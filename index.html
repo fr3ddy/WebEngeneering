@@ -15,6 +15,9 @@
     <link href="css/bootstrap.css" rel="stylesheet">
 	<script src="js/bootstrap.js"></script>
 
+	<!-- Underscore -->
+	<script src="js/underscore-min.js"></script>
+	
     <!-- Custom -->
     <link href="css/custom.css" rel="stylesheet">
     <script src="js/custom.js"></script>
@@ -40,34 +43,32 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#add">Add</a></li>
-            <li><a href="#list">List</a></li>
+            <!--<li class="active"><a href="#add">Hinfügen</a></li>-->
+            <li><a href="#list">Liste</a></li>
           </ul>
         </div>
       </div>
     </div>
 	
 	<div class="container" id="add">
-		<h1>Add</h1>
 		<div class="form-group">
 			<div class="row">
-				<div class="col-xs-3">
-					<input type="text" class="form-control" id="film" placeholder="Enter Film">
-				</div>
 				<div class="col-xs-1">
-					<button data-toggle="modal" id="addFilm" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> <b>New</b></button>
+					<button data-toggle="modal" data-target="#filmModal" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> <b>Neuen Film hinzufügen</b></button>
 				</div>
 			</div>
 		</div>
 	</div>
 	
 	<div class="container" id="list">
-		<h1>List</h1>
+		<h1>Liste</h1>
 		<table class="table table-hover" id="filmtable">
 			<tr>
 				<th>Titel</th>
 				<th>Produzent</th>
 				<th>Bewertung</th>
+				<th><!--Bearbeiten--></th>
+				<th><!--Löschen--></th>
 			<tr>
 		</table>
 	</div>
@@ -83,13 +84,13 @@
 			</div>
 			<div class="modal-body">
 				<div class="form-group">
-					<input type="text" class="form-control" id="finalFilm" placeholder="Enter Film">
-					<input type="text" class="form-control" id="produzent" placeholder="Enter Produzent">
+					<input type="text" class="form-control" id="filmTitle" placeholder="Film eingeben">
+					<input type="text" class="form-control" id="producer" placeholder="Produzent eingeben">
 				</div>
 			</div>
 			<div class="modal-footer">
-			  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			  <button type="button" class="btn btn-primary" id="saveFilm">Save changes</button>
+			  <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
+			  <button type="button" class="btn btn-primary" id="saveFilm">Speichern</button>
 			</div>
 		  </div>
 		</div>
