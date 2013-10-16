@@ -1,144 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
 
-    <title>Filmverwaltung</title>
+		<title>Filmverwaltung</title>
 
-    <!-- jQuery -->
-	<script src="http://code.jquery.com/jquery-2.0.3.js"></script>
-	
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.css" rel="stylesheet">
-	<script src="js/bootstrap.js"></script>
+		<!-- jQuery -->
+		<script src="http://code.jquery.com/jquery-2.0.3.js"></script>
 
-	<!-- Underscore -->
-	<script src="js/underscore-min.js"></script>
-	
-    <!-- Custom -->
-    <link href="css/custom.css" rel="stylesheet">
-    <script src="js/custom.js"></script>
+		<!-- Bootstrap -->
+		<link href="css/bootstrap.css" rel="stylesheet">
+		<script src="js/bootstrap.js"></script>
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="../../assets/js/html5shiv.js"></script>
-      <script src="../../assets/js/respond.min.js"></script>
-    <![endif]-->
-  </head>
+		<!-- Underscore -->
+		<script src="js/underscore-min.js"></script>
 
-  <body>
-    <!-- Fixed navbar -->
-    <div class="navbar navbar-default navbar-static-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Filmverwaltung</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="#list">Liste</a></li>
-          </ul>
-		  <ul class="nav navbar-nav navbar-right">
-			<li class="dropdown" id="menu1">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding-top: 0px; padding-bottom: 0px;">
-					<button class="btn btn-default btn-lg" id="loginButton">
-						<span class="glyphicon glyphicon-user"></span> Login
+		<!-- Custom -->
+		<link href="css/custom.css" rel="stylesheet">
+		<script src="js/custom.js"></script>
+
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+		<script src="../../assets/js/html5shiv.js"></script>
+		<script src="../../assets/js/respond.min.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+		<!-- Fixed navbar -->
+		<div class="navbar navbar-default navbar-static-top">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
 					</button>
-				</a>
-				<div class="dropdown-menu" style="width: 250px;">
-					<form style="margin: 0px" accept-charset="UTF-8" action="/sessions" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="4L/A2ZMYkhTD3IiNDMTuB/fhPRvyCNGEsaZocUUpw40=" /></div>
-						<fieldset class='textbox' style="padding:10px">
-							<div class="input-group">
-								<span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-								<input type="text" class="form-control" name="username" placeholder="Username" style="margin-top: 0px;">
-							</div>
-							<div class="input-group">
-								<span class="input-group-addon"><span class="glyphicon glyphicon-certificate"></span></span>
-								<input type="text" class="form-control" name="password" placeholder="Password" style="margin-top: 0px;">
-							</div>
-							
-							<button class="btn btn-primary form-control">Log In</button>
-						</fieldset>
-					</form>
+					<a class="navbar-brand" href="#">Filmverwaltung</a>
 				</div>
-			</li>
-		  </ul>
-        </div>
-      </div>
-    </div>
-	<div class="container" id="add">
-		<div class="form-group">
-			<div class="row">
-				<div class="col-xs-1">
-					<button data-toggle="modal" data-target="#createFilmModal" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> <b>Neuen Film hinzufügen</b></button>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<div class="container" id="list">
-		<h1>Liste</h1>
-		<table class="table table-hover" id="filmtable">
-			<tr id="tr-0">
-				<th>Titel</th>
-				<th>Produzent</th>
-				<th>Bewertung</th>
-				<th><!--Bearbeiten--></th>
-				<th><!--Löschen--></th>
-			<tr>
-		</table>
-	</div>
-	<!-- Modals
-    ================================================== -->
-	<!-- Modal New Movie-->
-	  <div class="modal fade" id="createFilmModal" tabindex="-1" role="dialog" aria-labelledby="filmModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-		  <div class="modal-content">
-			<div class="modal-header">
-			  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			  <h4 class="modal-title">Film hinzufügen</h4>
-			</div>
-			<div class="modal-body">
-				<div class="form-group">
-					<input type="text" class="form-control" id="filmTitle" placeholder="Film eingeben">
-					<input type="text" class="form-control" id="producer" placeholder="Produzent eingeben">
-				</div>
-			</div>
-			<div class="modal-footer">
-			  <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
-			  <button type="button" class="btn btn-primary" id="saveFilm">Speichern</button>
-			</div>
-		  </div>
-		</div>
-	  </div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li>
+							<a href="#list">Liste</a>
+						</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown" id="menu1">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding-top: 0px; padding-bottom: 0px;">
+							<button class="btn btn-default btn-lg" id="loginButton">
+								<span class="glyphicon glyphicon-user"></span> Login
+							</button> </a>
+							<div class="dropdown-menu" style="width: 250px;">
+								<form style="margin: 0px" accept-charset="UTF-8" action="/sessions" method="post">
+									<div style="margin:0;padding:0;display:inline">
+										<input name="utf8" type="hidden" value="&#x2713;" />
+										<input name="authenticity_token" type="hidden" value="4L/A2ZMYkhTD3IiNDMTuB/fhPRvyCNGEsaZocUUpw40=" />
+									</div>
+									<fieldset class='textbox' style="padding:10px">
+										<div class="input-group">
+											<span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+											<input type="text" class="form-control" name="username" placeholder="Username" style="margin-top: 0px;">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon"><span class="glyphicon glyphicon-certificate"></span></span>
+											<input type="text" class="form-control" name="password" placeholder="Password" style="margin-top: 0px;">
+										</div>
 
-	<!-- Modal Edit Movie-->
-	  <div class="modal fade" id="editFilmModal" tabindex="-1" role="dialog" aria-labelledby="filmModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-		  <div class="modal-content">
-			<div class="modal-header">
-			  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			  <h4 class="modal-title">Film hinzufügen</h4>
-			</div>
-			<div class="modal-body">
-				<div class="form-group">
-					<input type="text" class="form-control" id="filmTitleEdit" placeholder="Film eingeben">
-					<input type="text" class="form-control" id="producerEdit" placeholder="Produzent eingeben">
+										<button class="btn btn-primary form-control">
+											Log In
+										</button>
+									</fieldset>
+								</form>
+							</div>
+						</li>
+					</ul>
 				</div>
 			</div>
-			<div class="modal-footer">
-			  <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
-			  <button type="button" class="btn btn-primary" id="changeMovie">Ändern</button>
-			</div>
-		  </div>
 		</div>
-	  </div>	  
-  </body>
+		<div class="container" id="add">
+			<div class="form-group">
+				<div class="row">
+					<div class="col-xs-1">
+						<button data-toggle="modal" data-target="#createFilmModal" class="btn btn-default btn-sm">
+							<span class="glyphicon glyphicon-plus"></span><b>Neuen Film hinzufügen</b>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container" id="list">
+			<h1>Liste</h1>
+			<table class="table table-hover" id="filmtable">
+				<tr id="tr-0">
+					<th>Titel</th>
+					<th>Produzent</th>
+					<th>Bewertung</th>
+					<th><!--Bearbeiten--></th>
+					<th><!--Löschen--></th>
+				<tr>
+			</table>
+		</div>
+		<!-- Modals
+		================================================== -->
+		<!-- Modal New Movie-->
+		<div class="modal fade" id="createFilmModal" tabindex="-1" role="dialog" aria-labelledby="filmModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+							&times;
+						</button>
+						<h4 class="modal-title">Film hinzufügen</h4>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<input type="text" class="form-control" id="filmTitle" placeholder="Film eingeben">
+							<input type="text" class="form-control" id="producer" placeholder="Produzent eingeben">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">
+							Schließen
+						</button>
+						<button type="button" class="btn btn-primary" id="saveFilm">
+							Speichern
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal Edit Movie-->
+		<div class="modal fade" id="editFilmModal" tabindex="-1" role="dialog" aria-labelledby="filmModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+							&times;
+						</button>
+						<h4 class="modal-title">Film hinzufügen</h4>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<input type="text" class="form-control" id="filmTitleEdit" placeholder="Film eingeben">
+							<input type="text" class="form-control" id="producerEdit" placeholder="Produzent eingeben">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">
+							Schließen
+						</button>
+						<button type="button" class="btn btn-primary" id="changeMovie">
+							Ändern
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>
