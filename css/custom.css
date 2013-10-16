@@ -1,9 +1,28 @@
+html, body {
+	height: 100%;
+}
+
+label {
+	display: block;
+	float: left;
+	width: 8em;
+}
+
 .navbar-static-top {
   margin-bottom: 19px;
 }
 
 .form-control {
   margin: 5px 0 5px 0;
+}
+
+#detailedView {
+	display: none;
+	height: 100%;
+	position: absolute;
+	right: 0;
+	background-color: #fff;
+	z-index: 1060;
 }
 
 #loginButton{

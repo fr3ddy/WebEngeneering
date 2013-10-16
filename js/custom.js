@@ -1,15 +1,20 @@
 var selectedRowId;
 $(document).ready(function(){
 	var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>'
-									+'<td class="tableProducer"><%- movieProducer %></td>'
+									+'<td class="tableMovieSeen"><%- movieSeen %></td>'
 									+'<td class="tableRating"><%- rating %></td>'
 									+'<td><button class="btn btn-sm edit" title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>'
 									+'<td><button class="btn btn-sm" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
-									
-	/*$('#addFilm').on("click" , function(){
-		$('#filmTitle').val($('#film').val());
-		$('#filmModal').modal('show');
-	});*/
+	
+	var detailedMovieView = _.template('<div class="panel panel-default" id="detailedView">'
+											+'<div class="panel-heading">'+
+											+'<h3 class="panel-title"><%- movieTitle %></h3>'
+											+'</div>'
+											+'<div class="panel-body">'
+												+'<label>Gesehen: </label><span><%- movieSeen %></span><br>	'
+												+'<label>Bewertung: </label><span><%- rating %></span>'
+											+'</div>'
+										+'</div>');	
 	
 	$('#saveFilm').on("click" , function(){
 /*---------------------------------ID Ermitteln---------------------------------------------------------------------------------------------------------*/
@@ -23,30 +28,42 @@ $(document).ready(function(){
 			newID = 'tr-' + tmpId[1];					//ID für die neue Zeile zusammensetzen
 		}
 /*--------------------------------Tabelleneintrag hinzufügen---------------------------------------------------------------------------------------------*/		
-		$('#filmtable').append(addMovieToList({rowID: newID, movieTitle: $('#filmTitle').val(), movieProducer: $('#producer').val(), rating: "super"}));
+		$('#filmtable').append(addMovieToList({rowID: newID, movieTitle: $('#filmTitle').val(), movieSeen: $('#movieSeen').val(), rating: "super"}));
 		$('#film').val("");
 		$('#filmTitle').val("");
-		$('#producer').val("");
+		$('#movieSeen').val("");
 		$('#createFilmModal').modal('hide');
 	});	
 	$('#changeMovie').on("click" , function(){
 		$('#filmtable').find('#'+selectedRowId).find('.tableFilmTitle').text($('#filmTitleEdit').val());
-		$('#filmtable').find('#'+selectedRowId).find('.tableProducer').text($('#producerEdit').val());
+		$('#filmtable').find('#'+selectedRowId).find('.tableMovieSeen').text($('#movieSeenEdit').val());
 		$('#film').val("");
 		$('#filmTitleEdit').val("");
-		$('#producerEdit').val("");
+		$('#movieSeenEdit').val("");
 		$('#editFilmModal').modal('hide');
 	});
 	
 	$('#list').on('click', '.edit', function(){
 		var title 		= $(this).parent().parent().find('.tableFilmTitle').text();
-		var producer	= $(this).parent().parent().find('.tableProducer').text();
+		var movieSeen	= $(this).parent().parent().find('.tableMovieSeen').text();
 		selectedRowId	= $(this).parent().parent().attr('id');
 
 		$('#editFilmModal').modal('show');
 		$('#filmTitleEdit').val(title);
-		$('#producerEdit').val(producer);
+		$('#movieSeenEdit').val(movieSeen);
 		
 	});
+	
+/*--------------------------------Detailansicht für Film ------------------------------------------------------------------------------------------------*/	
+	$('#list').on('dblclick', 'tr', function(event) {
+		$('body').prepend(detailedMovieView({movieTitle: "Holla", movieSeen: "kadf	", rating: "super"}));
+		//$('#detailedView').css({'z-index': '1060'});
+		$('#detailedView').show('fast');
+		event.stopPropagation();
+	});
 
+	$(document).click(function() {
+		$('#detailedView').hide();
+		$('#detailedView').remove();
+	});
 });
