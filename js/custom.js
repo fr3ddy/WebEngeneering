@@ -1,3 +1,4 @@
+var selectedRowId;
 $(document).ready(function(){
 	var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>'
 									+'<td class="tableProducer"><%- movieProducer %></td>'
@@ -29,16 +30,18 @@ $(document).ready(function(){
 		$('#createFilmModal').modal('hide');
 	});	
 	$('#changeMovie').on("click" , function(){
-/*		$('#filmtable').append(addMovieToList({movieTitle: $('#filmTitle').val(), movieProducer: $('#producer').val(), rating: "super"}));
+		$('#filmtable').find('#'+selectedRowId).find('.tableFilmTitle').text($('#filmTitleEdit').val());
+		$('#filmtable').find('#'+selectedRowId).find('.tableProducer').text($('#producerEdit').val());
 		$('#film').val("");
 		$('#filmTitleEdit').val("");
 		$('#producerEdit').val("");
-		$('#editFilmModal').modal('hide');*/
+		$('#editFilmModal').modal('hide');
 	});
 	
 	$('#list').on('click', '.edit', function(){
 		var title 		= $(this).parent().parent().find('.tableFilmTitle').text();
 		var producer	= $(this).parent().parent().find('.tableProducer').text();
+		selectedRowId	= $(this).parent().parent().attr('id');
 
 		$('#editFilmModal').modal('show');
 		$('#filmTitleEdit').val(title);
