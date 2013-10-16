@@ -5,3 +5,7 @@
 .form-control {
   margin: 5px 0 5px 0;
 }
+
+#loginButton{
+	margin-top: 2px;
+}
