@@ -5,11 +5,16 @@ $(document).ready(function(){
 									+'<td class="tableRating"><%- rating %></td>'
 									+'<td><button class="btn btn-sm edit" title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>'
 									+'<td><button class="btn btn-sm" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
-									
-	/*$('#addFilm').on("click" , function(){
-		$('#filmTitle').val($('#film').val());
-		$('#filmModal').modal('show');
-	});*/
+	
+	var detailedMovieView = _.template('<div class="panel panel-default" id="detailedView">'
+											+'<div class="panel-heading">'+
+												+'<h3 class="panel-title"><%- movieTitle %></h3>'
+											+'</div>'
+											+'<div class="panel-body">'
+												+'<label>Gesehen: </label><span><%- movieSeen %></span><br>	'
+												+'<label>Bewertung: </label><span><%- rating %></span>'
+											+'</div>'
+										+'</div>');	
 	
 	$('#saveFilm').on("click" , function(){
 /*---------------------------------ID Ermitteln---------------------------------------------------------------------------------------------------------*/
@@ -47,6 +52,13 @@ $(document).ready(function(){
 		$('#filmTitleEdit').val(title);
 		$('#producerEdit').val(producer);
 		
+	});
+	
+/*--------------------------------Detailansicht für Film ------------------------------------------------------------------------------------------------*/	
+	$('#list').on('dblclick', 'tr', function() {
+		$('body').prepend(detailedMovieView({movieTitle: $(this).find('.tableFilmTitle').text(), movieSeen: "kadf	", rating: "super"}));
+		//$('#detailedView').css({'z-index': '1060'});
+		$('#detailedView').toggle('slide', '', 1000);
 	});
 
 });
