@@ -5,19 +5,3 @@
 .form-control {
   margin: 5px 0 5px 0;
 }
-
-.delete, .delete:ACTIVE {
-  background-image: url(../img/glyphicons_016_bin.png);
-  background-repeat: no-repeat;
-  background-position: center center;
-  height: 33px;
-  width: 30px;
-}
-
-.edit, .edit:ACTIVE {
-  background-image: url(../img/glyphicons_030_pencil.png);
-  background-repeat: no-repeat;
-  background-position: center center;
-  height: 33px;
-  width: 30px;
-}
