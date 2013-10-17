@@ -112,6 +112,9 @@ $(document).ready(function(){
 				});
 				$('#passwordInput').val("");
 				$('#usernameInput').val("");
+				
+				//SET SESSION
+				sessionStorage.setItem("user" , n);
 			}
 		});
 	});
