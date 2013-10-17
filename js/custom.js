@@ -1,8 +1,6 @@
 var selectedRowId;
 
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%- rating %></td>' + '<td><button class="btn btn-sm edit" title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
-
-$(document).ready(function() {
 	var detailedMovieView = _.template('<div class="container">' 
 											+ '<h3><%- movieTitle %>' 
 											+'<button type="button" id="closeDetailedView" class="close" aria-hidden="true">&times;</button></h3>'
@@ -11,6 +9,7 @@ $(document).ready(function() {
 											+ '<label>Bewertung: </label><span><%- rating %></span>' 
 										+ '</div>' 
 									   + '</div>');
+$(document).ready(function() {
 
 	/*Speichere-Button auf Modal 'createFilmModal'*/
 	$('#saveFilm').on("click", createMovie);
@@ -59,12 +58,8 @@ $(document).ready(function() {
 		if ($(this).attr('id') == 'tr-0') {
 			return false;
 		}
-
-		$('#detailedView').html(detailedMovieView({
-			movieTitle : $(this).find('.tableFilmTitle').text(),
-			movieSeen : "kadf	",
-			rating : "super"
-		}));
+		
+		buildDetailView($(this).find('.tableFilmTitle').text());
 		
 		$('#detailedView').show("slow");
 		$('#home').hide('slow');
@@ -202,4 +197,13 @@ function loadMovie_ajax(title){
 				movieTitle : title,
 			},
 	});
+}
+
+function buildDetailView(movieTitle){
+
+	$('#detailedView').html(detailedMovieView({
+		movieTitle : movieTitle,
+		movieSeen : "kadf	",
+		rating : "super"
+	}));
 }
