@@ -85,6 +85,9 @@ $(document).ready(function(){
 	});
 
 /*-----LOGIN--------*/
+	if(typeof(sessionStorage.getItem("user")) != "undefined"){
+		$('#loginButton').parent().empty().append('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
+	}
 	$('#submitLoginButton').on('click' , function(event){
 		event.preventDefault();
 		var n = $('#usernameInput').val();
@@ -120,6 +123,14 @@ $(document).ready(function(){
 				//SET SESSION
 				sessionStorage.setItem("user" , n);
 			}
+		});
+	});
+	$('#logoutButton').on('click' , function(){
+		var parent = $('#logoutButton').parent();
+		logout_ajax().done(function(value){
+			parent.empty();
+			parent.append(value);
+			sessionStorage.setItem("user" , "");
 		});
 	});
 });
