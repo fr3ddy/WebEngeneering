@@ -9,7 +9,7 @@ $(document).ready(function() {
 											+'<button type="button" id="closeDetailedView" class="close" aria-hidden="true">&times;</button></h3>'
 										+ '<div>' 
 											+ '<label>Gesehen: </label><span><%- movieSeen %></span><br>' 
-											+ '<label>Bewertung: </label><span><%- rating %></span>' 
+											+ '<label>Bewertung: </label><span><%- rating %></span>'
 										+ '</div>' 
 									   + '</div>');
 
@@ -63,7 +63,7 @@ $(document).ready(function() {
 
 		$('#detailedView').html(detailedMovieView({
 			movieTitle : $(this).find('.tableFilmTitle').text(),
-			movieSeen : "kadf	",
+			movieSeen : "kadf",
 			rating : "super"
 		}));
 		
