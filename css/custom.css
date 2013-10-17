@@ -22,7 +22,7 @@ label {
 	position: absolute;
 	right: 0;
 	background-color: #fff;
-	z-index: 1060;
+	/*z-index: 1060;*/
 }
 
 #home {

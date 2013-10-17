@@ -5,7 +5,16 @@ var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle
 var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%- rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 
 $(document).ready(function() {
-
+	/* Setze Focus auf Film Titel Input, wenn Modal geäffnet wird */
+	$('#createFilmModal').on('focus', function() {
+		filmTitle.focus();
+	});
+	
+	/* Setze Focus auf Film Titel Input, wenn Modal geäffnet wird */
+	$('#editFilmModal').on('focus', function() {
+		filmTitleEdit.focus();
+	});
+	
 	/*Speichere-Button auf Modal 'createFilmModal'*/
 	$('#saveFilm').on("click", createMovie);
 
@@ -148,7 +157,7 @@ function createMovie() {
 		content : popoverContent,
 		html : 'true'
 	});
-
+	
 	$('#film').val("");
 	$('#filmTitle').val("");
 	$('#movieSeen').val("");
@@ -197,29 +206,50 @@ function loadMovie_ajax(title) {
 }
 
 function buildDetailView(movieTitle) {
-	loadMovie_ajax(movieTitle).done(function(omdbOutput) {
-		//Release - Runtime - Genre - Director - Actors - Poster - User Rating
-		var omdbArray = omdbOutput.split(" - ");
-		var release = omdbArray[0];
-		var runtime = omdbArray[1];
-		var genre = omdbArray[2];
-		var director = omdbArray[3];
-		var actors = omdbArray[4];
-		var poster = omdbArray[5];
-		var stars = 0;
-		
-		$('#detailedView').html(detailedMovieView({
-			movieTitle : movieTitle,
-			movieSeen : "No",
-			rating : stars,
-			picture : poster,
-			release : release,
-			runtime : runtime,
-			genre : genre,
-			director : director,
-			actors : actors
-		}));
-		$('#detailedView').show("slow");
-		$('#home').hide('slow');
-	});
+	// alternative Quelle könnte "http://mymovieapi.com/?title=" sein
+	$.getJSON("http://www.omdbapi.com/?t=" + movieTitle.replace(" ", "+"))
+		.done(function(data) {
+			$('#detailedView').html(detailedMovieView({
+				movieTitle : movieTitle,
+				movieSeen : "No",
+				rating : 0,
+				picture : data.Poster,
+				release : data.Released,
+				runtime : data.Runtime,
+				genre : data.Genre,
+				director : data.Director,
+				actors : data.Actors
+			}));
+		})
+		.always(function() {
+			$('#detailedView').show("slow");
+			$('#home').hide('slow');
+		});
+	
+	// loadMovie_ajax(movieTitle).done(function(omdbOutput) {
+		// //Release - Runtime - Genre - Director - Actors - Poster - User Rating
+		// var omdbArray = omdbOutput.split(" - ");
+		// var release = omdbArray[0];
+		// var runtime = omdbArray[1];
+		// var genre = omdbArray[2];
+		// var director = omdbArray[3];
+		// var actors = omdbArray[4];
+		// var poster = omdbArray[5];
+		// var stars = 0;
+// 
+		// $('#detailedView').html(detailedMovieView({
+			// movieTitle : movieTitle,
+			// movieSeen : "No",
+			// rating : stars,
+			// picture : poster,
+			// release : release,
+			// runtime : runtime,
+			// genre : genre,
+			// director : director,
+			// actors : actors
+		// }));
+		// $('#detailedView').show("slow");
+		// $('#home').hide('slow');
+	// }); 
+
 }
