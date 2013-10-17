@@ -4,8 +4,14 @@ sessionStorage.setItem("user" , "");
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%- rating %></td>' + '<td><button class="btn btn-sm edit" title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 
 $(document).ready(function() {
-	
-	var detailedMovieView = _.template('<div class="panel panel-default" id="detailedView">' + '<div class="panel-heading">' + '<span class="glyphicon glyphicon-remove"></span>' + '<h3 class="panel-title"><%- movieTitle %></h3>' + '</div>' + '<div class="panel-body">' + '<label>Gesehen: </label><span><%- movieSeen %></span><br>	' + '<label>Bewertung: </label><span><%- rating %></span>' + '</div>' + '</div>');
+	var detailedMovieView = _.template('<div class="container">' 
+											+ '<h3><%- movieTitle %>' 
+											+'<button type="button" id="closeDetailedView" class="close" aria-hidden="true">&times;</button></h3>'
+										+ '<div>' 
+											+ '<label>Gesehen: </label><span><%- movieSeen %></span><br>' 
+											+ '<label>Bewertung: </label><span><%- rating %></span>' 
+										+ '</div>' 
+									   + '</div>');
 
 	/*Speichere-Button auf Modal 'createFilmModal'*/
 	$('#saveFilm').on("click", createMovie);
@@ -43,31 +49,33 @@ $(document).ready(function() {
 
 	});
 
-	/*--------------------------------Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
 	/*L�sche-Button in Filmeintrag*/
 	$('#list').on('click', '.delete', function() {
 		$(this).popover();
 	});
 
 	/*--------------------------------Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
-	$('#list').on('dblclick', 'tr', function(event) {
+	$('#list').on('dblclick', 'tr', function() {
 		// Damit keine Detailansicht bei Klick auf den Header erscheint
 		if ($(this).attr('id') == 'tr-0') {
 			return false;
 		}
 
-		$('body').prepend(detailedMovieView({
+		$('#detailedView').html(detailedMovieView({
 			movieTitle : $(this).find('.tableFilmTitle').text(),
 			movieSeen : "kadf	",
 			rating : "super"
 		}));
-		$('#detailedView').show('fast');
-		event.stopPropagation();
+		
+		$('#detailedView').show("slow");
+		$('#home').hide('slow');
 	});
-
-	$(document).click(function() {
-		$('#detailedView').hide();
-		$('#detailedView').remove();
+	
+	$('#detailedView').on('click', '#closeDetailedView', function(event) {
+		event.preventDefault();
+		$('#detailedView').hide('slow');
+		$('#detailedView').empty();
+		$('#home').show('slow');
 	});
 
 	/*-----LOGIN--------*/
