@@ -26,6 +26,7 @@ label {
 	z-index: 1060;
 }
 
-#loginButton{
+#loginButton ,
+#logoutButton{
 	margin-top: 2px;
 }

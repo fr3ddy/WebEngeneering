@@ -80,8 +80,60 @@ $(document).ready(function(){
 		$('#detailedView').hide();
 		$('#detailedView').remove();
 	});
+
+/*-----LOGIN--------*/
+	$('#submitLoginButton').on('click' , function(event){
+		event.preventDefault();
+		var n = $('#usernameInput').val();
+		var p = $('#passwordInput').val();
+		var parent = $('#loginButton').parent();
+		login_ajax(n , p).done(function(value){
+			if(value == ""){
+				$('#passwordInput').parent().addClass("has-error");
+				$('#usernameInput').parent().addClass("has-error");
+			}else if(value == "muser"){
+				$('#usernameInput').parent().removeClass("has-error");
+				$('#usernameInput').parent().addClass("has-error");
+			}else if(value == "mpw"){
+				$('#passwordInput').parent().addClass("has-error");
+				$('#usernameInput').parent().removeClass("has-error");
+			}else{
+				$('#usernameInput').parent().removeClass("has-error");
+				$('#passwordInput').parent().removeClass("has-error");
+				parent.empty();
+				parent.append(value);
+				$('#submitLoginButton').parent().parent().parent().parent().removeClass("open");
+				$('#logoutButton').on('click' , function(){
+					var parent = $('#logoutButton').parent();
+					logout_ajax().done(function(value){
+						parent.empty();
+						parent.append(value);
+					});
+				});
+				$('#passwordInput').val("");
+				$('#usernameInput').val("");
+			}
+		});
+	});
 });
 
 function removeMovie (element){
 	$(element).parent().parent().parent().parent().remove();
+}
+
+function login_ajax(n , p){
+	return $.ajax({
+	type: "POST",
+	url: "ajax/login.php",
+	data: {
+		username : n,
+		password : p
+		},
+	});
+}
+function logout_ajax(){
+	return $.ajax({
+	type: "POST",
+	url: "ajax/logout.php",
+	});
 }
