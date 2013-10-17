@@ -2,7 +2,7 @@ var selectedRowId;
 sessionStorage.setItem("user", "");
 
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%- rating %></td>' + '<td><button class="btn btn-sm edit" title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
-var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%- rating %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
+var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%- rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 $(document).ready(function() {
 
 	/*Speichere-Button auf Modal 'createFilmModal'*/
@@ -199,11 +199,24 @@ function loadMovie_ajax(title) {
 
 function buildDetailView(movieTitle) {
 	loadMovie_ajax(movieTitle).done(function(omdbOutput) {
+		//Release - Runtime - Genre - Director - Actors - Poster
+		var omdbArray = omdbOutput.split(" - ");
+		var release = omdbArray[0];
+		var runtime = omdbArray[1];
+		var genre = omdbArray[2];
+		var director = omdbArray[3];
+		var actors = omdbArray[4];
+		var poster = omdbArray[5];
 		$('#detailedView').html(detailedMovieView({
 			movieTitle : movieTitle,
 			movieSeen : "No",
 			rating : "super",
-			picture : omdbOutput,
+			picture : poster,
+			release : release,
+			runtime : runtime,
+			genre : genre,
+			director : director,
+			actors : actors
 		}));
 	});
 }
