@@ -3,8 +3,7 @@ html, body {
 }
 
 label {
-	display: block;
-	float: left;
+	display: inline-block;
 	width: 8em;
 }
 

@@ -7,8 +7,9 @@ $(document).ready(function(){
 									+'<td><button class="btn btn-sm delete" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 	
 	var detailedMovieView = _.template('<div class="panel panel-default" id="detailedView">'
-											+'<div class="panel-heading">'+
-											+'<h3 class="panel-title"><%- movieTitle %></h3>'
+											+'<div class="panel-heading">'
+												+'<span class="glyphicon glyphicon-remove"></span>'
+												+'<h3 class="panel-title"><%- movieTitle %></h3>'
 											+'</div>'
 											+'<div class="panel-body">'
 												+'<label>Gesehen: </label><span><%- movieSeen %></span><br>	'
@@ -28,10 +29,10 @@ $(document).ready(function(){
 			tmpId[1] = parseInt(tmpId[1]) + 1;			//Anzahl der Zeilen steht im 2. Feld, muss von String in Integer geparst werden
 			newID = 'tr-' + tmpId[1];					//ID f�r die neue Zeile zusammensetzen
 		}
-/*--------------------------------Tabelleneintrag hinzuf�gen---------------------------------------------------------------------------------------------*/		
+/*--------------------------------Tabelleneintrag hinzufuegen---------------------------------------------------------------------------------------------*/		
 		$('#filmtable').append(addMovieToList({rowID: newID, movieTitle: $('#filmTitle').val(), movieSeen: $('#movieSeen').val(), rating: "super"}));
 		
-		/*------------------------Initialisiere PopOver f�r Delete-Button--------------------------------------------------------------------------------*/
+		/*------------------------Initialisiere PopOver fuer Delete-Button--------------------------------------------------------------------------------*/
 		$('#'+newID).find('.delete').popover({title: 'L�schen', content:'Wollen Sie den Film wirklich l�schen?<br><button type="button" class="btn btn-default" onclick="$(this).parent().parent().parent().find(&quot;.delete&quot;).popover(&quot;toggle&quot;)">Nein</button><button type="button" class="btn btn-primary" onclick="removeMovie($(this))">Ja</button>', html: 'true'});
 		
 		$('#film').val("");
@@ -62,16 +63,18 @@ $(document).ready(function(){
 		
 	});
 	
-/*--------------------------------Detailansicht f�r Film ------------------------------------------------------------------------------------------------*/	
+/*--------------------------------Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/	
 	/*L�sche-Button in Filmeintrag*/	
 	$('#list').on('click', '.delete', function(){
 		$(this).popover();
 	});
 	
-/*--------------------------------Detailansicht f�r Film ------------------------------------------------------------------------------------------------*/	
+/*--------------------------------Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/	
 	$('#list').on('dblclick', 'tr', function(event) {
-		$('body').prepend(detailedMovieView({movieTitle: "Holla", movieSeen: "kadf	", rating: "super"}));
-		//$('#detailedView').css({'z-index': '1060'});
+		// Damit keine Detailansicht bei Klick auf den Header erscheint
+		if($(this).attr('id') == 'tr-0') { return false; }
+		
+		$('body').prepend(detailedMovieView({movieTitle: $(this).find('.tableFilmTitle').text(), movieSeen: "kadf	", rating: "super"}));
 		$('#detailedView').show('fast');
 		event.stopPropagation();
 	});
