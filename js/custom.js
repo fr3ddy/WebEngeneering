@@ -1,4 +1,5 @@
 var selectedRowId;
+sessionStorage.setItem("user" , "");
 
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%- rating %></td>' + '<td><button class="btn btn-sm edit" title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 	var detailedMovieView = _.template('<div class="container">' 
@@ -6,7 +7,7 @@ var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle
 											+'<button type="button" id="closeDetailedView" class="close" aria-hidden="true">&times;</button></h3>'
 										+ '<div>' 
 											+ '<label>Gesehen: </label><span><%- movieSeen %></span><br>' 
-											+ '<label>Bewertung: </label><span><%- rating %></span>' 
+											+ '<label>Bewertung: </label><span><%- rating %></span>'
 										+ '</div>' 
 									   + '</div>');
 $(document).ready(function() {
@@ -58,9 +59,7 @@ $(document).ready(function() {
 		if ($(this).attr('id') == 'tr-0') {
 			return false;
 		}
-		
-		buildDetailView($(this).find('.tableFilmTitle').text());
-		
+
 		$('#detailedView').show("slow");
 		$('#home').hide('slow');
 	});
