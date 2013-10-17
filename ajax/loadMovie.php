@@ -1,9 +1,13 @@
 <?php
 	$title = $_POST["movieTitle"];
-	preg_replace(" ", "%", $title);
-	$json = file_get_contents("http://www.omdbapi.com/?t=".$title);
+//	preg_replace(" ", "%20", $title);
+	$json = file_get_contents("http://www.omdbapi.com/?t=Titanic");
 	$info = json_decode($json , true);
 	
-	echo $info["Poster"];
+	$text = "Hallo ";
 	
-?>
+	foreach ($info as $teil) {
+		$text = $text + " " + $teil;
+	}
+	
+	echo $text;

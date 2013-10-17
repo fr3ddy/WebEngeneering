@@ -1,15 +1,8 @@
 var selectedRowId;
-sessionStorage.setItem("user" , "");
+sessionStorage.setItem("user", "");
 
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%- rating %></td>' + '<td><button class="btn btn-sm edit" title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
-	var detailedMovieView = _.template('<div class="container">' 
-											+ '<h3><%- movieTitle %>' 
-											+'<button type="button" id="closeDetailedView" class="close" aria-hidden="true">&times;</button></h3>'
-										+ '<div>' 
-											+ '<label>Gesehen: </label><span><%- movieSeen %></span><br>' 
-											+ '<label>Bewertung: </label><span><%- rating %></span>'
-										+ '</div>' 
-									   + '</div>');
+var detailedMovieView = _.template('<div class="container">' + '<h3><%- movieTitle %>' + '<button type="button" id="closeDetailedView" class="close" aria-hidden="true">&times;</button></h3>' + '<div>' + '<label>Gesehen: </label><span><%- movieSeen %></span><br>' + '<label>Bewertung: </label><span><%- rating %></span><span><img src="<%- picture %>" /></span>' + '</div>' + '</div>');
 $(document).ready(function() {
 
 	/*Speichere-Button auf Modal 'createFilmModal'*/
@@ -59,11 +52,13 @@ $(document).ready(function() {
 		if ($(this).attr('id') == 'tr-0') {
 			return false;
 		}
+		
+		buildDetailView($(this).find('#filmTitle').text());
 
 		$('#detailedView').show("slow");
 		$('#home').hide('slow');
 	});
-	
+
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
 		event.preventDefault();
 		$('#detailedView').hide('slow');
@@ -147,9 +142,13 @@ function createMovie() {
 	}));
 
 	/*------------------------Initialisiere PopOver fuer Delete-Button--------------------------------------------------------------------------------*/
-		var popoverContent ='Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"'+
-							'onclick="removeMovie($(this))">Ja</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
-		$('#'+newID).find('.delete').popover({trigger: 'focus', title: 'Löschen', content: popoverContent, html: 'true'});
+	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Ja</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
+	$('#' + newID).find('.delete').popover({
+		trigger : 'focus',
+		title : 'Löschen',
+		content : popoverContent,
+		html : 'true'
+	});
 
 	$('#film').val("");
 	$('#filmTitle').val("");
@@ -188,21 +187,23 @@ function logout_ajax() {
 	});
 }
 
-function loadMovie_ajax(title){
+function loadMovie_ajax(title) {
 	return $.ajax({
 		type : "POST",
 		url : "ajax/loadMovie.php",
-		data: {
-				movieTitle : title,
-			},
+		data : {
+			movieTitle : title,
+		},
 	});
 }
 
-function buildDetailView(movieTitle){
-
-	$('#detailedView').html(detailedMovieView({
-		movieTitle : movieTitle,
-		movieSeen : "kadf	",
-		rating : "super"
-	}));
+function buildDetailView(movieTitle) {
+	loadMovie_ajax(movieTitle).done(function(omdbOutput){
+		$('#detailedView').html(detailedMovieView({
+			movieTitle : movieTitle,
+			movieSeen : omdbOutput,
+			rating : "super",
+			picture : omdbOutput,
+		}));
+	});
 }
