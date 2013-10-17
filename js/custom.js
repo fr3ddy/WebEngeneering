@@ -85,7 +85,7 @@ $(document).ready(function(){
 	});
 
 /*-----LOGIN--------*/
-	if(typeof(sessionStorage.getItem("user")) != "undefined"){
+	if(sessionStorage.getItem("user") != ""){
 		$('#loginButton').parent().empty().append('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
 	}
 	$('#submitLoginButton').on('click' , function(event){
