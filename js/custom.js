@@ -2,7 +2,7 @@ var selectedRowId;
 sessionStorage.setItem("user", "");
 
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%- rating %></td>' + '<td><button class="btn btn-sm edit" title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
-var detailedMovieView = _.template('<div class="container">' + '<h3><%- movieTitle %>' + '<button type="button" id="closeDetailedView" class="close" aria-hidden="true">&times;</button></h3>' + '<div>' + '<label>Gesehen: </label><span><%- movieSeen %></span><br>' + '<label>Bewertung: </label><span><%- rating %></span><span><img src="<%- picture %>" /></span>' + '</div>' + '</div>');
+var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%- rating %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 $(document).ready(function() {
 
 	/*Speichere-Button auf Modal 'createFilmModal'*/
@@ -52,8 +52,8 @@ $(document).ready(function() {
 		if ($(this).attr('id') == 'tr-0') {
 			return false;
 		}
-		
-		buildDetailView($(this).find('#filmTitle').text());
+
+		buildDetailView($(this).find('.tableFilmTitle').text());
 
 		$('#detailedView').show("slow");
 		$('#home').hide('slow');
@@ -198,10 +198,10 @@ function loadMovie_ajax(title) {
 }
 
 function buildDetailView(movieTitle) {
-	loadMovie_ajax(movieTitle).done(function(omdbOutput){
+	loadMovie_ajax(movieTitle).done(function(omdbOutput) {
 		$('#detailedView').html(detailedMovieView({
 			movieTitle : movieTitle,
-			movieSeen : omdbOutput,
+			movieSeen : "No",
 			rating : "super",
 			picture : omdbOutput,
 		}));
