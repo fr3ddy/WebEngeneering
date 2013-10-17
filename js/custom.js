@@ -144,11 +144,9 @@ function createMovie() {
 	}));
 
 	/*------------------------Initialisiere PopOver fuer Delete-Button--------------------------------------------------------------------------------*/
-	$('#' + newID).find('.delete').popover({
-		title : 'Löschen',
-		content : 'Wollen Sie den Film wirklich löschen?<br><button type="button" class="btn btn-default" onclick="$(this).parent().parent().parent().find(.delete").popover("toggle")">Nein</button><button type="button" class="btn btn-danger" onclick="removeMovie($(this))">Ja</button>',
-		html : 'true'
-	});
+		var popoverContent ='Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"'+
+							'onclick="removeMovie($(this))">Ja</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
+		$('#'+newID).find('.delete').popover({trigger: 'focus', title: 'Löschen', content: popoverContent, html: 'true'});
 
 	$('#film').val("");
 	$('#filmTitle').val("");
