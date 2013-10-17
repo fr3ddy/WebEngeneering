@@ -32,6 +32,7 @@
 	<body>
 		<!-- Fixed navbar -->
 		<div class="navbar navbar-default navbar-static-top">
+
 			<div class="container">
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -76,30 +77,35 @@
 				</div>
 			</div>
 		</div>
-		<div class="container" id="add">
-			<div class="form-group">
-				<div class="row">
-					<div class="col-xs-1">
-						<button data-toggle="modal" data-target="#createFilmModal" class="btn btn-default btn-sm">
-							<span class="glyphicon glyphicon-plus"></span> <b>Neuen Film hinzufügen</b>
-						</button>
+		<div id="home">
+			<div class="container" id="add">
+				<div class="form-group">
+					<div class="row">
+						<div class="col-xs-1">
+							<button data-toggle="modal" data-target="#createFilmModal" class="btn btn-default btn-sm">
+								<span class="glyphicon glyphicon-plus"></span><b>Neuen Film hinzufügen</b>
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
+
+			<div class="container" id="list">
+				<h1>Liste</h1>
+				<table class="table table-hover" id="filmtable">
+					<tr id="tr-0">
+						<th>Titel</th>
+						<th>Produzent</th>
+						<th>Bewertung</th>
+						<th><!--Bearbeiten--></th>
+						<th><!--Löschen--></th>
+					<tr>
+				</table>
+			</div>
 		</div>
 
-		<div class="container" id="list">
-			<h1>Liste</h1>
-			<table class="table table-hover" id="filmtable">
-				<tr id="tr-0">
-					<th>Titel</th>
-					<th>Produzent</th>
-					<th>Bewertung</th>
-					<th><!--Bearbeiten--></th>
-					<th><!--Löschen--></th>
-				<tr>
-			</table>
-		</div>
+		<div id="detailedView"></div>
+
 		<!-- Modals
 		================================================== -->
 		<!-- Modal New Movie-->
