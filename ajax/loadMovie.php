@@ -9,8 +9,10 @@
 	$info = json_decode($json , true);
 
 
-	if($info["Response"] != "False"){
+	if($info["Response"] != "False" && $info["Poster"] != "N/A"){
 		echo $info["Poster"];
+	}else{
+		echo "img/noposter.png";
 	}
 	
 ?>
