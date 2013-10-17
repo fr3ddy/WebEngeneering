@@ -184,3 +184,13 @@ function logout_ajax() {
 		url : "ajax/logout.php",
 	});
 }
+
+function loadMovie_ajax(title){
+	return $.ajax({
+		type : "POST",
+		url : "ajax/loadMovie.php",
+		data: {
+				movieTitle : title,
+			},
+	});
+}
