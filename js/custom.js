@@ -108,6 +108,7 @@ $(document).ready(function(){
 					logout_ajax().done(function(value){
 						parent.empty();
 						parent.append(value);
+						sessionStorage.setItem("user" , "");
 					});
 				});
 				$('#passwordInput').val("");
