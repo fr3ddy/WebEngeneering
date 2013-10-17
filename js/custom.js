@@ -66,7 +66,7 @@ $(document).ready(function() {
 			rating : "super"
 		}));
 		
-		$('#detailedView').show('slow');
+		$('#detailedView').show("slow");
 		$('#home').hide('slow');
 	});
 	

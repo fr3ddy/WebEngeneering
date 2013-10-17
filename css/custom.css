@@ -21,9 +21,15 @@ label {
 	width: 100%;
 	position: absolute;
 	right: 0;
-	bottom: 0;
 	background-color: #fff;
 	z-index: 1060;
+}
+
+#home {
+	width: 100%;
+	height: 90%;
+	position: absolute;
+	left: 0;
 }
 
 #loginButton ,
