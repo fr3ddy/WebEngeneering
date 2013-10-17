@@ -1,8 +1,10 @@
 var selectedRowId;
+sessionStorage.setItem("user" , "");
 
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%- rating %></td>' + '<td><button class="btn btn-sm edit" title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 
 $(document).ready(function() {
+	
 	var detailedMovieView = _.template('<div class="panel panel-default" id="detailedView">' + '<div class="panel-heading">' + '<span class="glyphicon glyphicon-remove"></span>' + '<h3 class="panel-title"><%- movieTitle %></h3>' + '</div>' + '<div class="panel-body">' + '<label>Gesehen: </label><span><%- movieSeen %></span><br>	' + '<label>Bewertung: </label><span><%- rating %></span>' + '</div>' + '</div>');
 
 	/*Speichere-Button auf Modal 'createFilmModal'*/
