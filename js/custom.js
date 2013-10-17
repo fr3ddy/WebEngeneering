@@ -25,9 +25,9 @@ $(document).ready(function(){
 		}else{
 			var tmpId = newID.split('-');				//ID der letzten Zeile splitten (ID = "tr-ZAHL")
 			tmpId[1] = parseInt(tmpId[1]) + 1;			//Anzahl der Zeilen steht im 2. Feld, muss von String in Integer geparst werden
-			newID = 'tr-' + tmpId[1];					//ID für die neue Zeile zusammensetzen
+			newID = 'tr-' + tmpId[1];					//ID fï¿½r die neue Zeile zusammensetzen
 		}
-/*--------------------------------Tabelleneintrag hinzufügen---------------------------------------------------------------------------------------------*/		
+/*--------------------------------Tabelleneintrag hinzufï¿½gen---------------------------------------------------------------------------------------------*/		
 		$('#filmtable').append(addMovieToList({rowID: newID, movieTitle: $('#filmTitle').val(), movieSeen: $('#movieSeen').val(), rating: "super"}));
 		$('#film').val("");
 		$('#filmTitle').val("");
@@ -54,7 +54,7 @@ $(document).ready(function(){
 		
 	});
 	
-/*--------------------------------Detailansicht für Film ------------------------------------------------------------------------------------------------*/	
+/*--------------------------------Detailansicht fï¿½r Film ------------------------------------------------------------------------------------------------*/	
 	$('#list').on('dblclick', 'tr', function(event) {
 		$('body').prepend(detailedMovieView({movieTitle: "Holla", movieSeen: "kadf	", rating: "super"}));
 		//$('#detailedView').css({'z-index': '1060'});
@@ -66,4 +66,5 @@ $(document).ready(function(){
 		$('#detailedView').hide();
 		$('#detailedView').remove();
 	});
+/*--------------------------Test--------------*/
 });
