@@ -5,6 +5,7 @@ var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle
 var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%= rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 
 $(document).ready(function() {
+	$('.starRatingTemplate').append(starRatingHTML);
 	/* Setze Focus auf Film Titel Input, wenn Modal geäffnet wird */
 	$('#createFilmModal').on('focus', function() {
 		filmTitle.focus();
@@ -253,6 +254,7 @@ function buildDetailView(movieTitle) {
 }
 
 function fillTableStar(star){
+	console.log($(star).prevAll());
 	var starID 	= $(star).attr('class');
 	starID	 	= starID.split('-');
 	var rowID	= $(star).parent().parent().attr('id');
