@@ -46,5 +46,5 @@ label {
 }
 
 .masterTable{
-	display: none;
+	visibility:hidden;
 }
