@@ -44,3 +44,7 @@ label {
 #logoutButton{
 	margin-top: 2px;
 }
+
+.masterTable{
+	display: none;
+}

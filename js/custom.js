@@ -1,7 +1,7 @@
 var selectedRowId;
 sessionStorage.setItem("user", "");
 
-var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating" title="0"><%- rating %></td>' + '<td><button class="btn btn-sm edit" title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
+var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating" title="0"><%- rating %></td>' + '<td class="masterTable"><button class="btn btn-sm edit" title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td class="masterTable"><button class="btn btn-sm delete" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%- rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 
 $(document).ready(function() {
@@ -106,6 +106,8 @@ $(document).ready(function() {
 						parent.append(value);
 						sessionStorage.setItem("user", "");
 						$('#add').toggleClass('loggedOut loggedIn');
+						
+						toggleMasterButtons();
 					});
 				});
 				$('#passwordInput').val("");
@@ -114,6 +116,8 @@ $(document).ready(function() {
 				//SET SESSION
 				sessionStorage.setItem("user", n);
 				$('#add').toggleClass('loggedOut loggedIn');
+				
+				toggleMasterButtons();
 			}
 		});
 	});
@@ -152,7 +156,9 @@ function createMovie() {
 	}));
 
 	/*------------------------Initialisiere PopOver fuer Delete-Button--------------------------------------------------------------------------------*/
-	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Ja</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
+	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button"'+
+						 'class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" '+
+						 'class="btn btn-default" data-dismiss="popover">Nein</button>';
 	$('#' + newID).find('.delete').popover({
 		trigger : 'focus',
 		title : 'Löschen',
@@ -207,6 +213,10 @@ function loadMovie_ajax(title) {
 	});
 }
 
+function toggleMasterButtons(){
+	$('#liste').find()
+}
+
 function buildDetailView(movieTitle) {
 	// alternative Quelle könnte "http://mymovieapi.com/?title=" sein
 	$.getJSON("http://www.omdbapi.com/?t=" + movieTitle.replace(" ", "+")).done(function(data) {
@@ -253,3 +263,5 @@ function buildDetailView(movieTitle) {
 	// });
 
 }
+
+
