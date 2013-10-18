@@ -63,7 +63,7 @@
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
-											<input type="text" class="form-control" id="passwordInput" name="password" placeholder="Password" style="margin-top: 0px;">
+											<input type="password" class="form-control" id="passwordInput" name="password" placeholder="Password" style="margin-top: 0px;">
 										</div>
 
 										<button class="btn btn-primary form-control" id="submitLoginButton">
@@ -79,19 +79,70 @@
 		</div>
 		<div id="home">
 			<div class="container" id="list">
-				<h1>Liste 
-					<button data-toggle="modal" data-target="#createFilmModal" class="btn btn-default btn-sm pull-right loggedOut" id='add'>
-								<span class="glyphicon glyphicon-plus"></span><b>Neuen Film hinzufügen</b>
-					</button>
-				</h1>
+				<h1>Liste
+				<button data-toggle="modal" data-target="#createFilmModal" class="btn btn-default btn-sm pull-right loggedOut" id='add'>
+					<span class="glyphicon glyphicon-plus"></span><b>Neuen Film hinzufügen</b>
+				</button></h1>
 				<table class="table table-hover" id="filmtable">
 					<tr id="tr-0">
 						<th>Titel</th>
-						<th>Produzent</th>
+						<th>Gesehen / nicht gesehen</th>
 						<th>Bewertung</th>
 						<th><!--Bearbeiten--></th>
 						<th><!--Löschen--></th>
 					<tr>
+					<tr id="tr-1">
+						<td class="tableFilmTitle">Thor</td>
+						<td class="tableMovieSeen">gesehen</td>
+						<td class="tableRating" title="0">5</td>
+						<td>
+						<button class="btn btn-sm edit loggedOut" title="Edit">
+							<span class="glyphicon glyphicon-pencil"></span>
+						</button></td>
+						<td>
+						<button class="btn btn-sm delete loggedOut" title="Delete">
+							<span class="glyphicon glyphicon-trash"></span>
+						</button></td>
+					</tr>
+					<tr id="tr-1">
+						<td class="tableFilmTitle">Iron Man</td>
+						<td class="tableMovieSeen">gesehen</td>
+						<td class="tableRating" title="0">5</td>
+						<td>
+						<button class="btn btn-sm edit loggedOut" title="Edit">
+							<span class="glyphicon glyphicon-pencil"></span>
+						</button></td>
+						<td>
+						<button class="btn btn-sm delete loggedOut" title="Delete">
+							<span class="glyphicon glyphicon-trash"></span>
+						</button></td>
+					</tr>
+					<tr id="tr-1">
+						<td class="tableFilmTitle">Iron Man 2</td>
+						<td class="tableMovieSeen">gesehen</td>
+						<td class="tableRating" title="0">5</td>
+						<td>
+						<button class="btn btn-sm edit loggedOut" title="Edit">
+							<span class="glyphicon glyphicon-pencil"></span>
+						</button></td>
+						<td>
+						<button class="btn btn-sm delete loggedOut" title="Delete">
+							<span class="glyphicon glyphicon-trash"></span>
+						</button></td>
+					</tr>
+					<tr id="tr-1">
+						<td class="tableFilmTitle">Pirates of the Caribbean: The Curse of the Black Pearl</td>
+						<td class="tableMovieSeen">gesehen</td>
+						<td class="tableRating" title="0">5</td>
+						<td>
+						<button class="btn btn-sm edit loggedOut" title="Edit">
+							<span class="glyphicon glyphicon-pencil"></span>
+						</button></td>
+						<td>
+						<button class="btn btn-sm delete loggedOut" title="Delete">
+							<span class="glyphicon glyphicon-trash"></span>
+						</button></td>
+					</tr>
 				</table>
 			</div>
 		</div>

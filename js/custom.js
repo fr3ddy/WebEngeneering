@@ -161,7 +161,6 @@ function createMovie() {
 		rating : 'super'
 	}));
 
-	$('.masterTable').css('visibility', 'visible'); //Edit- und Delete-Button sichtbar machen
 	/*------------------------Initialisiere PopOver fuer Delete-Button--------------------------------------------------------------------------------*/
 	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Ja</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
 	$('#' + newID).find('.delete').popover({
