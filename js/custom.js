@@ -30,7 +30,7 @@ $(document).ready(function() {
 	/*�ndere-Button auf Modal 'editFilmModal'*/
 	$('#changeMovie').on("click", changeMovieValues);
 
-	/* reagiere auf 'Enter' im FilmTitel Feld */
+	/* ändere bestehenden Film bei 'Enter' */
 	$('#filmTitleEdit').bind('keypress', function(event) {
 		var key = event.keyCode;
 
@@ -75,15 +75,18 @@ $(document).ready(function() {
 	});
 
 	/*-----LOGIN--------*/
+	// TODO wofür ist das?
 	if (sessionStorage.getItem("user") != "") {
 		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
 	}
+
 	$('#submitLoginButton').on('click', function(event) {
+		// TODO aufräumen, vereinfachen
 		event.preventDefault();
-		var n = $('#usernameInput').val();
-		var p = $('#passwordInput').val();
+		var userName = $('#usernameInput').val();
+		var password = $('#passwordInput').val();
 		var parent = $('#loginButton').parent();
-		login_ajax(n, p).done(function(value) {
+		login_ajax(userName, password).done(function(value) {
 			if (value == "") {
 				$('#passwordInput').parent().addClass("has-error");
 				$('#usernameInput').parent().addClass("has-error");
@@ -105,30 +108,32 @@ $(document).ready(function() {
 						parent.empty();
 						parent.append(value);
 						sessionStorage.setItem("user", "");
-						$('#add').toggleClass('loggedOut loggedIn');
-						
-						toggleMasterButtons(false);	//Edit- und Delete-Button unsichtbar machen
+
+						isLoggedInOrNot();
+
 					});
 				});
 				$('#passwordInput').val("");
 				$('#usernameInput').val("");
 
 				//SET SESSION
-				sessionStorage.setItem("user", n);
-				$('#add').toggleClass('loggedOut loggedIn');
-				
-				toggleMasterButtons(true); //Edit- und Delete-Button sichtbar machen
+				sessionStorage.setItem("user", userName);
+
+				isLoggedInOrNot();
 			}
 		});
 	});
-	$('#logoutButton').on('click', function() {
-		var parent = $('#logoutButton').parent();
-		logout_ajax().done(function(value) {
-			parent.empty();
-			parent.append(value);
-			sessionStorage.setItem("user", "");
-		});
-	});
+
+	// TODO Wofür ist das gut?
+	// $('#logoutButton').on('click', function() {
+	// var parent = $('#logoutButton').parent();
+	// logout_ajax().done(function(value) {
+	// debugger;
+	// parent.empty();
+	// parent.append(value);
+	// sessionStorage.setItem("user", "");
+	// });
+	// });
 });
 
 function createMovie() {
@@ -155,15 +160,14 @@ function createMovie() {
 		rating : 'super'
 	}));
 
+
 	$('.masterTable').css('visibility', 'visible'); //Edit- und Delete-Button sichtbar machen
 	$('a[class*="tableStar"]').on('mouseover',function(){
 		fillTableStar(this);
 	});
 	
 	/*------------------------Initialisiere PopOver fuer Delete-Button--------------------------------------------------------------------------------*/
-	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button"'+
-						 'class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" '+
-						 'class="btn btn-default" data-dismiss="popover">Nein</button>';
+	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Ja</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
 	$('#' + newID).find('.delete').popover({
 		trigger : 'focus',
 		title : 'Löschen',
@@ -208,69 +212,45 @@ function logout_ajax() {
 	});
 }
 
-function loadMovie_ajax(title) {
-	return $.ajax({
-		type : "POST",
-		url : "ajax/loadMovie.php",
-		data : {
-			movieTitle : title,
-		},
+function isLoggedInOrNot() {
+	$('#add').fadeToggle('1000', function() {
+		$('#add').toggleClass('loggedOut loggedIn');
+	});
+	toggleClassOnAllElements('.edit');
+	toggleClassOnAllElements('.delete');
+}
+
+function toggleClassOnAllElements(element) {
+	$(element).each(function() {
+		$(this).fadeToggle('1000', function() {
+			$(this).toggleClass('loggedOut loggedIn');
+		});
 	});
 }
 
-function toggleMasterButtons(logstatus){
-	if(logstatus == true){
-		$('.masterTable').css('visibility', 'visible');		
-	}else{
-		$('.masterTable').css('visibility', 'hidden');				
-	}
-}
-
+/* Detailansicht wird aufgebaut. Dafuer werden Daten von der OMDB Database als JSON geholt */
 function buildDetailView(movieTitle) {
 	// alternative Quelle könnte "http://mymovieapi.com/?title=" sein
 	$.getJSON("http://www.omdbapi.com/?t=" + movieTitle.replace(" ", "+")).done(function(data) {
-		$('#detailedView').html(detailedMovieView({
-			movieTitle : movieTitle,
-			movieSeen : "No",
-			rating : 0,
-			picture : data.Poster,
-			release : data.Released,
-			runtime : data.Runtime,
-			genre : data.Genre,
-			director : data.Director,
-			actors : data.Actors
-		}));
-	}).always(function() {
-		$('#detailedView').show("slow");
-		$('#home').hide('slow');
+		if(data.Response == "False") {
+			// TODO Fehlermeldung machen
+			alert('Fehler');
+		} else { // data.Response == "True"	
+			$('#detailedView').html(detailedMovieView({
+				movieTitle : movieTitle,
+				movieSeen : "No",
+				rating : 0,
+				picture : data.Poster,
+				release : data.Released,
+				runtime : data.Runtime,
+				genre : data.Genre,
+				director : data.Director,
+				actors : data.Actors
+			}));
+			$('#detailedView').show("slow");
+			$('#home').hide('slow');
+		}
 	});
-
-	// loadMovie_ajax(movieTitle).done(function(omdbOutput) {
-	// //Release - Runtime - Genre - Director - Actors - Poster - User Rating
-	// var omdbArray = omdbOutput.split(" - ");
-	// var release = omdbArray[0];
-	// var runtime = omdbArray[1];
-	// var genre = omdbArray[2];
-	// var director = omdbArray[3];
-	// var actors = omdbArray[4];
-	// var poster = omdbArray[5];
-	// var stars = 0;
-	//
-	// $('#detailedView').html(detailedMovieView({
-	// movieTitle : movieTitle,
-	// movieSeen : "No",
-	// rating : stars,
-	// picture : poster,
-	// release : release,
-	// runtime : runtime,
-	// genre : genre,
-	// director : director,
-	// actors : actors
-	// }));
-	// $('#detailedView').show("slow");
-	// $('#home').hide('slow');
-	// });
-
 }
 
 function fillTableStar(star){
@@ -292,3 +272,4 @@ function fillTableStar(star){
 		
 	}
 }
+
