@@ -9,12 +9,12 @@ $(document).ready(function() {
 	$('#createFilmModal').on('focus', function() {
 		filmTitle.focus();
 	});
-	
+
 	/* Setze Focus auf Film Titel Input, wenn Modal geäffnet wird */
 	$('#editFilmModal').on('focus', function() {
 		filmTitleEdit.focus();
 	});
-	
+
 	/*Speichere-Button auf Modal 'createFilmModal'*/
 	$('#saveFilm').on("click", createMovie);
 
@@ -64,7 +64,7 @@ $(document).ready(function() {
 		}
 
 		buildDetailView($(this).find('.tableFilmTitle').text());
-		
+
 	});
 
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
@@ -76,7 +76,7 @@ $(document).ready(function() {
 
 	/*-----LOGIN--------*/
 	if (sessionStorage.getItem("user") != "") {
-		$('#loginButton').parent().empty().append('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
+		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
 	}
 	$('#submitLoginButton').on('click', function(event) {
 		event.preventDefault();
@@ -105,6 +105,7 @@ $(document).ready(function() {
 						parent.empty();
 						parent.append(value);
 						sessionStorage.setItem("user", "");
+						$('#add').toggleClass('loggedOut loggedIn');
 					});
 				});
 				$('#passwordInput').val("");
@@ -112,6 +113,7 @@ $(document).ready(function() {
 
 				//SET SESSION
 				sessionStorage.setItem("user", n);
+				$('#add').toggleClass('loggedOut loggedIn');
 			}
 		});
 	});
@@ -148,7 +150,7 @@ function createMovie() {
 		movieSeen : $('#movieSeen').val(),
 		rating : 'super'
 	}));
-	
+
 	/*------------------------Initialisiere PopOver fuer Delete-Button--------------------------------------------------------------------------------*/
 	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Ja</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
 	$('#' + newID).find('.delete').popover({
@@ -157,7 +159,7 @@ function createMovie() {
 		content : popoverContent,
 		html : 'true'
 	});
-	
+
 	$('#film').val("");
 	$('#filmTitle').val("");
 	$('#movieSeen').val("");
@@ -207,49 +209,47 @@ function loadMovie_ajax(title) {
 
 function buildDetailView(movieTitle) {
 	// alternative Quelle könnte "http://mymovieapi.com/?title=" sein
-	$.getJSON("http://www.omdbapi.com/?t=" + movieTitle.replace(" ", "+"))
-		.done(function(data) {
-			$('#detailedView').html(detailedMovieView({
-				movieTitle : movieTitle,
-				movieSeen : "No",
-				rating : 0,
-				picture : data.Poster,
-				release : data.Released,
-				runtime : data.Runtime,
-				genre : data.Genre,
-				director : data.Director,
-				actors : data.Actors
-			}));
-		})
-		.always(function() {
-			$('#detailedView').show("slow");
-			$('#home').hide('slow');
-		});
-	
+	$.getJSON("http://www.omdbapi.com/?t=" + movieTitle.replace(" ", "+")).done(function(data) {
+		$('#detailedView').html(detailedMovieView({
+			movieTitle : movieTitle,
+			movieSeen : "No",
+			rating : 0,
+			picture : data.Poster,
+			release : data.Released,
+			runtime : data.Runtime,
+			genre : data.Genre,
+			director : data.Director,
+			actors : data.Actors
+		}));
+	}).always(function() {
+		$('#detailedView').show("slow");
+		$('#home').hide('slow');
+	});
+
 	// loadMovie_ajax(movieTitle).done(function(omdbOutput) {
-		// //Release - Runtime - Genre - Director - Actors - Poster - User Rating
-		// var omdbArray = omdbOutput.split(" - ");
-		// var release = omdbArray[0];
-		// var runtime = omdbArray[1];
-		// var genre = omdbArray[2];
-		// var director = omdbArray[3];
-		// var actors = omdbArray[4];
-		// var poster = omdbArray[5];
-		// var stars = 0;
-// 
-		// $('#detailedView').html(detailedMovieView({
-			// movieTitle : movieTitle,
-			// movieSeen : "No",
-			// rating : stars,
-			// picture : poster,
-			// release : release,
-			// runtime : runtime,
-			// genre : genre,
-			// director : director,
-			// actors : actors
-		// }));
-		// $('#detailedView').show("slow");
-		// $('#home').hide('slow');
-	// }); 
+	// //Release - Runtime - Genre - Director - Actors - Poster - User Rating
+	// var omdbArray = omdbOutput.split(" - ");
+	// var release = omdbArray[0];
+	// var runtime = omdbArray[1];
+	// var genre = omdbArray[2];
+	// var director = omdbArray[3];
+	// var actors = omdbArray[4];
+	// var poster = omdbArray[5];
+	// var stars = 0;
+	//
+	// $('#detailedView').html(detailedMovieView({
+	// movieTitle : movieTitle,
+	// movieSeen : "No",
+	// rating : stars,
+	// picture : poster,
+	// release : release,
+	// runtime : runtime,
+	// genre : genre,
+	// director : director,
+	// actors : actors
+	// }));
+	// $('#detailedView').show("slow");
+	// $('#home').hide('slow');
+	// });
 
 }
