@@ -1,7 +1,7 @@
 var selectedRowId;
 sessionStorage.setItem("user", "");
 
-var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating" title="0"><%- rating %></td>' + '<td><button class="btn btn-sm edit masterTable"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete masterTable" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
+var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating" title="0"><a class="tableStar-1" href="#"><span class="glyphicon glyphicon-star-empty"></span></a><a class="tableStar-2" href="#"><span class="glyphicon glyphicon-star-empty"></span></a><a class="tableStar-3" href="#"><span class="glyphicon glyphicon-star-empty"></span></a><a class="tableStar-4" href="#"><span class="glyphicon glyphicon-star-empty"></span></a><a class="tableStar-5" href="#"><span class="glyphicon glyphicon-star-empty"></span></a></td>' + '<td><button class="btn btn-sm edit masterTable"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete masterTable" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%- rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 
 $(document).ready(function() {
@@ -156,6 +156,10 @@ function createMovie() {
 	}));
 
 	$('.masterTable').css('visibility', 'visible'); //Edit- und Delete-Button sichtbar machen
+	$('a[class*="tableStar"]').on('mouseover',function(){
+		fillTableStar(this);
+	});
+	
 	/*------------------------Initialisiere PopOver fuer Delete-Button--------------------------------------------------------------------------------*/
 	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button"'+
 						 'class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" '+
@@ -269,4 +273,22 @@ function buildDetailView(movieTitle) {
 
 }
 
-
+function fillTableStar(star){
+	var starID 	= $(star).attr('class');
+	starID	 	= starID.split('-');
+	var rowID	= $(star).parent().parent().attr('id');
+	
+	//$('#'+starID).find('span').removeClass('glyphicon-star-empty');
+	//$('#'+starID).find('span').addClass('glyphicon-star');
+	
+	for (var i=1; i < 6; i++) {
+		if(i <= parseInt(starID[1])){
+			$('#'+rowID).find('.tableStar-'+i).find('span').removeClass('glyphicon-star-empty');
+			$('#'+rowID).find('.tableStar-'+i).find('span').addClass('glyphicon-star');
+		}else{
+			$('#'+rowID).find('.tableStar-'+i).find('span').removeClass('glyphicon-star');
+			$('#'+rowID).find('.tableStar-'+i).find('span').addClass('glyphicon-star-empty');
+		}
+		
+	}
+}
