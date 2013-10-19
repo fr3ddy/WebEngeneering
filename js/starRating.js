@@ -5,25 +5,14 @@ var starRating = {
 (function($) {
 
 	$.fn.rating = function(options) {
+		// This is the easiest way to have default options.
+		var settings = $.extend({
+			// These are the defaults.
+			hints : ["schlecht", "geht so", "okay", "gut", "wow"]
+		}, options);
+
 		var methods = {
-			init : function() {
-				// This is the easiest way to have default options.
-				var settings = $.extend({
-					// These are the defaults.
-					hints : ["schlecht", "geht so", "okay", "gut", "wow"]
-				}, options);
-
-				var val = starRating.content({
-					hint1 : settings.hints[0],
-					hint2 : settings.hints[1],
-					hint3 : settings.hints[2],
-					hint4 : settings.hints[3],
-					hint5 : settings.hints[4]
-				});
-
-				//_.bindAll(starRating, 'mouseOver');
-				return $(val).html();
-			},
+			init : function() {},
 			mouseOver : function() {
 				// fuellen des Sterns, ueber dem der Mauszeiger ist
 				toggleClasses(true);
@@ -38,10 +27,22 @@ var starRating = {
 					toggleClasses(false);
 				});
 			}
-			
 		};
 		
-			methods.init();
+		return this.each(function() {
+			console.log("aha");
+			
+		});
+		
+		_.bindAll(methods, 'mouseOver');
+
+		// return starRating.content({
+			// hint1 : settings.hints[0],
+			// hint2 : settings.hints[1],
+			// hint3 : settings.hints[2],
+			// hint4 : settings.hints[3],
+			// hint5 : settings.hints[4]
+		// });
 	};
 
 	function toggleClasses(prev) {
