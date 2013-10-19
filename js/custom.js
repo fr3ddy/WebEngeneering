@@ -1,8 +1,9 @@
 var selectedRowId;
-sessionStorage.setItem("user", "");
 var starRatingHTML = '<a class="tableStar-1" href="#" title="schlecht"><span class="glyphicon glyphicon-star-empty"></span></a><a class="tableStar-2" href="#" title="geht so"><span class="glyphicon glyphicon-star-empty"></span></a><a class="tableStar-3" href="#" title="in Ordnung"><span class="glyphicon glyphicon-star-empty"></span></a><a class="tableStar-4" href="#" title="gut"><span class="glyphicon glyphicon-star-empty"></span></a><a class="tableStar-5" href="#" title="grandios"><span class="glyphicon glyphicon-star-empty"></span></a>';
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td><button class="btn btn-sm edit loggedIn"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete loggedIn" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
-var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%= rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
+var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><% rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
+
+sessionStorage.setItem("user", "");
 
 $(document).ready(function() {
 	$('.starRatingTemplate').append(starRatingHTML);
@@ -17,7 +18,7 @@ $(document).ready(function() {
 	});
 
 	/*Speichere-Button auf Modal 'createFilmModal'*/
-	$('#saveFilm').on("click", createMovie);
+	$('#saveFilm').on('click', createMovie);
 
 	/* reagiere auf 'Enter' im FilmTitel und speichere neuen Film in Tabelle */
 	$('#filmTitle').bind('keypress', function(event) {
@@ -29,7 +30,7 @@ $(document).ready(function() {
 	});
 
 	/*�ndere-Button auf Modal 'editFilmModal'*/
-	$('#changeMovie').on("click", changeMovieValues);
+	$('#changeMovie').on('click', changeMovieValues);
 
 	/* ändere bestehenden Film bei 'Enter' */
 	$('#filmTitleEdit').bind('keypress', function(event) {
@@ -239,7 +240,7 @@ function buildDetailView(movieTitle) {
 			$('#detailedView').html(detailedMovieView({
 				movieTitle : movieTitle,
 				movieSeen : "No",
-				rating : starRatingHTML,
+				rating : $().rating(),
 				picture : data.Poster,
 				release : data.Released,
 				runtime : data.Runtime,
@@ -247,6 +248,7 @@ function buildDetailView(movieTitle) {
 				director : data.Director,
 				actors : data.Actors
 			}));
+			
 			$('#detailedView').show("slow");
 			$('#home').hide('slow');
 		}
@@ -254,23 +256,21 @@ function buildDetailView(movieTitle) {
 }
 
 function fillTableStar(star){
-	console.log($(star).prevAll());
-	var starID 	= $(star).attr('class');
-	starID	 	= starID.split('-');
-	var rowID	= $(star).parent().parent().attr('id');
+	// fuellen des Sterns, ueber dem der Mauszeiger ist
+	$(star).children('span').removeClass('glyphicon-star-empty');
+	$(star).children('span').addClass('glyphicon-star');
 	
-	//$('#'+starID).find('span').removeClass('glyphicon-star-empty');
-	//$('#'+starID).find('span').addClass('glyphicon-star');
+	// fuellt die vorhergehenden Sterne aus
+	console.log($(star).prevAll().length);
+	$(star).prevAll().each(function(){
+		$(this).children('span').removeClass('glyphicon-star-empty');
+		$(this).children('span').addClass('glyphicon-star');
+	});
 	
-	for (var i=1; i < 6; i++) {
-		if(i <= parseInt(starID[1])){
-			$('#'+rowID).find('.tableStar-'+i).find('span').removeClass('glyphicon-star-empty');
-			$('#'+rowID).find('.tableStar-'+i).find('span').addClass('glyphicon-star');
-		}else{
-			$('#'+rowID).find('.tableStar-'+i).find('span').removeClass('glyphicon-star');
-			$('#'+rowID).find('.tableStar-'+i).find('span').addClass('glyphicon-star-empty');
-		}
-		
-	}
+	// entfernt ausgefuellte Sterne in nachvolgenden Elementen
+	$(star).nextAll().each(function(){
+		$(this).children('span').removeClass('glyphicon-star');
+		$(this).children('span').addClass('glyphicon-star-empty');
+	});
 }
 

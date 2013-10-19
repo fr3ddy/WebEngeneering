@@ -23,6 +23,10 @@ label {
 	display: none;
 }
 
+.starRating {
+	display: inline-block
+}
+
 #detailedView {
 	display: none;
 	height: 90%;
