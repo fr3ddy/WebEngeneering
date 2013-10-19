@@ -8,7 +8,7 @@ var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %>
 sessionStorage.setItem("user", "");
 
 $(document).ready(function() {
-	$('.rating').append($(starRatingHTML).on('mouseover', 'span', fillTableStar));
+	$('.rating').append($(starRatingHTML).on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar));
 
 	/* Setze Focus auf Film Titel Input, wenn Modal geäffnet wird */
 	$('#createFilmModal').on('focus', function() {
@@ -28,7 +28,8 @@ $(document).ready(function() {
 
 	/* Modal öffnen, um neuen Film hinzuzufügen */
 	$('#add').on('click', function() {
-		$('#createFilmModal').find('.' + ratingIconOn).remove(ratingIconOn).addClass(ratingIconOff);
+		$('#createFilmModal').find('.stars').children('span').removeClass(ratingIconOn).addClass(ratingIconOff);
+		$('#createFilmModal').find('.stars').on('mouseover', 'span', fillTableStar);
 		$('#createFilmModal').modal('show');
 	});
 
@@ -49,7 +50,10 @@ $(document).ready(function() {
 		$('#editFilmModal').modal('show');
 		$('#filmTitleEdit').val(title);
 		$('#movieSeenEdit').val(movieSeen);
-		$('#editFilmModal').find('.stars').html(setRating(rating));
+		
+		$('#editFilmModal').find('.stars').on('mouseover', 'span', fillTableStar);
+		$('#editFilmModal').find('.stars').remove('div');
+		$('#editFilmModal').find('.rating').append($(setRating(rating)).on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar));
 
 	});
 
@@ -138,7 +142,7 @@ $(document).ready(function() {
 });
 
 /* unterscheiden zwischen Enter-Event und Speichern-Button-Event. Zusätzlich Anzahl selektierter Sterne fuer Rating herausfinden*/
-function createMovie() {
+function createMovie(event) {
 	switch(event.type) {
 		case ('click'):
 			addNewTableLine($(this).parent().parent().find('.stars').find('.' + ratingIconOn).length);
@@ -193,7 +197,7 @@ function addNewTableLine(numberOfStars) {
 	$('#createFilmModal').modal('hide');
 }
 
-function changeMovieValues() {
+function changeMovieValues(event) {
 	switch(event.type) {
 		case ('click'):
 			changeTableRowValues($(this).parent().parent().find('.stars').find('.' + ratingIconOn).length);
@@ -287,7 +291,12 @@ function buildDetailView(numberOfStars, movieTitle) {
 	});
 }
 
-function fillTableStar() {
+function fillTableStar(event) {
+	// klickt ein User auf die Bewertung, wird das Event bei 'mouseover' entfernt und die Bewertung lässt sich nur per 'click' öndern
+	if(event.type === 'click') {
+		$(this).parent().off('mouseover', 'span');
+	}
+	
 	// fuellen des Sterns, ueber dem der Mauszeiger ist
 	toggleRatingClasses(this, true);
 
