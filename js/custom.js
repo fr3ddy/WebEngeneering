@@ -10,7 +10,7 @@ $(document).ready(function() {
 
 	/* Setze Focus auf Film Titel Input, wenn Modal geäffnet wird */
 	$('#createFilmModal').on('focus', function() {
-		filmTitle.focus();	
+		filmTitle.focus();
 	});
 
 	/* Setze Focus auf Film Titel Input, wenn Modal geoeffnet wird */
@@ -22,41 +22,40 @@ $(document).ready(function() {
 	$('#saveFilm').on('click', createMovie);
 
 	/* reagiere auf 'Enter' im FilmTitel und speichere neuen Film in Tabelle */
-	$('#filmTitle').bind('keypress', function(event) {
-		var key = event.keyCode;
-
-		if (key == 13) {
-			createMovie();
-		}
-	});
+	$('#filmTitle').bind('keypress', createMovie);
+	// function(event) {
+	// var key = event.keyCode;
+	//
+	// if (key == 13) {
+	// debugger;
+	// createMovie();
+	// }
+	// });
 
 	/* Modal öffnen, um neuen Film hinzuzufügen */
 	$('#add').on('click', function() {
 		$('#createFilmModal').find('.glyphicon-star').remove('glyphicon-star').addClass('glyphicon-star-empty');
 		$('#createFilmModal').modal('show');
 	});
-	
+
 	/*Aendere-Button auf Modal 'editFilmModal'*/
 	$('#changeMovie').on('click', changeMovieValues);
 
 	/* aendere bestehenden Film bei 'Enter' */
-	$('#filmTitleEdit').bind('keypress', function(event) {
-		var key = event.keyCode;
-
-		if (key == 13) {
-			changeMovieValues();
-		}
-	});
+	$('#filmTitleEdit').bind('keypress', changeMovieValues);
 
 	/*Editierbutton in Filmeintrag*/
 	$('#list').on('click', '.edit', function() {
 		var title = $(this).parent().parent().find('.tableFilmTitle').text();
 		var movieSeen = $(this).parent().parent().find('.tableMovieSeen').text();
+		var rating = $(this).parent().parent().find('.tableRating').find('.glyphicon-star').length;
+		debugger;
 		selectedRowId = $(this).parent().parent().attr('id');
 
 		$('#editFilmModal').modal('show');
 		$('#filmTitleEdit').val(title);
 		$('#movieSeenEdit').val(movieSeen);
+		$('.stars').html(setRating(rating));
 
 	});
 
@@ -145,7 +144,24 @@ $(document).ready(function() {
 	// });
 });
 
+/* unterscheiden zwischen Enter-Event und Speichern-Button-Event. Zusätzlich Anzahl selektierter Sterne fuer Rating herausfinden*/
 function createMovie() {
+	switch(event.type) {
+		case ('click'):
+			addNewTableLine($(this).parent().parent().find('.stars').find('.glyphicon-star').length);
+			break;
+		case ('keypress'):
+			if (event.keyCode === 13) {
+				addNewTableLine($(this).parent().find('.stars').find('.glyphicon-star').length);
+			}
+			break;
+		default:
+			break;
+	}
+}
+
+/* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
+function addNewTableLine(numberOfStars) {
 	/*---------------------------------ID Ermitteln---------------------------------------------------------------------------------------------------------*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
 	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
@@ -162,13 +178,11 @@ function createMovie() {
 		//ID fuer die neue Zeile zusammensetzen
 	}
 	/*--------------------------------Tabelleneintrag hinzufuegen---------------------------------------------------------------------------------------------*/
-	console.log($(this).parent().parent().find('.stars').find('.glyphicon-star').length);
-
 	$('#filmtable').append(addMovieToList({
 		rowID : newID,
 		movieTitle : $('#filmTitle').val(),
-		movieSeen : $('#movieSeen').val(),
-		rating : setRating($(this).parent().parent().find('.stars').find('.glyphicon-star').length)
+		movieSeen : 'nicht gesehen',
+		rating : setRating(numberOfStars)
 	}));
 
 	/*------------------------Initialisiere PopOver fuer Delete-Button--------------------------------------------------------------------------------*/
@@ -187,8 +201,23 @@ function createMovie() {
 }
 
 function changeMovieValues() {
+	switch(event.type) {
+		case ('click'):
+			changeTableRowValues($(this).parent().parent().find('.stars').find('.glyphicon-star').length);
+			break;
+		case ('keypress'):
+			if (event.keyCode === 13) {
+				changeTableRowValues($(this).parent().find('.stars').find('.glyphicon-star').length);
+			}
+			break;
+		default:
+			break;
+	}
+}
+
+function changeTableRowValues(numberOfStars) {
 	$('#filmtable').find('#' + selectedRowId).find('.tableFilmTitle').text($('#filmTitleEdit').val());
-	$('#filmtable').find('#' + selectedRowId).find('.tableMovieSeen').text($('#movieSeenEdit').val());
+	$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStars));
 	$('#film').val("");
 	$('#filmTitleEdit').val("");
 	$('#movieSeenEdit').val("");
