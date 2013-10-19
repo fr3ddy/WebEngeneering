@@ -17,10 +17,10 @@
 
 		<!-- Underscore -->
 		<script src="js/underscore-min.js"></script>
-	
+
 		<!-- Star Rating -->
 		<script src="js/starRating.js"></script>
-		
+
 		<!-- Custom -->
 		<link href="css/custom.css" rel="stylesheet">
 		<script src="js/custom.js"></script>
@@ -114,7 +114,16 @@
 					<div class="modal-body">
 						<div class="form-group">
 							<input type="text" class="form-control" id="filmTitle" placeholder="Film eingeben">
-							<div class="rating"><label>Bewertung:</label></div>
+							<div class="rating">
+								<label>Bewertung:</label>
+							</div>
+							<div class="switch-wrapper">
+								<input type="checkbox" value="1" checked="" style="display: none;">
+								<span class="switch-button-label off">GESEHEN</span>
+								<div class="switch-button-background" style="width: 50px; height: 20px;">
+									<div class="switch-button-button" style="width: 25px; height: 20px; left: 14px;"></div>
+								</div><span class="switch-button-label on">NICHT GESEHEN</span><div style="clear: left;"></div>
+							</div>
 						</div>
 					</div>
 					<div class="modal-footer">
@@ -142,7 +151,15 @@
 					<div class="modal-body">
 						<div class="form-group">
 							<input type="text" class="form-control" id="filmTitleEdit" placeholder="Film eingeben">
-							<div class="rating"><label>Bewertung:</label></div>
+							<div class="rating">
+								<label>Bewertung:</label>
+							</div>
+							<div class="switch-wrapper">
+								<span class="switch-button-label off">GESEHEN</span>
+								<div class="switch-button-background" style="width: 50px; height: 20px;">
+									<div class="switch-button-button" style="width: 25px; height: 20px; left: 14px;"></div>
+								</div><span class="switch-button-label on">NICHT GESEHEN</span><div style="clear: left;"></div>
+							</div>
 						</div>
 					</div>
 					<div class="modal-footer">

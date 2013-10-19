@@ -1,7 +1,7 @@
 var selectedRowId;
 var ratingIconOn = 'glyphicon-star';
 var ratingIconOff = 'glyphicon-star-empty';
-var starRatingHTML = '<div class="stars"> <span class="glyphicon ' + ratingIconOff +'" title="schlecht"></span><span class="glyphicon '+ ratingIconOff +'" title="geht so"></span><span class="glyphicon '+ ratingIconOff +'" title="in Ordnung"></span><span class="glyphicon '+ ratingIconOff +'" title="gut"></span><span class="glyphicon '+ ratingIconOff +'" title="grandios"></span></div>';
+var starRatingHTML = '<div class="stars"> <span class="glyphicon ' + ratingIconOff + '" title="schlecht"></span><span class="glyphicon ' + ratingIconOff + '" title="geht so"></span><span class="glyphicon ' + ratingIconOff + '" title="in Ordnung"></span><span class="glyphicon ' + ratingIconOff + '" title="gut"></span><span class="glyphicon ' + ratingIconOff + '" title="grandios"></span></div>';
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td><button class="btn btn-sm edit loggedIn"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete loggedIn" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%= rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 
@@ -30,6 +30,8 @@ $(document).ready(function() {
 	$('#add').on('click', function() {
 		$('#createFilmModal').find('.stars').children('span').removeClass(ratingIconOn).addClass(ratingIconOff);
 		$('#createFilmModal').find('.stars').on('mouseover', 'span', fillTableStar);
+
+		setListenerForSeenSwitch('#createFilmModal', this);
 		$('#createFilmModal').modal('show');
 	});
 
@@ -44,17 +46,17 @@ $(document).ready(function() {
 		var title = $(this).parent().parent().find('.tableFilmTitle').text();
 		var movieSeen = $(this).parent().parent().find('.tableMovieSeen').text();
 		var rating = $(this).parent().parent().find('.tableRating').find('.' + ratingIconOn).length;
-		
+
 		selectedRowId = $(this).parent().parent().attr('id');
 
-		$('#editFilmModal').modal('show');
 		$('#filmTitleEdit').val(title);
 		$('#movieSeenEdit').val(movieSeen);
-		
+
+		setListenerForSeenSwitch('#editFilmModal', this);
 		$('#editFilmModal').find('.stars').on('mouseover', 'span', fillTableStar);
 		$('#editFilmModal').find('.stars').remove('div');
 		$('#editFilmModal').find('.rating').append($(setRating(rating)).on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar));
-
+		$('#editFilmModal').modal('show');
 	});
 
 	/*L�sche-Button in Filmeintrag*/
@@ -69,7 +71,7 @@ $(document).ready(function() {
 			return false;
 		}
 
-		buildDetailView($(this).find('.stars').find('.'+ratingIconOn).length, $(this).find('.tableFilmTitle').text());
+		buildDetailView($(this).find('.stars').find('.' + ratingIconOn).length, $(this).find('.tableFilmTitle').text());
 
 	});
 
@@ -178,7 +180,7 @@ function addNewTableLine(numberOfStars) {
 	$('#filmtable').append(addMovieToList({
 		rowID : newID,
 		movieTitle : $('#filmTitle').val(),
-		movieSeen : 'nicht gesehen',
+		movieSeen : $('#createFilmModal').find('.on').text(),
 		rating : setRating(numberOfStars)
 	}));
 
@@ -293,10 +295,10 @@ function buildDetailView(numberOfStars, movieTitle) {
 
 function fillTableStar(event) {
 	// klickt ein User auf die Bewertung, wird das Event bei 'mouseover' entfernt und die Bewertung lässt sich nur per 'click' öndern
-	if(event.type === 'click') {
+	if (event.type === 'click') {
 		$(this).parent().off('mouseover', 'span');
 	}
-	
+
 	// fuellen des Sterns, ueber dem der Mauszeiger ist
 	toggleRatingClasses(this, true);
 
@@ -317,7 +319,7 @@ function fillTableStar(event) {
  * Ansonsten ist der Wert 'false'. Das aktuelle Element wird im Parameter 'elem' übergeben.
  * */
 function toggleRatingClasses(elem, prev) {
-	if(prev) {
+	if (prev) {
 		$(elem).removeClass(ratingIconOff);
 		$(elem).addClass(ratingIconOn);
 	} else {
@@ -327,8 +329,8 @@ function toggleRatingClasses(elem, prev) {
 }
 
 function setRating(selectedStars) {
-	var starFull = '<span class="glyphicon '+ ratingIconOn +'"></span>';
-	var starEmpty = '<span class="glyphicon '+ ratingIconOff +'"></span>';
+	var starFull = '<span class="glyphicon ' + ratingIconOn + '"></span>';
+	var starEmpty = '<span class="glyphicon ' + ratingIconOff + '"></span>';
 	var result = "";
 
 	for (var i = 1; i <= 5; i++) {
@@ -340,5 +342,39 @@ function setRating(selectedStars) {
 	}
 
 	return '<div class="stars">' + result + '</div>';
+}
+
+function setListenerForSeenSwitch(modal, elem) {
+	$(modal).find('.switch-button-label').on('click', function() {
+		if (!$(this).hasClass('on')) {
+			changeSwitchButtonTextStyle.apply(this);
+			animateSwitchButton.apply(this);
+		}
+	});
+	$(modal).find('.switch-button-background').on('click', function() {
+		animateSwitchButton.apply(this);
+		changeSwitchButtonTextStyle.apply(this);
+	});
+}
+
+function animateSwitchButton() {
+	var position = $(this).parent().find('.switch-button-button').css('left');
+	if (position === '-11px') {
+		$(this).parent().find('.switch-button-button').animate({
+			left : "15px"
+		});
+	} else {
+		$(this).parent().find('.switch-button-button').animate({
+			left : "-11px"
+		});
+	}
+}
+
+function changeSwitchButtonTextStyle() {
+	var on = $(this).parent().find('.on');
+	var off = $(this).parent().find('.off');
+
+	$(on).toggleClass('off on');
+	$(off).toggleClass('off on');
 }
 

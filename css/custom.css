@@ -27,6 +27,55 @@ label {
 	display: inline-block
 }
 
+.switch-wrapper {
+	display: inline-block;
+	position: relative;	
+}
+
+.switch-button-background {
+	position: relative;	
+	float: left;
+	background-color: #ccc;
+	border: 1px solid #aaa;
+	margin: 1px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.switch-button-button {
+	position: absolute;
+	top: -2px;
+	background-color: #fafafa;
+	border: 1px solid #aaa;
+	margin: 1px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+	/*-webkit-transition: left 0.4s ease-in-out;*/
+}
+
+.switch-button-label {
+	height: auto;
+	float: left;
+	cursor: pointer;
+	vertical-align: middle;
+}
+
+.switch-button-label.on {
+	color: #0088CC;	
+}
+
+.switch-button-label.off {
+	color: #adadad;
+}
+
+.tableFilmTitle {
+	text-transform: capitalize;	
+}
+
+.tableMovieSeen {
+	text-transform: lowercase;
+}
+
 #detailedView {
 	display: none;
 	height: 90%;
