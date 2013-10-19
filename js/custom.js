@@ -1,5 +1,7 @@
 var selectedRowId;
-var starRatingHTML = '<div class="stars"> <span class="glyphicon glyphicon-star-empty" title="schlecht"></span><span class="glyphicon glyphicon-star-empty" title="geht so"></span><span class="glyphicon glyphicon-star-empty" title="in Ordnung"></span><span class="glyphicon glyphicon-star-empty" title="gut"></span><span class="glyphicon glyphicon-star-empty" title="grandios"></span></div>';
+var ratingIconOn = 'glyphicon-star';
+var ratingIconOff = 'glyphicon-star-empty';
+var starRatingHTML = '<div class="stars"> <span class="glyphicon ' + ratingIconOff +'" title="schlecht"></span><span class="glyphicon '+ ratingIconOff +'" title="geht so"></span><span class="glyphicon '+ ratingIconOff +'" title="in Ordnung"></span><span class="glyphicon '+ ratingIconOff +'" title="gut"></span><span class="glyphicon '+ ratingIconOff +'" title="grandios"></span></div>';
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td><button class="btn btn-sm edit loggedIn"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete loggedIn" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%= rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 
@@ -23,18 +25,10 @@ $(document).ready(function() {
 
 	/* reagiere auf 'Enter' im FilmTitel und speichere neuen Film in Tabelle */
 	$('#filmTitle').bind('keypress', createMovie);
-	// function(event) {
-	// var key = event.keyCode;
-	//
-	// if (key == 13) {
-	// debugger;
-	// createMovie();
-	// }
-	// });
 
 	/* Modal öffnen, um neuen Film hinzuzufügen */
 	$('#add').on('click', function() {
-		$('#createFilmModal').find('.glyphicon-star').remove('glyphicon-star').addClass('glyphicon-star-empty');
+		$('#createFilmModal').find('.' + ratingIconOn).remove(ratingIconOn).addClass(ratingIconOff);
 		$('#createFilmModal').modal('show');
 	});
 
@@ -48,14 +42,14 @@ $(document).ready(function() {
 	$('#list').on('click', '.edit', function() {
 		var title = $(this).parent().parent().find('.tableFilmTitle').text();
 		var movieSeen = $(this).parent().parent().find('.tableMovieSeen').text();
-		var rating = $(this).parent().parent().find('.tableRating').find('.glyphicon-star').length;
-		debugger;
+		var rating = $(this).parent().parent().find('.tableRating').find('.' + ratingIconOn).length;
+		
 		selectedRowId = $(this).parent().parent().attr('id');
 
 		$('#editFilmModal').modal('show');
 		$('#filmTitleEdit').val(title);
 		$('#movieSeenEdit').val(movieSeen);
-		$('.stars').html(setRating(rating));
+		$('#editFilmModal').find('.stars').html(setRating(rating));
 
 	});
 
@@ -71,7 +65,7 @@ $(document).ready(function() {
 			return false;
 		}
 
-		buildDetailView($(this).find('.tableFilmTitle').text());
+		buildDetailView($(this).find('.stars').find('.'+ratingIconOn).length, $(this).find('.tableFilmTitle').text());
 
 	});
 
@@ -136,7 +130,6 @@ $(document).ready(function() {
 	// $('#logoutButton').on('click', function() {
 	// var parent = $('#logoutButton').parent();
 	// logout_ajax().done(function(value) {
-	// debugger;
 	// parent.empty();
 	// parent.append(value);
 	// sessionStorage.setItem("user", "");
@@ -148,11 +141,11 @@ $(document).ready(function() {
 function createMovie() {
 	switch(event.type) {
 		case ('click'):
-			addNewTableLine($(this).parent().parent().find('.stars').find('.glyphicon-star').length);
+			addNewTableLine($(this).parent().parent().find('.stars').find('.' + ratingIconOn).length);
 			break;
 		case ('keypress'):
 			if (event.keyCode === 13) {
-				addNewTableLine($(this).parent().find('.stars').find('.glyphicon-star').length);
+				addNewTableLine($(this).parent().find('.stars').find('.' + ratingIconOn).length);
 			}
 			break;
 		default:
@@ -203,11 +196,11 @@ function addNewTableLine(numberOfStars) {
 function changeMovieValues() {
 	switch(event.type) {
 		case ('click'):
-			changeTableRowValues($(this).parent().parent().find('.stars').find('.glyphicon-star').length);
+			changeTableRowValues($(this).parent().parent().find('.stars').find('.' + ratingIconOn).length);
 			break;
 		case ('keypress'):
 			if (event.keyCode === 13) {
-				changeTableRowValues($(this).parent().find('.stars').find('.glyphicon-star').length);
+				changeTableRowValues($(this).parent().find('.stars').find('.' + ratingIconOn).length);
 			}
 			break;
 		default:
@@ -263,18 +256,24 @@ function toggleClassOnAllElements(element) {
 }
 
 /* Detailansicht wird aufgebaut. Dafuer werden Daten von der OMDB Database als JSON geholt */
-function buildDetailView(movieTitle) {
+function buildDetailView(numberOfStars, movieTitle) {
 	// alternative Quelle könnte "http://mymovieapi.com/?title=" sein
 	$.getJSON("http://www.omdbapi.com/?t=" + movieTitle.replace(" ", "+")).done(function(data) {
 		if (data.Response == "False") {
 			// TODO Fehlermeldung machen
 			alert('Fehler');
 		} else {// data.Response == "True"
+			var poster;
+			if (data.Poster === "N/A") {
+				poster = './img/noposter.png';
+			} else {
+				poster = data.Poster;
+			}
 			$('#detailedView').html(detailedMovieView({
 				movieTitle : movieTitle,
 				movieSeen : "No",
-				rating : starRatingHTML,
-				picture : data.Poster,
+				rating : setRating(numberOfStars),
+				picture : poster,
 				release : data.Released,
 				runtime : data.Runtime,
 				genre : data.Genre,
@@ -290,26 +289,37 @@ function buildDetailView(movieTitle) {
 
 function fillTableStar() {
 	// fuellen des Sterns, ueber dem der Mauszeiger ist
-	$(this).removeClass('glyphicon-star-empty');
-	$(this).addClass('glyphicon-star');
+	toggleRatingClasses(this, true);
 
 	// fuellt die vorhergehenden Sterne aus
 	//console.log($(this).prevAll().length);
 	$(this).prevAll().each(function() {
-		$(this).removeClass('glyphicon-star-empty');
-		$(this).addClass('glyphicon-star');
+		toggleRatingClasses(this, true);
 	});
 
 	// entfernt ausgefuellte Sterne in nachvolgenden Elementen
 	$(this).nextAll().each(function() {
-		$(this).removeClass('glyphicon-star');
-		$(this).addClass('glyphicon-star-empty');
+		toggleRatingClasses(this, false);
 	});
 }
 
+/* Legt fest, ob ein Stern beim Mouseover gefüllt oder leer dargestellt wird.
+ * Der Parameter 'prev' hat den Wert 'true', wenn das aktuelle Element ein Vorgänger desjenigen Elements ist, über dem der Cursor platziert ist.
+ * Ansonsten ist der Wert 'false'. Das aktuelle Element wird im Parameter 'elem' übergeben.
+ * */
+function toggleRatingClasses(elem, prev) {
+	if(prev) {
+		$(elem).removeClass(ratingIconOff);
+		$(elem).addClass(ratingIconOn);
+	} else {
+		$(elem).removeClass(ratingIconOn);
+		$(elem).addClass(ratingIconOff);
+	}
+}
+
 function setRating(selectedStars) {
-	var starFull = '<span class="glyphicon glyphicon-star"></span>';
-	var starEmpty = '<span class="glyphicon glyphicon-star-empty"></span>';
+	var starFull = '<span class="glyphicon '+ ratingIconOn +'"></span>';
+	var starEmpty = '<span class="glyphicon '+ ratingIconOff +'"></span>';
 	var result = "";
 
 	for (var i = 1; i <= 5; i++) {
