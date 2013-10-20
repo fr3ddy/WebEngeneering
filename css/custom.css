@@ -8,11 +8,11 @@ label {
 }
 
 .navbar-static-top {
-  margin-bottom: 19px;
+	margin-bottom: 19px;
 }
 
 .form-control {
-  margin: 5px 0 5px 0;
+	margin: 5px 0 5px 0;
 }
 
 .loggedIn {
@@ -29,11 +29,11 @@ label {
 
 .switch-wrapper {
 	display: inline-block;
-	position: relative;	
+	position: relative;
 }
 
 .switch-button-background {
-	position: relative;	
+	position: relative;
 	float: left;
 	background-color: #ccc;
 	border: 1px solid #aaa;
@@ -61,7 +61,7 @@ label {
 }
 
 .switch-button-label.on {
-	color: #0088CC;	
+	color: #0088CC;
 }
 
 .switch-button-label.off {
@@ -69,19 +69,28 @@ label {
 }
 
 .tableFilmTitle {
-	text-transform: capitalize;	
+	text-transform: capitalize;
 }
 
 .tableMovieSeen {
 	text-transform: lowercase;
 }
 
+#closeDetailedView {
+	left: -20px;
+	font-size: inherit;
+	padding: 0;
+	cursor: pointer;
+	background: transparent;
+	border: 0;
+}
+
 #detailedView {
-	display: none;
+	display: block;
 	height: 90%;
 	width: 100%;
 	position: absolute;
-	right: 0;
+	right: -2000px;
 	background-color: #fff;
 	/*z-index: 1060;*/
 }
@@ -93,7 +102,6 @@ label {
 	left: 0;
 }
 
-#loginButton ,
-#logoutButton{
+#loginButton, #logoutButton {
 	margin-top: 2px;
 }

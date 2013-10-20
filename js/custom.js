@@ -93,9 +93,9 @@ $(document).ready(function() {
 
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
 		event.preventDefault();
-		$('#detailedView').hide('slow');
-		$('#detailedView').empty();
-		$('#home').show('slow');
+		event.stopPropagation();
+		$('#detailedView').animate({right: "-2000px"}, function() {$('#detailedView').empty();});
+		$('#home').animate({left: "0px"});
 	});
 
 	/*-----LOGIN--------*/
@@ -315,8 +315,8 @@ function buildDetailView(numberOfStars, movieTitle, movieSeen) {
 				actors : data.Actors
 			}));
 
-			$('#detailedView').show("slow");
-			$('#home').hide('slow');
+			$('#detailedView').animate({right: "0px"});
+			$('#home').animate({left : "-2000px"});
 		}
 	});
 }
