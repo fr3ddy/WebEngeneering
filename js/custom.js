@@ -1,6 +1,8 @@
 var selectedRowId;
 var ratingIconOn = 'glyphicon-star';
 var ratingIconOff = 'glyphicon-star-empty';
+var switchButtonSeen = "-11px";
+var switchButtonUnseen = "15px";
 var starRatingHTML = '<div class="stars"> <span class="glyphicon ' + ratingIconOff + '" title="schlecht"></span><span class="glyphicon ' + ratingIconOff + '" title="geht so"></span><span class="glyphicon ' + ratingIconOff + '" title="in Ordnung"></span><span class="glyphicon ' + ratingIconOff + '" title="gut"></span><span class="glyphicon ' + ratingIconOff + '" title="grandios"></span></div>';
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td><button class="btn btn-sm edit loggedIn"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete loggedIn" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%= rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
@@ -8,8 +10,14 @@ var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %>
 sessionStorage.setItem("user", "");
 
 $(document).ready(function() {
-	$('.rating').append($(starRatingHTML).on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar));
-
+	$('#loginButton').on('click', function() {
+		/* wenn der loginButton geklickt wurde, wurde das DropDown Menue noch nicht gerendert, daher wird ein Timeout gemacht,  
+		 * dass den Fokus nach 100ms auf das Benutzername-Feld setzt. Nach 100ms ist damit zu rechnen, dass das DropDown Menue 
+		 * angezeigt wird 
+		 */
+		setTimeout('$("#usernameInput").focus()', 100);
+	});
+	
 	/* Setze Focus auf Film Titel Input, wenn Modal geäffnet wird */
 	$('#createFilmModal').on('focus', function() {
 		filmTitle.focus();
@@ -28,10 +36,16 @@ $(document).ready(function() {
 
 	/* Modal öffnen, um neuen Film hinzuzufügen */
 	$('#add').on('click', function() {
+		// setze Rating am Anfang immer auf leer
 		$('#createFilmModal').find('.stars').children('span').removeClass(ratingIconOn).addClass(ratingIconOff);
-		$('#createFilmModal').find('.stars').on('mouseover', 'span', fillTableStar);
 
-		setListenerForSeenSwitch('#createFilmModal', this);
+		// setze GESEHEN / NICHT GESEHEN am Anfang auf NICH GESEHEN
+		if ($('#createFilmModal').find('.switch-wrapper').find('.on').text() === "GESEHEN") {
+			setModalSwitchButton.call($('#createFilmModal').find('.switch-wrapper'), 'NICHT GESEHEN');
+		}
+
+		setListenerForSeenSwitch('#createFilmModal');
+		setRatingVisibility.call($('#createFilmModal').find('.rating'), '0');
 		$('#createFilmModal').modal('show');
 	});
 
@@ -52,10 +66,12 @@ $(document).ready(function() {
 		$('#filmTitleEdit').val(title);
 		$('#movieSeenEdit').val(movieSeen);
 
-		setListenerForSeenSwitch('#editFilmModal', this);
-		$('#editFilmModal').find('.stars').on('mouseover', 'span', fillTableStar);
-		$('#editFilmModal').find('.stars').remove('div');
-		$('#editFilmModal').find('.rating').append($(setRating(rating)).on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar));
+		if ($('#editFilmModal').find('.switch-wrapper').find('.on').text() !== movieSeen) {
+			setModalSwitchButton.call($('#editFilmModal').find('.switch-wrapper'), movieSeen);
+		}
+
+		setListenerForSeenSwitch('#editFilmModal');
+		setRatingVisibility.call($('#editFilmModal').find('.rating'), $(this).parent().parent().find('.stars').find('.' + ratingIconOn).length);
 		$('#editFilmModal').modal('show');
 	});
 
@@ -71,7 +87,7 @@ $(document).ready(function() {
 			return false;
 		}
 
-		buildDetailView($(this).find('.stars').find('.' + ratingIconOn).length, $(this).find('.tableFilmTitle').text());
+		buildDetailView($(this).find('.stars').find('.' + ratingIconOn).length, $(this).find('.tableFilmTitle').text(), $(this).find('.tableMovieSeen').text());
 
 	});
 
@@ -177,6 +193,10 @@ function addNewTableLine(numberOfStars) {
 		//ID fuer die neue Zeile zusammensetzen
 	}
 	/*--------------------------------Tabelleneintrag hinzufuegen---------------------------------------------------------------------------------------------*/
+	if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text()) {
+		numberOfStars = 0;
+	}
+	
 	$('#filmtable').append(addMovieToList({
 		rowID : newID,
 		movieTitle : $('#filmTitle').val(),
@@ -202,11 +222,11 @@ function addNewTableLine(numberOfStars) {
 function changeMovieValues(event) {
 	switch(event.type) {
 		case ('click'):
-			changeTableRowValues($(this).parent().parent().find('.stars').find('.' + ratingIconOn).length);
+			changeTableRowValues.call($(this).parent().parent(), $(this).parent().parent().find('.stars').find('.' + ratingIconOn).length);
 			break;
 		case ('keypress'):
 			if (event.keyCode === 13) {
-				changeTableRowValues($(this).parent().find('.stars').find('.' + ratingIconOn).length);
+				changeTableRowValues.call($(this).parent(), $(this).parent().find('.stars').find('.' + ratingIconOn).length);
 			}
 			break;
 		default:
@@ -216,7 +236,15 @@ function changeMovieValues(event) {
 
 function changeTableRowValues(numberOfStars) {
 	$('#filmtable').find('#' + selectedRowId).find('.tableFilmTitle').text($('#filmTitleEdit').val());
-	$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStars));
+	$('#filmtable').find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text());
+
+	// wurde ein Film als 'GESEHEN' markiert, erhält er die Anzahl an Sternen, mit denen er bewertet wurde. Ansonsten sind alle Sterne leer
+	if ($(this).find('.on').text() === "GESEHEN") {
+		$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStars));
+	} else {
+		$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(starRatingHTML);
+	}
+
 	$('#film').val("");
 	$('#filmTitleEdit').val("");
 	$('#movieSeenEdit').val("");
@@ -262,7 +290,7 @@ function toggleClassOnAllElements(element) {
 }
 
 /* Detailansicht wird aufgebaut. Dafuer werden Daten von der OMDB Database als JSON geholt */
-function buildDetailView(numberOfStars, movieTitle) {
+function buildDetailView(numberOfStars, movieTitle, movieSeen) {
 	// alternative Quelle könnte "http://mymovieapi.com/?title=" sein
 	$.getJSON("http://www.omdbapi.com/?t=" + movieTitle.replace(" ", "+")).done(function(data) {
 		if (data.Response == "False") {
@@ -277,7 +305,7 @@ function buildDetailView(numberOfStars, movieTitle) {
 			}
 			$('#detailedView').html(detailedMovieView({
 				movieTitle : movieTitle,
-				movieSeen : "No",
+				movieSeen : movieSeen,
 				rating : setRating(numberOfStars),
 				picture : poster,
 				release : data.Released,
@@ -293,6 +321,7 @@ function buildDetailView(numberOfStars, movieTitle) {
 	});
 }
 
+/* Die Film Bewertung wird durch 'mouseover' über oder 'click' auf Sterne festgelegt. Damit das funtkioniert gibt es diese Methode */
 function fillTableStar(event) {
 	// klickt ein User auf die Bewertung, wird das Event bei 'mouseover' entfernt und die Bewertung lässt sich nur per 'click' öndern
 	if (event.type === 'click') {
@@ -328,6 +357,7 @@ function toggleRatingClasses(elem, prev) {
 	}
 }
 
+/* stellt ein, wie viele Sterne beim Rating in der Tabelle oder Bearbeitungsansicht ausgefuellt sind */
 function setRating(selectedStars) {
 	var starFull = '<span class="glyphicon ' + ratingIconOn + '"></span>';
 	var starEmpty = '<span class="glyphicon ' + ratingIconOff + '"></span>';
@@ -344,37 +374,81 @@ function setRating(selectedStars) {
 	return '<div class="stars">' + result + '</div>';
 }
 
-function setListenerForSeenSwitch(modal, elem) {
+/* einstellen, dass SwitchButton bei Druck auf Schalter oder auch Text reagiert*/
+function setListenerForSeenSwitch(modal) {
 	$(modal).find('.switch-button-label').on('click', function() {
 		if (!$(this).hasClass('on')) {
-			changeSwitchButtonTextStyle.apply(this);
 			animateSwitchButton.apply(this);
 		}
 	});
-	$(modal).find('.switch-button-background').on('click', function() {
-		animateSwitchButton.apply(this);
-		changeSwitchButtonTextStyle.apply(this);
-	});
+	$(modal).find('.switch-button-background').on('click', animateSwitchButton);
 }
 
 function animateSwitchButton() {
-	var position = $(this).parent().find('.switch-button-button').css('left');
-	if (position === '-11px') {
-		$(this).parent().find('.switch-button-button').animate({
-			left : "15px"
-		});
+	if ($(this).parent().find('.switch-button-button').is(':animated')) {
+		// wenn noch eine Animation läuft, dann soll nichts passieren, bis diese fertig ist
+		return;
 	} else {
-		$(this).parent().find('.switch-button-button').animate({
-			left : "-11px"
-		});
+		var position = $(this).parent().find('.switch-button-button').css('left');
+		setSwitchButtonLabelStyle.apply(this);
+
+		if (position === switchButtonSeen) {
+			$(this).parent().find('.switch-button-button').animate({
+				left : switchButtonUnseen
+			}, 200);
+
+			// blende Rating aus, da kein Film bewertet werden kann den man noch nicht gesehen hat
+			$(this).parent().parent().find('.rating').slideUp();
+		} else {
+			$(this).parent().find('.switch-button-button').animate({
+				left : switchButtonSeen
+			}, 200);
+
+			// blende Rating ein, da der Nutzer den Film schon gesehen hat
+			$(this).parent().parent().find('.rating').slideDown();
+		}
 	}
 }
 
-function changeSwitchButtonTextStyle() {
+/* stellt ein, welches SwitchButton-Label aktiv = on bzw. inakiv = off ist */
+function setSwitchButtonLabelStyle(numberOfSelectedStars) {
 	var on = $(this).parent().find('.on');
 	var off = $(this).parent().find('.off');
 
 	$(on).toggleClass('off on');
 	$(off).toggleClass('off on');
+}
+
+/* bestimmt, ob Rating sichtbar oder unsichtbar ist, wenn Modal angezeigt wird. Rating wird nur angezeigt, wenn SwitchButton auf 'GESEHEN' steht */
+function setRatingVisibility(numberOfSelectedStars) {
+	$(this).find('.stars').remove('div');
+
+	if ($(this).parent().find('.switch-wrapper').find('.on').text() === "GESEHEN") {
+		// rating hinzufuegen und anzeigen, da SwitchButton auf 'GESEHEN' steht
+		$(this).append($(setRating(numberOfSelectedStars)).on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar)).show();
+	} else {
+		// rating zwar hinzufuegen, aber nicht anzeigen
+		$(this).append($(setRating(numberOfSelectedStars)).on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar)).hide();
+	}
+}
+
+/* Setze SwitchButton auf Wert 'value' */
+function setModalSwitchButton(value) {
+	setSwitchButtonLabelStyle.apply($(this).find('.on'));
+
+	switch(value) {
+		case "GESEHEN":
+			$(this).find('.switch-button-button').css({
+				left : switchButtonSeen
+			});
+			break;
+		case "NICHT GESEHEN":
+			$(this).find('.switch-button-button').css({
+				left : switchButtonUnseen
+			});
+			break;
+		default:
+			break;
+	}
 }
 
