@@ -10,14 +10,20 @@ var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %>
 sessionStorage.setItem("user", "");
 
 $(document).ready(function() {
+	/* deaktiviert Textauswahl in der Tabelle */
+	$('table').bind('selectstart dragstart', function(evt) {
+		evt.preventDefault();
+		return false;
+	});
+	
 	$('#loginButton').on('click', function() {
-		/* wenn der loginButton geklickt wurde, wurde das DropDown Menue noch nicht gerendert, daher wird ein Timeout gemacht,  
-		 * dass den Fokus nach 100ms auf das Benutzername-Feld setzt. Nach 100ms ist damit zu rechnen, dass das DropDown Menue 
-		 * angezeigt wird 
+		/* wenn der loginButton geklickt wurde, wurde das DropDown Menue noch nicht gerendert, daher wird ein Timeout gemacht,
+		 * dass den Fokus nach 100ms auf das Benutzername-Feld setzt. Nach 100ms ist damit zu rechnen, dass das DropDown Menue
+		 * angezeigt wird
 		 */
 		setTimeout('$("#usernameInput").focus()', 100);
 	});
-	
+
 	/* Setze Focus auf Film Titel Input, wenn Modal geäffnet wird */
 	$('#createFilmModal').on('focus', function() {
 		filmTitle.focus();
@@ -94,14 +100,26 @@ $(document).ready(function() {
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		$('#detailedView').animate({right: "-100%"}, function() {$('#detailedView').empty();});
-		$('#home').animate({left: "0px"});
+		$('#detailedView').animate({
+			right : "-100%"
+		}, function() {
+			$('#detailedView').hide();
+		});
+		$('#home').show().animate({
+			left : "0px"
+		});
 	});
-	$('#listNav').on('click' , function(event){
+	$('#listNav').on('click', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		$('#detailedView').animate({right: "-100%"}, function() {$('#detailedView').empty();});
-		$('#home').animate({left: "0px"});
+		$('#detailedView').animate({
+			right : "-100%"
+		}, function() {
+			$('#detailedView').hide();
+		});
+		$('#home').show().animate({
+			left : "0px"
+		});
 	});
 
 	/*-----LOGIN--------*/
@@ -156,16 +174,16 @@ $(document).ready(function() {
 
 	/* Filter */
 	/* gesehen / nicht gesehen */
-	$('#filterGesehen').on("click" , function(){
+	$('#filterGesehen').on("click", function() {
 		filterGnG("GESEHEN");
 	});
-	
-	$('#filterNichtGesehen').on("click" , function(){
+
+	$('#filterNichtGesehen').on("click", function() {
 		filterGnG("NICHT GESEHEN");
 	});
-	
+
 	/* DELTE FILTER */
-	$('#filterResetButton').on("click" , function(){
+	$('#filterResetButton').on("click", function() {
 		$('tr[id*="tr-"]').show();
 	});
 	// TODO Wofür ist das gut?
@@ -216,7 +234,7 @@ function addNewTableLine(numberOfStars) {
 	if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text()) {
 		numberOfStars = 0;
 	}
-	
+
 	$('#filmtable').append(addMovieToList({
 		rowID : newID,
 		movieTitle : $('#filmTitle').val(),
@@ -335,8 +353,14 @@ function buildDetailView(numberOfStars, movieTitle, movieSeen) {
 				actors : data.Actors
 			}));
 
-			$('#detailedView').animate({right: "0px"});
-			$('#home').animate({left : "-100%"});
+			$('#detailedView').show().animate({
+				right : "0px"
+			});
+			$('#home').animate({
+				left : "-100%"
+			}, function() {
+				$('#home').hide();
+			});
 		}
 	});
 }
@@ -473,12 +497,12 @@ function setModalSwitchButton(value) {
 }
 
 /* Filter */
-function filterGnG(gStatus){
+function filterGnG(gStatus) {
 	var aktTr = $('#tr-1');
-	while(aktTr.length != 0){
-		if(aktTr.find('.tableMovieSeen').text() != gStatus){
-			aktTr.hide();		
-		}else{
+	while (aktTr.length != 0) {
+		if (aktTr.find('.tableMovieSeen').text() != gStatus) {
+			aktTr.hide();
+		} else {
 			aktTr.show();
 		}
 		aktTr = aktTr.next();

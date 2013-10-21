@@ -86,7 +86,7 @@ label {
 }
 
 #detailedView {
-	display: block;
+	display: none;
 	height: 90%;
 	width: 100%;
 	position: absolute;
