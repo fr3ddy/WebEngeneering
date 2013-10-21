@@ -90,7 +90,7 @@ label {
 	height: 90%;
 	width: 100%;
 	position: absolute;
-	right: -2000px;
+	right: -100%;
 	background-color: #fff;
 	/*z-index: 1060;*/
 }
@@ -104,4 +104,26 @@ label {
 
 #loginButton, #logoutButton {
 	margin-top: 2px;
+}
+
+#sortButtonTitel{
+	margin-left: 40px;
+	margin-top: -20px;
+}
+
+#sortButtonBewertung{
+	margin-left: 90px;
+	margin-top: -20px;
+}
+
+#sortButtonGnG{
+	margin-left: 190px;
+	margin-top: -20px;
+}
+
+#filterResetButton{
+	display: none;
+	float: right;
+	margin-top: 0px;
+	margin-bottom: 0px;
 }
