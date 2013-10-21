@@ -97,6 +97,12 @@ $(document).ready(function() {
 		$('#detailedView').animate({right: "-100%"}, function() {$('#detailedView').empty();});
 		$('#home').animate({left: "0px"});
 	});
+	$('#listNav').on('click' , function(event){
+		event.preventDefault();
+		event.stopPropagation();
+		$('#detailedView').animate({right: "-100%"}, function() {$('#detailedView').empty();});
+		$('#home').animate({left: "0px"});
+	});
 
 	/*-----LOGIN--------*/
 	// TODO wofür ist das?
