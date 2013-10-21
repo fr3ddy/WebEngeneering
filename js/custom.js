@@ -154,6 +154,20 @@ $(document).ready(function() {
 		});
 	});
 
+	/* Filter */
+	/* gesehen / nicht gesehen */
+	$('#filterGesehen').on("click" , function(){
+		filterGnG("GESEHEN");
+	});
+	
+	$('#filterNichtGesehen').on("click" , function(){
+		filterGnG("NICHT GESEHEN");
+	});
+	
+	/* DELTE FILTER */
+	$('#filterResetButton').on("click" , function(){
+		$('tr[id*="tr-"]').show();
+	});
 	// TODO Wofür ist das gut?
 	// $('#logoutButton').on('click', function() {
 	// var parent = $('#logoutButton').parent();
@@ -458,3 +472,15 @@ function setModalSwitchButton(value) {
 	}
 }
 
+/* Filter */
+function filterGnG(gStatus){
+	var aktTr = $('#tr-1');
+	while(aktTr.length != 0){
+		if(aktTr.find('.tableMovieSeen').text() != gStatus){
+			aktTr.hide();		
+		}else{
+			aktTr.show();
+		}
+		aktTr = aktTr.next();
+	}
+}
