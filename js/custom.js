@@ -205,7 +205,7 @@ function addNewTableLine(numberOfStars) {
 	}));
 
 	/*------------------------Initialisiere PopOver fuer Delete-Button--------------------------------------------------------------------------------*/
-	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Ja</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
+	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
 	$('#' + newID).find('.delete').popover({
 		trigger : 'focus',
 		title : 'Löschen',
