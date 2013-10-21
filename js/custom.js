@@ -195,6 +195,14 @@ $(document).ready(function() {
 	// sessionStorage.setItem("user", "");
 	// });
 	// });
+	
+	$('#sortTitle').on("click", function(){
+		sortTitleAlphabet(true);
+	});
+		
+	$('#sortTitleAlt').on("click", function(){
+		sortTitleAlphabet(false);
+	});
 });
 
 /* unterscheiden zwischen Enter-Event und Speichern-Button-Event. Zusätzlich Anzahl selektierter Sterne fuer Rating herausfinden*/
@@ -507,4 +515,29 @@ function filterGnG(gStatus) {
 		}
 		aktTr = aktTr.next();
 	}
+}
+
+function sortTitleAlphabet(direction){
+	var aktTr 	= $('#tr-0').next();
+	var titles = new Array();
+	var counter = 0;
+	while(aktTr.length != 0){
+		titles[counter] = aktTr.find('.tableFilmTitle').text() + "-" + aktTr.attr('id');
+		aktTr = aktTr.next();
+		counter++;
+	}	
+	
+	titles.sort();
+	
+	if(direction == false){
+		titles.reverse();
+	}
+	
+	var prevRow = "#tr-0";
+	for (var i=0; i < titles.length; i++) {
+	  var segments = titles[i].split('-tr-');
+	  $('#tr-'+segments[1]).insertAfter($(prevRow));
+	  
+	  prevRow = '#tr-' + segments[1];
+	};
 }
