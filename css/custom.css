@@ -105,3 +105,25 @@ label {
 #loginButton, #logoutButton {
 	margin-top: 2px;
 }
+
+#sortButtonTitel{
+	margin-left: 40px;
+	margin-top: -20px;
+}
+
+#sortButtonBewertung{
+	margin-left: 90px;
+	margin-top: -20px;
+}
+
+#sortButtonGnG{
+	margin-left: 190px;
+	margin-top: -20px;
+}
+
+#filterResetButton{
+	display: none;
+	float: right;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
