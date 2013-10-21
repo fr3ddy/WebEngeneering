@@ -94,7 +94,7 @@ $(document).ready(function() {
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		$('#detailedView').animate({right: "-2000px"}, function() {$('#detailedView').empty();});
+		$('#detailedView').animate({right: "-100%"}, function() {$('#detailedView').empty();});
 		$('#home').animate({left: "0px"});
 	});
 
@@ -316,7 +316,7 @@ function buildDetailView(numberOfStars, movieTitle, movieSeen) {
 			}));
 
 			$('#detailedView').animate({right: "0px"});
-			$('#home').animate({left : "-2000px"});
+			$('#home').animate({left : "-100%"});
 		}
 	});
 }
