@@ -13,7 +13,6 @@ var ratingIconOn = 'glyphicon-star';
 var ratingIconOff = 'glyphicon-star-empty';
 var switchButtonSeen = "-11px";
 var switchButtonUnseen = "15px";
-var starRatingHTML = '<div class="stars"> <span class="glyphicon ' + ratingIconOff + '" title="schlecht"></span><span class="glyphicon ' + ratingIconOff + '" title="geht so"></span><span class="glyphicon ' + ratingIconOff + '" title="in Ordnung"></span><span class="glyphicon ' + ratingIconOff + '" title="gut"></span><span class="glyphicon ' + ratingIconOff + '" title="grandios"></span></div>';
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td><button class="btn btn-sm edit loggedIn"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete loggedIn" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%= rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 
@@ -309,7 +308,7 @@ function changeTableRowValues(numberOfStars) {
 			$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStars));
 		}
 	} else {
-		$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(starRatingHTML);
+		$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(0));
 	} 
 	
 	// wurde einmal dieses Flag auf true gesetzt, dann muss es vor der nachsten Benutzung wieder zurueckgestellt werden
