@@ -7,23 +7,18 @@ var starRatingHTML = '<div class="stars"> <span class="glyphicon ' + ratingIconO
 var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td><button class="btn btn-sm edit loggedIn"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete loggedIn" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%= rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 
-sessionStorage.setItem("user", "");
+sessionStorage.setItem("user", ""); // Initialisierung des Items 'User' im Sessionstorage
 
 $(document).ready(function() {
-	/* deaktiviert Textauswahl in der Tabelle */
-	$('table').bind('selectstart dragstart', function(evt) {
-		evt.preventDefault();
-		return false;
-	});
-	
 	$('#loginButton').on('click', function() {
-		/* wenn der loginButton geklickt wurde, wurde das DropDown Menue noch nicht gerendert, daher wird ein Timeout gemacht,
-		 * dass den Fokus nach 100ms auf das Benutzername-Feld setzt. Nach 100ms ist damit zu rechnen, dass das DropDown Menue
-		 * angezeigt wird
+		/* TODO for IE and FF */
+		/* wenn der loginButton geklickt wurde, wurde das DropDown Menue noch nicht gerendert, daher wird ein Timeout gemacht,  
+		 * dass den Fokus nach 100ms auf das Benutzername-Feld setzt. Nach 100ms ist damit zu rechnen, dass das DropDown Menue 
+		 * angezeigt wird 
 		 */
 		setTimeout('$("#usernameInput").focus()', 100);
 	});
-
+	
 	/* Setze Focus auf Film Titel Input, wenn Modal geäffnet wird */
 	$('#createFilmModal').on('focus', function() {
 		filmTitle.focus();
@@ -100,26 +95,14 @@ $(document).ready(function() {
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		$('#detailedView').animate({
-			right : "-100%"
-		}, function() {
-			$('#detailedView').hide();
-		});
-		$('#home').show().animate({
-			left : "0px"
-		});
+		$('#detailedView').animate({right: "-100%"}, function() {$('#detailedView').empty();});
+		$('#home').animate({left: "0px"});
 	});
-	$('#listNav').on('click', function(event) {
+	$('#listNav').on('click' , function(event){
 		event.preventDefault();
 		event.stopPropagation();
-		$('#detailedView').animate({
-			right : "-100%"
-		}, function() {
-			$('#detailedView').hide();
-		});
-		$('#home').show().animate({
-			left : "0px"
-		});
+		$('#detailedView').animate({right: "-100%"}, function() {$('#detailedView').empty();});
+		$('#home').animate({left: "0px"});
 	});
 
 	/*-----LOGIN--------*/
@@ -174,16 +157,16 @@ $(document).ready(function() {
 
 	/* Filter */
 	/* gesehen / nicht gesehen */
-	$('#filterGesehen').on("click", function() {
+	$('#filterGesehen').on("click" , function(){
 		filterGnG("GESEHEN");
 	});
-
-	$('#filterNichtGesehen').on("click", function() {
+	
+	$('#filterNichtGesehen').on("click" , function(){
 		filterGnG("NICHT GESEHEN");
 	});
-
+	
 	/* DELTE FILTER */
-	$('#filterResetButton').on("click", function() {
+	$('#filterButton').on("click" , function(){
 		$('tr[id*="tr-"]').show();
 	});
 	// TODO Wofür ist das gut?
@@ -196,11 +179,11 @@ $(document).ready(function() {
 	// });
 	// });
 	
-	$('#sortTitle').on("click", function(){
+	$('#sortTitleASC').on("click", function(){
 		sortTitleAlphabet(true);
 	});
 		
-	$('#sortTitleAlt').on("click", function(){
+	$('#sortTitleDESC').on("click", function(){
 		sortTitleAlphabet(false);
 	});
 });
@@ -242,7 +225,7 @@ function addNewTableLine(numberOfStars) {
 	if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text()) {
 		numberOfStars = 0;
 	}
-
+	
 	$('#filmtable').append(addMovieToList({
 		rowID : newID,
 		movieTitle : $('#filmTitle').val(),
@@ -361,14 +344,8 @@ function buildDetailView(numberOfStars, movieTitle, movieSeen) {
 				actors : data.Actors
 			}));
 
-			$('#detailedView').show().animate({
-				right : "0px"
-			});
-			$('#home').animate({
-				left : "-100%"
-			}, function() {
-				$('#home').hide();
-			});
+			$('#detailedView').animate({right: "0px"});
+			$('#home').animate({left : "-100%"});
 		}
 	});
 }
@@ -505,12 +482,12 @@ function setModalSwitchButton(value) {
 }
 
 /* Filter */
-function filterGnG(gStatus) {
+function filterGnG(gStatus){
 	var aktTr = $('#tr-1');
-	while (aktTr.length != 0) {
-		if (aktTr.find('.tableMovieSeen').text() != gStatus) {
-			aktTr.hide();
-		} else {
+	while(aktTr.length != 0){
+		if(aktTr.find('.tableMovieSeen').text() != gStatus){
+			aktTr.hide();		
+		}else{
 			aktTr.show();
 		}
 		aktTr = aktTr.next();
