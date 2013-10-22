@@ -15,7 +15,7 @@ $(document).ready(function() {
 		evt.preventDefault();
 		return false;
 	});
-	
+
 	$('#loginButton').on('click', function() {
 		/* wenn der loginButton geklickt wurde, wurde das DropDown Menue noch nicht gerendert, daher wird ein Timeout gemacht,
 		 * dass den Fokus nach 100ms auf das Benutzername-Feld setzt. Nach 100ms ist damit zu rechnen, dass das DropDown Menue
