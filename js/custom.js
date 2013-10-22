@@ -19,7 +19,7 @@ $(document).ready(function() {
 		setTimeout('$("#usernameInput").focus()', 100);
 	});
 	
-	/* Setze Focus auf Film Titel Input, wenn Modal geäffnet wird */
+	/* Setze Focus auf Film Titel Input, wenn Modal geoeffnet wird */
 	$('#createFilmModal').on('focus', function() {
 		filmTitle.focus();
 	});
