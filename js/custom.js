@@ -10,6 +10,7 @@ var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %>
 sessionStorage.setItem("user", ""); // Initialisierung des Items 'User' im Sessionstorage
 
 $(document).ready(function() {
+	/*TODO Issue 34*/
 	$('#loginButton').on('click', function() {
 		/* TODO for IE and FF */
 		/* wenn der loginButton geklickt wurde, wurde das DropDown Menue noch nicht gerendert, daher wird ein Timeout gemacht,  
@@ -29,18 +30,18 @@ $(document).ready(function() {
 		filmTitleEdit.focus();
 	});
 
-	/*Speichere-Button auf Modal 'createFilmModal'*/
+	/*Speicher-Button von Modal 'createFilmModal'*/
 	$('#saveFilm').on('click', createMovie);
 
-	/* reagiere auf 'Enter' im FilmTitel und speichere neuen Film in Tabelle */
+	/* reagiere auf 'Enter' im FilmTitel und speichere neuen Film in Tabelle zu 'createFilmModal' */
 	$('#filmTitle').bind('keypress', createMovie);
 
-	/* Modal öffnen, um neuen Film hinzuzufügen */
+	/* Modal öffnen, um neuen Film hinzuzufügen 'createFilmModal'*/
 	$('#add').on('click', function() {
 		// setze Rating am Anfang immer auf leer
 		$('#createFilmModal').find('.stars').children('span').removeClass(ratingIconOn).addClass(ratingIconOff);
 
-		// setze GESEHEN / NICHT GESEHEN am Anfang auf NICH GESEHEN
+		// setze GESEHEN / NICHT GESEHEN am Anfang auf NICHT GESEHEN
 		if ($('#createFilmModal').find('.switch-wrapper').find('.on').text() === "GESEHEN") {
 			setModalSwitchButton.call($('#createFilmModal').find('.switch-wrapper'), 'NICHT GESEHEN');
 		}
@@ -53,10 +54,10 @@ $(document).ready(function() {
 	/*Aendere-Button auf Modal 'editFilmModal'*/
 	$('#changeMovie').on('click', changeMovieValues);
 
-	/* aendere bestehenden Film bei 'Enter' */
+	/* aendere bestehenden Film bei 'Enter' 'editFilmModal' */
 	$('#filmTitleEdit').bind('keypress', changeMovieValues);
 
-	/*Editierbutton in Filmeintrag*/
+	/*Aufbau Modal um den Film zu editieren*/
 	$('#list').on('click', '.edit', function() {
 		var title = $(this).parent().parent().find('.tableFilmTitle').text();
 		var movieSeen = $(this).parent().parent().find('.tableMovieSeen').text();
@@ -76,7 +77,7 @@ $(document).ready(function() {
 		$('#editFilmModal').modal('show');
 	});
 
-	/*L�sche-Button in Filmeintrag*/
+	/*Loesche-Button in Filmeintrag*/
 	$('#list').on('click', '.delete', function() {
 		$(this).popover();
 	});
@@ -106,13 +107,13 @@ $(document).ready(function() {
 	});
 
 	/*-----LOGIN--------*/
-	// TODO wofür ist das?
+	// TODO kommentieren
 	if (sessionStorage.getItem("user") != "") {
 		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
 	}
 
 	$('#submitLoginButton').on('click', function(event) {
-		// TODO aufräumen, vereinfachen
+		// TODO Issue 35
 		event.preventDefault();
 		var userName = $('#usernameInput').val();
 		var password = $('#passwordInput').val();
@@ -141,7 +142,6 @@ $(document).ready(function() {
 						sessionStorage.setItem("user", "");
 
 						isLoggedInOrNot();
-
 					});
 				});
 				$('#passwordInput').val("");
@@ -157,6 +157,7 @@ $(document).ready(function() {
 
 	/* Filter */
 	/* gesehen / nicht gesehen */
+	//  TODO Issue 13 ---------------------------------------------------------------------------------------------------------------------
 	$('#filterGesehen').on("click" , function(){
 		filterGnG("GESEHEN");
 	});
@@ -165,19 +166,10 @@ $(document).ready(function() {
 		filterGnG("NICHT GESEHEN");
 	});
 	
-	/* DELTE FILTER */
+	/* DELETE FILTER */
 	$('#filterButton').on("click" , function(){
 		$('tr[id*="tr-"]').show();
 	});
-	// TODO Wofür ist das gut?
-	// $('#logoutButton').on('click', function() {
-	// var parent = $('#logoutButton').parent();
-	// logout_ajax().done(function(value) {
-	// parent.empty();
-	// parent.append(value);
-	// sessionStorage.setItem("user", "");
-	// });
-	// });
 	
 	$('#sortTitleASC').on("click", function(){
 		sortTitleAlphabet(true);
@@ -186,6 +178,7 @@ $(document).ready(function() {
 	$('#sortTitleDESC').on("click", function(){
 		sortTitleAlphabet(false);
 	});
+	//---------------------------------------------------------------------------------------------------------------------------------------
 });
 
 /* unterscheiden zwischen Enter-Event und Speichern-Button-Event. Zusätzlich Anzahl selektierter Sterne fuer Rating herausfinden*/
@@ -206,7 +199,7 @@ function createMovie(event) {
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
 function addNewTableLine(numberOfStars) {
-	/*---------------------------------ID Ermitteln---------------------------------------------------------------------------------------------------------*/
+	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
 	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
 
@@ -221,7 +214,7 @@ function addNewTableLine(numberOfStars) {
 		newID = 'tr-' + tmpId[1];
 		//ID fuer die neue Zeile zusammensetzen
 	}
-	/*--------------------------------Tabelleneintrag hinzufuegen---------------------------------------------------------------------------------------------*/
+	/*Tabelleneintrag hinzufuegen*/
 	if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text()) {
 		numberOfStars = 0;
 	}
@@ -233,7 +226,7 @@ function addNewTableLine(numberOfStars) {
 		rating : setRating(numberOfStars)
 	}));
 
-	/*------------------------Initialisiere PopOver fuer Delete-Button--------------------------------------------------------------------------------*/
+	/*Initialisiere PopOver fuer Delete-Button*/
 	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
 	$('#' + newID).find('.delete').popover({
 		trigger : 'focus',
@@ -248,6 +241,7 @@ function addNewTableLine(numberOfStars) {
 	$('#createFilmModal').modal('hide');
 }
 
+// TODO Kommentar
 function changeMovieValues(event) {
 	switch(event.type) {
 		case ('click'):
@@ -263,6 +257,7 @@ function changeMovieValues(event) {
 	}
 }
 
+// TODO Kommentar
 function changeTableRowValues(numberOfStars) {
 	$('#filmtable').find('#' + selectedRowId).find('.tableFilmTitle').text($('#filmTitleEdit').val());
 	$('#filmtable').find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text());
@@ -284,31 +279,13 @@ function removeMovie(element) {
 	$(element).parent().parent().parent().parent().remove();
 }
 
-function login_ajax(n, p) {
-	return $.ajax({
-		type : "POST",
-		url : "ajax/login.php",
-		data : {
-			username : n,
-			password : p
-		},
-	});
-}
-
-function logout_ajax() {
-	return $.ajax({
-		type : "POST",
-		url : "ajax/logout.php",
-	});
-}
-
+//Togglet Edit-, Delete- und Hinzufuege -Buttons
 function isLoggedInOrNot() {
-	$('#add').fadeToggle('1000', function() {
-		$('#add').toggleClass('loggedOut loggedIn');
-	});
 	toggleClassOnAllElements('.edit');
 	toggleClassOnAllElements('.delete');
+	toggleClassOnAllElements('#add');
 }
+
 
 function toggleClassOnAllElements(element) {
 	$(element).each(function() {
@@ -350,6 +327,7 @@ function buildDetailView(numberOfStars, movieTitle, movieSeen) {
 	});
 }
 
+// TODO Issue 11
 /* Die Film Bewertung wird durch 'mouseover' über oder 'click' auf Sterne festgelegt. Damit das funtkioniert gibt es diese Methode */
 function fillTableStar(event) {
 	// klickt ein User auf die Bewertung, wird das Event bei 'mouseover' entfernt und die Bewertung lässt sich nur per 'click' öndern
@@ -413,6 +391,7 @@ function setListenerForSeenSwitch(modal) {
 	$(modal).find('.switch-button-background').on('click', animateSwitchButton);
 }
 
+// TODO Kommentar
 function animateSwitchButton() {
 	if ($(this).parent().find('.switch-button-button').is(':animated')) {
 		// wenn noch eine Animation läuft, dann soll nichts passieren, bis diese fertig ist
@@ -439,7 +418,7 @@ function animateSwitchButton() {
 	}
 }
 
-/* stellt ein, welches SwitchButton-Label aktiv = on bzw. inakiv = off ist */
+/* stellt ein, welches SwitchButton-Label aktiv = on oder inakiv = off ist */
 function setSwitchButtonLabelStyle(numberOfSelectedStars) {
 	var on = $(this).parent().find('.on');
 	var off = $(this).parent().find('.off');
@@ -481,7 +460,7 @@ function setModalSwitchButton(value) {
 	}
 }
 
-/* Filter */
+/*------------------------------ Filter --------------------------------*/
 function filterGnG(gStatus){
 	var aktTr = $('#tr-1');
 	while(aktTr.length != 0){
@@ -517,4 +496,23 @@ function sortTitleAlphabet(direction){
 	  
 	  prevRow = '#tr-' + segments[1];
 	};
+}
+
+//---------------------------Ajax-Methoden-------------------------------------------------------------
+function login_ajax(n, p) {
+	return $.ajax({
+		type : "POST",
+		url : "ajax/login.php",
+		data : {
+			username : n,
+			password : p
+		},
+	});
+}
+
+function logout_ajax() {
+	return $.ajax({
+		type : "POST",
+		url : "ajax/logout.php",
+	});
 }
