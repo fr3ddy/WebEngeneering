@@ -102,14 +102,14 @@ $(document).ready(function() {
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		$('#detailedView').animate({right: "-100%"}, function() {$('#detailedView').empty();});
-		$('#home').animate({left: "0px"});
+		$('#detailedView').animate({right: "-100%"}, function() {$('#detailedView').hide();});
+		$('#home').show().animate({left: "0px"});
 	});
 	$('#listNav').on('click' , function(event){
 		event.preventDefault();
 		event.stopPropagation();
-		$('#detailedView').animate({right: "-100%"}, function() {$('#detailedView').empty();});
-		$('#home').animate({left: "0px"});
+		$('#detailedView').animate({right: "-100%"}, function() {$('#detailedView').hide();});
+		$('#home').show().animate({left: "0px"});
 	});
 
 	/*-----LOGIN--------*/
@@ -327,8 +327,8 @@ function buildDetailView(numberOfStars, movieTitle, movieSeen) {
 				actors : data.Actors
 			}));
 
-			$('#detailedView').animate({right: "0px"});
-			$('#home').animate({left : "-100%"});
+			$('#detailedView').show().animate({right: "0px"});
+			$('#home').animate({left : "-100%"}, function() {$('#home').hide();});
 		}
 	});
 }
