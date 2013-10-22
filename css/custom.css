@@ -84,10 +84,6 @@ label {
 	text-transform: capitalize;
 }
 
-.tableMovieSeen {
-	text-transform: lowercase;
-}
-
 #closeDetailedView {
 	left: -20px;
 	font-size: inherit;
