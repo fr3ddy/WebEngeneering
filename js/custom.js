@@ -58,6 +58,19 @@ $(document).ready(function() {
 		evt.preventDefault();
 		return false;
 	});
+	
+		
+	//Initialisierung des Popovers
+	var popoverFilterContent = '<fieldset id="filterBox"><div class="form-group"><div class="input-group col-lg-10"><span class="input-group-addon"><span class="glyphicon glyphicon-film"></span></span><input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Film Titel"></div><div class="col-lg-2"><button type="button" id="closeDetailedView" class="close" aria-hidden="true" onclick="removeTitleFilter()"> ×</button></div></div>'+
+							'<div class="btn-group" data-toggle="buttons"><label class="btn btn-primary"><input type="radio" name="options" id="movieWatched">Gesehen</label><label class="btn btn-primary"><input type="radio" name="options" id="movieNotWatched">Nicht Gesehen</label></div><button type="button" id="closeDetailedView" class="close" aria-hidden="true" onclick="removeWatchFilter()"> ×</button>'+
+							'<button class="btn btn-primary form-control" id="submitFilter" onclick="filterTable()">Filtern</button></fieldset>'; 
+	$('#filterButton').popover({
+		trigger : 'click',
+		title : 'Filter',
+		content : popoverFilterContent,
+		html : 'true',
+		placement: 'bottom'		
+	});
 
 	/*TODO Issue 34*/
 	$('#loginButton').on('click', function() {
@@ -222,18 +235,6 @@ $(document).ready(function() {
 	});
 
 	/* Filter */
-	
-	//Initialisierung des Popovers
-	var popoverFilterContent = '<fieldset id="filterBox"><div class="form-group"><div class="input-group col-lg-10"><span class="input-group-addon"><span class="glyphicon glyphicon-film"></span></span><input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Film Titel"></div><div class="col-lg-2"><button type="button" id="closeDetailedView" class="close" aria-hidden="true" onclick="removeTitleFilter()"> ×</button></div></div>'+
-							'<div class="btn-group" data-toggle="buttons"><label class="btn btn-primary"><input type="radio" name="options" id="movieWatched">Gesehen</label><label class="btn btn-primary"><input type="radio" name="options" id="movieNotWatched">Nicht Gesehen</label></div><button type="button" id="closeDetailedView" class="close" aria-hidden="true" onclick="removeWatchFilter()"> ×</button>'+
-							'<button class="btn btn-primary form-control" id="submitFilter" onclick="filterTable()">Filtern</button></fieldset>'; 
-	$('#filterButton').popover({
-		trigger : 'click',
-		title : 'Filter',
-		content : popoverFilterContent,
-		html : 'true',
-		placement: 'bottom'		
-	});
 	
 	$('#filterButton').on("click", function() {
 		$(this).popover();
