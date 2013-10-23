@@ -258,6 +258,19 @@ $(document).ready(function() {
 
 	$('#filterButton').on("click", function() {
 		$(this).popover();
+		$('#filterBox').find('#movieTitle').val(filter.movieTitle);
+		
+		if(filter.movieSeen == 'gesehen'){
+			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary active');
+			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');			
+			
+		}else if(filter.movieSeen == 'nicht gesehen'){
+			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary');
+			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary active');						
+		}else if(filter.movieSeen == null){
+			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary');
+			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');			
+		}
 	});
 
 	$('#sortTitleASC').on("click", function() {
@@ -301,15 +314,6 @@ function createMovie(event) {
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
 function addNewTableLine(numberOfStars) {
-	filterSet = new Array();
-	filterSet = filter;
-	
-	if(filter[0] != null|| filter[1] != null){
-		removeAllFilters();	
-	}
-	if(filter[2] != null){
-		removeTitleSort();		
-	}
 	
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
@@ -357,11 +361,6 @@ function addNewTableLine(numberOfStars) {
 		var clickedTr = $(this).parent().parent();
 		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
 	});
-	
-	filter = filterSet;
-	if(filter[0] != null || filter[1] != null || filter[2] != null){
-		filterTable();
-	}
 }
 
 /* Das 'editFilmModul' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */
