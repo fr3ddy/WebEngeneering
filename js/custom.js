@@ -5,10 +5,6 @@ var selectedRowId;
  * Sie darf aber nur uebernommen werden, wenn der User die Bewertung durch 'click' gesetzt hat */
 var mouseoverForRatingOn = true;
 
-/* Wird in der bearbeiten Ansicht der Status von nicht gesehen auf gesehen geaendert, dann muss eine Bewertung mit min. 1 Stern
- * erfolgen. Um das zu gewaehrleisten wird dieses Flag genutzt. */
-var rateWithOneStar = false;
-
 var ratingIconOn = 'glyphicon-star';
 var ratingIconOff = 'glyphicon-star-empty';
 var switchButtonSeen = "-11px";
@@ -252,7 +248,7 @@ function addNewTableLine(numberOfStars) {
 		numberOfStars = 0;
 	} else if (mouseoverForRatingOn) {
 		/* 'mouseover' Event ist noch an Bewertung gebunden, daher darf eine Bewertung nicht erfolgen.
-		* Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
+		 * Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
 		numberOfStars = 1;
 	}
 
@@ -298,21 +294,18 @@ function changeTableRowValues(numberOfStars) {
 
 	// wurde ein Film als 'GESEHEN' markiert, erhält er die Anzahl an Sternen, mit denen er bewertet wurde. Ansonsten sind alle Sterne leer
 	if ("GESEHEN" === $(this).find('.on').text()) {
-		if (mouseoverForRatingOn && !rateWithOneStar) {
+		if (mouseoverForRatingOn) {
 			/* an die Bewertung ist noch ein 'mouseover' Event gebunden, daher darf die Bewertung nicht geaendert werden und die bestehende Bewertung bleibt bestehen.
-			 * Ist aber mindestens 1 Stern zu setzen, dann darf das Programm nicht hier rein springen und geht weiter. Ansonsten ist hier nichts zu tun.
+			 * Ist die bestehende Bewertung aber 0, dann muss min. 1 Stern gesetzt werden.
 			 */
-		} else if (rateWithOneStar) {
-			$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(1));
-		}else {
+			var numberOfStarsInTable = $('#filmtable').find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
+			$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStarsInTable >= 1 ? numberOfStarsInTable : 1));
+		} else {
 			$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStars));
 		}
 	} else {
 		$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(0));
-	} 
-	
-	// wurde einmal dieses Flag auf true gesetzt, dann muss es vor der nachsten Benutzung wieder zurueckgestellt werden
-	rateWithOneStar = false;
+	}
 
 	$('#editFilmModal').modal('hide');
 }
@@ -413,8 +406,6 @@ function animateSwitchButton() {
 
 			// blende Rating ein, da der Nutzer den Film schon gesehen hat
 			$(this).parent().parent().find('.rating').slideDown();
-			// setzte Flag, damit Bewertung mit min. 1 Sterne erfolgt
-			rateWithOneStar = true;
 		}
 	}
 }
@@ -454,6 +445,9 @@ function setModalSwitchButton(value) {
 /* bestimmt, ob Rating sichtbar oder unsichtbar ist, wenn Modal angezeigt wird. Rating wird nur angezeigt, wenn SwitchButton auf 'GESEHEN' steht */
 function setRatingVisibility(numberOfSelectedStars) {
 	$(this).find('.stars').remove('div');
+
+	// zu beginn ist immer mindestens 1 Stern ausgefuellt
+	numberOfSelectedStars = numberOfSelectedStars >= 1 ? numberOfSelectedStars : 1;
 
 	/* Die Bewertung fuer die Filme. Dabei wird auf 'mouseover' Events die Sterne gefuellt. Bei 'click' Events die ausgewaehlten Sterne gespeichet
 	 * und bei 'mouseleave' keine Bewertung gespeichert, falls nicht voher ein 'click' Event ausgeloest wurde */
@@ -546,7 +540,9 @@ function setRating(selectedStars) {
 				title : tooltip
 			});
 		} else {
-			result += starEmpty({title : tooltip});
+			result += starEmpty({
+				title : tooltip
+			});
 		}
 	}
 
