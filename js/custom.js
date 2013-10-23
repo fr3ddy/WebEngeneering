@@ -243,8 +243,8 @@ $(document).ready(function() {
 
 	$('#sortTitleASC').on("click", function() {
 		if (filter[2] != 'true') {
-			sortTitleAlphabet(true);
 			filter[2] = 'true';			
+			sortTitleAlphabet(filter[2]);
 		}else{
 			removeTitleSort();
 			filter[2] = null;
@@ -253,8 +253,8 @@ $(document).ready(function() {
 
 	$('#sortTitleDESC').on("click", function() {
 		if (filter[2] != 'false') {
-			sortTitleAlphabet(false);
 			filter[2] = 'false';
+			sortTitleAlphabet(filter[2]);
 		}else{
 			removeTitleSort();
 			filter[2] = null;
@@ -281,7 +281,12 @@ function createMovie(event) {
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
 function addNewTableLine(numberOfStars) {
-	
+	if(filter[0] != null|| filter[1] != null){
+		removeAllFilters();	
+	}
+	if(filter[2] != null){
+		removeTitleSort();		
+	}
 	
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
@@ -329,6 +334,10 @@ function addNewTableLine(numberOfStars) {
 		var clickedTr = $(this).parent().parent();
 		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
 	});
+	
+	if(filter[0] != null || filter[1] != null || filter[2] != null){
+		filterTable();
+	}
 }
 
 /* Das 'editFilmModul' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */
@@ -641,6 +650,7 @@ function filterTable(){
 	
 	filterMovieTitle(filter[0]);
 	filterWatchStatus(filter[1]);
+	sortTitleAlphabet(filter[2]);
 }
 
 function removeWatchFilter(){
@@ -732,7 +742,7 @@ function sortTitleAlphabet(direction) {
 
 	titles.sort();
 
-	if (direction == false) {
+	if (direction == 'false') {
 		titles.reverse();
 	}
 
