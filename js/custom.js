@@ -537,7 +537,8 @@ function setRating(selectedStars, forTableOrDetailedView) {
 		}
 
 		/* setze nur einen Tooltip auf das die Sterne umgebende DIV. In der Tabelle und Detailansicht kann die Bewertung nicht geaendert werden,
-		 * daher sind keine Tooltips auf die einzelnen Sterne, sondern nur auf die Gesamtbewertung, also das DIV zu setzen */
+		 * daher sind keine Tooltips auf die einzelnen Sterne, sondern nur auf die Gesamtbewertung, also das DIV zu setzen.
+		 * Ist keine Bewertung gesetzt, dann setze "nicht bewertet" als Tooltip */
 		if (forTableOrDetailedView) {
 			if (i <= selectedStars) {
 				tableTooltip = tooltip;
