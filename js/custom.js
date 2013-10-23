@@ -170,6 +170,7 @@ $(document).ready(function() {
 						sessionStorage.setItem("user", "");
 
 						isLoggedInOrNot();
+						setTimeout('$("#usernameInput").focus()', 100);
 					});
 				});
 				$('#passwordInput').val("");
