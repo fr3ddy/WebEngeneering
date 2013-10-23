@@ -314,7 +314,17 @@ function createMovie(event) {
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
 function addNewTableLine(numberOfStars) {
+	var filterSetting = {movieTitle: filter.movieTitle, movieSeen: filter.movieSeen, movieTitleSorted: filter.movieTitleSorted};
 	
+	if(filter.movieTitleSorted != null){
+		removeTitleSort();
+	}
+	if(filter.movieSeen != null){
+		removeWatchFilter();
+	}
+	if(filter.movieTitle != null){
+		removeTitleFilter();
+	}
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
 	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
@@ -361,6 +371,20 @@ function addNewTableLine(numberOfStars) {
 		var clickedTr = $(this).parent().parent();
 		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
 	});
+	
+	filter.movieSeen = filterSetting.movieSeen;
+	filter.movieTitle = filterSetting.movieTitle;
+	filter.movieTitleSorted = filterSetting.movieTitleSorted;
+	
+	if(filter.movieTitleSorted != null){
+		sortTitleAlphabet(filter.movieTitleSorted);
+	}
+	if(filter.movieSeen != null){
+		filterWatchStatus(filter.movieSeen);
+	}
+	if(filter.movieTitle != null){
+		filterMovieTitle(filter.movieTitle);
+	}
 }
 
 /* Das 'editFilmModul' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */
@@ -691,7 +715,6 @@ function removeTitleFilter() {
 function removeAllFilters(){
 	removeWatchFilter();
 	removeTitleFilter();
-	removeTitleSort();
 }
 
 function filterMovieTitle(movieTitle){
