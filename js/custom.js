@@ -9,7 +9,7 @@ var ratingIconOn = 'glyphicon-star';
 var ratingIconOff = 'glyphicon-star-empty';
 var switchButtonSeen = "-11px";
 var switchButtonUnseen = "15px";
-var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td><button class="btn btn-sm edit loggedIn"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete loggedIn" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
+var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="lupeTable"><span class="glyphicon glyphicon-search detailLupe" /></td><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td><button class="btn btn-sm edit loggedIn"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete loggedIn" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%= rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 
 sessionStorage.setItem("user", "");
@@ -98,15 +98,6 @@ $(document).ready(function() {
 	});
 
 	/*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
-	$('#list').on('dblclick', 'tr', function() {
-		// Damit keine Detailansicht bei Klick auf den Header erscheint
-		if ($(this).attr('id') == 'tr-0') {
-			return false;
-		}
-
-		buildDetailView($(this).find('.stars').find('.' + ratingIconOn).length, $(this).find('.tableFilmTitle').text(), $(this).find('.tableMovieSeen').text().toLowerCase());
-
-	});
 
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
 		event.preventDefault();
@@ -149,15 +140,19 @@ $(document).ready(function() {
 		var parent = $('#loginButton').parent();
 		login_ajax(userName, password).done(function(value) {
 			if (value == "") {
+				//Es wurden keine Logindaten eingeben
 				$('#passwordInput').parent().addClass("has-error");
 				$('#usernameInput').parent().addClass("has-error");
-			} else if (value == "muser") {
-				$('#usernameInput').parent().removeClass("has-error");
+			} else if (value == "wrongUser") {
+				//Es wurde ein falscher Benutzername eingegeben
+				$('#passwordInput').parent().removeClass("has-error");
 				$('#usernameInput').parent().addClass("has-error");
-			} else if (value == "mpw") {
+			} else if (value == "wrongPassword") {
+				//Es wurde ein falsches Passwort eingegeben
 				$('#passwordInput').parent().addClass("has-error");
 				$('#usernameInput').parent().removeClass("has-error");
 			} else {
+				//Alles war gut!
 				$('#usernameInput').parent().removeClass("has-error");
 				$('#passwordInput').parent().removeClass("has-error");
 				parent.empty();
@@ -227,7 +222,7 @@ function createMovie(event) {
 }
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
-function addNewTableLine(numberOfStars) {
+function addNewTableLine(numberOfStars){
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
 	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
@@ -269,6 +264,11 @@ function addNewTableLine(numberOfStars) {
 	});
 
 	$('#createFilmModal').modal('hide');
+	/* Action Listener für Detail View Lupe */
+	$('.detailLupe').click('click' , function() {
+		var clickedTr = $(this).parent().parent();
+		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
+	});
 }
 
 /* Das 'editFilmModul' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */
