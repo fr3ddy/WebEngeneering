@@ -541,6 +541,8 @@ function setRating(selectedStars, forTableOrDetailedView) {
 		if (forTableOrDetailedView) {
 			if (i <= selectedStars) {
 				tableTooltip = tooltip;
+			} else if (selectedStars === 0) {
+				tableTooltip = "nicht bewertet";
 			}
 			tooltip = "";
 		}
