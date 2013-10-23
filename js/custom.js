@@ -259,11 +259,23 @@ $(document).ready(function() {
 	});
 
 	$('#sortTitleASC').on("click", function() {
-		sortTitleAlphabet(true);
+		if (filter[2] != 'true') {
+			sortTitleAlphabet(true);
+			filter[2] = 'true';			
+		}else{
+			removeTitleSort();
+			filter[2] = null;
+		}
 	});
 
 	$('#sortTitleDESC').on("click", function() {
-		sortTitleAlphabet(false);
+		if (filter[2] != 'false') {
+			sortTitleAlphabet(false);
+			filter[2] = 'false';
+		}else{
+			removeTitleSort();
+			filter[2] = null;
+		}
 	});
 	//---------------------------------------------------------------------------------------------------------------------------------------
 });
@@ -286,6 +298,8 @@ function createMovie(event) {
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
 function addNewTableLine(numberOfStars) {
+	
+	
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
 	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
@@ -659,8 +673,14 @@ function removeTitleFilter() {
 	filterTable();
 }
 
-function filterMovieTitle(movieTitle) {
-	if (movieTitle != null) {
+function removeAllFilters(){
+	removeWatchFilter();
+	removeTitleFilter();
+	removeTitleSort();
+}
+
+function filterMovieTitle(movieTitle){
+	if(movieTitle != null){
 		var actRow = $('#list tbody tr:first-child');
 		while (actRow.length != 0) {
 			if (actRow.find('.tableFilmTitle').text().toLowerCase().search(movieTitle.toLowerCase()) == -1) {
@@ -681,6 +701,39 @@ function filterWatchStatus(gStatus) {
 			actRow = actRow.next();
 		}
 	}
+}
+
+function removeTitleSort(){
+	var actRow = $('#list tbody tr:first-child');
+	var titles = new Array();
+	var counter = 0;
+	
+	while (actRow.length != 0) {
+		titles[counter] = actRow.attr('id') + "-" + actRow.find('.tableFilmTitle').text();
+		actRow = actRow.next();
+		counter++;
+	}
+
+	titles.sort();
+
+	//Aufbau der sortierten Tabelle
+	//erste Zeile in den Tabellen-Bauch hängen
+	var segments = titles[0].split('-');
+	actRow = '#tr-' + segments[1];
+		
+	$(actRow).appendTo($('#list tbody'));
+	var prevRow = actRow;
+	
+	//nun die restlichen Zeilen anhängen
+	for (var i = 1; i < titles.length; i++) {
+		var segments = titles[i].split('-');
+		actRow = '#tr-' + segments[1];
+		
+		$(actRow).insertAfter($(prevRow));
+
+		prevRow = actRow;
+	};
+	
 }
 
 function sortTitleAlphabet(direction) {
