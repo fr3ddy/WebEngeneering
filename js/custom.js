@@ -102,12 +102,12 @@ $(document).ready(function() {
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		$('#detailedView').animate({
+		$('#detailedView').stop().animate({
 			right : "-100%"
 		}, function() {
 			$('#detailedView').hide();
 		});
-		$('#home').show().animate({
+		$('#home').stop().show().animate({
 			left : "0px"
 		});
 	});
@@ -115,12 +115,12 @@ $(document).ready(function() {
 	$('#listNav').on('click', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		$('#detailedView').animate({
+		$('#detailedView').stop().animate({
 			right : "-100%"
 		}, function() {
 			$('#detailedView').hide();
 		});
-		$('#home').show().animate({
+		$('#home').stop().show().animate({
 			left : "0px"
 		});
 	});
@@ -222,7 +222,7 @@ function createMovie(event) {
 }
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
-function addNewTableLine(numberOfStars){
+function addNewTableLine(numberOfStars) {
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
 	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
@@ -265,7 +265,7 @@ function addNewTableLine(numberOfStars){
 
 	$('#createFilmModal').modal('hide');
 	/* Action Listener für Detail View Lupe */
-	$('.detailMagnifier').click('click' , function() {
+	$('.detailMagnifier').click('click', function() {
 		var clickedTr = $(this).parent().parent();
 		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
 	});
@@ -358,10 +358,10 @@ function buildDetailView(numberOfStars, movieTitle, movieSeen) {
 				actors : data.Actors
 			}));
 
-			$('#detailedView').show().animate({
+			$('#detailedView').stop().show().animate({
 				right : "0px"
 			});
-			$('#home').animate({
+			$('#home').stop().animate({
 				left : "-100%"
 			}, function() {
 				$('#home').hide();

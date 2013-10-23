@@ -23,8 +23,8 @@ table {
 	cursor: default;
 }
 
-.navbar-static-top {
-	margin-bottom: 19px;
+.detailMagnifier {
+	cursor: pointer;
 }
 
 .form-control {
@@ -40,13 +40,20 @@ table {
 }
 
 .magnifierTable{
-	cursor: pointer;
 	width: 30px;
+}
+
+.navbar-static-top {
+	margin-bottom: 19px;
 }
 
 .rating .stars {
 	display: inline-block;
 	cursor: pointer;
+}
+
+.stars {
+	display: inline-block;
 }
 
 .switch-wrapper {
@@ -110,6 +117,7 @@ table {
 	position: absolute;
 	right: -100%;
 	background-color: #fff;
+	cursor: default;
 	/*z-index: 1060;*/
 }
 
