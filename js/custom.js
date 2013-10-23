@@ -10,6 +10,8 @@ var ratingIconOff = 'glyphicon-star-empty';
 var switchButtonSeen = "-11px";
 var switchButtonUnseen = "15px";
 
+var filter = new Array();
+
 //@formatter:off
 var addMovieToList = _.template('<tr id="<%- rowID %>">'
 									+'<td class="magnifierTable"><span class="glyphicon glyphicon-search detailMagnifier"/></td>'
@@ -220,20 +222,23 @@ $(document).ready(function() {
 	});
 
 	/* Filter */
-	/* gesehen / nicht gesehen */
-	//  TODO Issue 13 ---------------------------------------------------------------------------------------------------------------------
-	$('#filterGesehen').on("click", function() {
-		filterGnG("GESEHEN");
+	
+	//Initialisierung des Popovers
+	var popoverFilterContent = '<fieldset id="filterBox"><div class="form-group"><div class="input-group col-lg-10"><span class="input-group-addon"><span class="glyphicon glyphicon-film"></span></span><input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Film Titel"></div><div class="col-lg-2"><button type="button" id="closeDetailedView" class="close" aria-hidden="true" onclick="removeTitleFilter()"> ×</button></div></div>'+
+							'<div class="btn-group" data-toggle="buttons"><label class="btn btn-primary"><input type="radio" name="options" id="movieWatched">Gesehen</label><label class="btn btn-primary"><input type="radio" name="options" id="movieNotWatched">Nicht Gesehen</label></div><button type="button" id="closeDetailedView" class="close" aria-hidden="true" onclick="removeWatchFilter()"> ×</button>'+
+							'<button class="btn btn-primary form-control" id="submitFilter" onclick="filterTable()">Filtern</button></fieldset>'; 
+	$('#filterButton').popover({
+		trigger : 'click',
+		title : 'Filter',
+		content : popoverFilterContent,
+		html : 'true',
+		placement: 'bottom'		
 	});
-
-	$('#filterNichtGesehen').on("click", function() {
-		filterGnG("NICHT GESEHEN");
-	});
-
-	/* DELETE FILTER */
+	
 	$('#filterButton').on("click", function() {
-		$('tr[id*="tr-"]').show();
+		$(this).popover();
 	});
+
 
 	$('#sortTitleASC').on("click", function() {
 		sortTitleAlphabet(true);
@@ -605,25 +610,69 @@ function setRating(selectedStars, forTableOrDetailedView) {
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/
 
 /*------------------------------ Filter --------------------------------*/
-function filterGnG(gStatus) {
-	var aktTr = $('#tr-1');
-	while (aktTr.length != 0) {
-		if (aktTr.find('.tableMovieSeen').text() != gStatus) {
-			aktTr.hide();
-		} else {
-			aktTr.show();
-		}
-		aktTr = aktTr.next();
+
+function filterTable(){
+	$('tr[id*="tr-"]').show();
+	
+	filter[0] = $('#filterBox').find('#movieTitle').val();
+	
+	if($('#movieWatched').parent().attr('class') == "btn btn-primary active"){
+		filter[1] = "gesehen";
+	}else if($('#movieNotWatched').parent().attr('class') == "btn btn-primary active"){
+		filter[1] = "nicht gesehen";
+	}else{
+		filter[1] = null;
+	}
+	
+	filterMovieTitle(filter[0]);
+	filterWatchStatus(filter[1]);
+}
+
+function removeWatchFilter(){
+	$('#movieWatched').parent().attr('class', 'btn btn-primary');
+	$('#movieNotWatched').parent().attr('class', 'btn btn-primary');
+	
+	filterTable();
+}
+
+function removeTitleFilter(){
+	$('#filterBox').find('#movieTitle').val(null);
+
+	filterTable();
+}
+
+function filterMovieTitle(movieTitle){
+	if(movieTitle != null){
+		var actRow = $('#list tbody tr:first-child');
+		while (actRow.length != 0) {		
+			if (actRow.find('.tableFilmTitle').text().toLowerCase().search(movieTitle.toLowerCase()) == -1) {
+				actRow.hide();
+			}
+			actRow = actRow.next();
+		}		
+	}
+}
+
+function filterWatchStatus(gStatus) {
+	if(gStatus != null){
+		var actRow = $('#list tbody tr:first-child');
+		while (actRow.length != 0) {
+			if (actRow.find('.tableMovieSeen').text() != gStatus) {
+				actRow.hide();
+			} 
+			actRow = actRow.next();
+		}	
 	}
 }
 
 function sortTitleAlphabet(direction) {
-	var aktTr = $('#tr-0').next();
+	var actRow = $('#list tbody tr:first-child');
 	var titles = new Array();
 	var counter = 0;
-	while (aktTr.length != 0) {
-		titles[counter] = aktTr.find('.tableFilmTitle').text() + "-" + aktTr.attr('id');
-		aktTr = aktTr.next();
+	
+	while (actRow.length != 0) {
+		titles[counter] = actRow.find('.tableFilmTitle').text() + "-" + actRow.attr('id');
+		actRow = actRow.next();
 		counter++;
 	}
 
@@ -633,14 +682,25 @@ function sortTitleAlphabet(direction) {
 		titles.reverse();
 	}
 
-	var prevRow = "#tr-0";
-	for (var i = 0; i < titles.length; i++) {
+	//Aufbau der sortierten Tabelle
+	//erste Zeile in den Tabellen-Bauch hängen
+	var segments = titles[0].split('-tr-');
+	actRow = '#tr-' + segments[1];
+		
+	$(actRow).appendTo($('#list tbody'));
+	var prevRow = actRow;
+	
+	//nun die restlichen Zeilen anhängen
+	for (var i = 1; i < titles.length; i++) {
 		var segments = titles[i].split('-tr-');
-		$('#tr-' + segments[1]).insertAfter($(prevRow));
+		actRow = '#tr-' + segments[1];
+		
+		$(actRow).insertAfter($(prevRow));
 
-		prevRow = '#tr-' + segments[1];
+		prevRow = actRow;
 	};
 }
+
 
 //---------------------------Ajax-Methoden-------------------------------------------------------------
 function login_ajax(n, p) {
