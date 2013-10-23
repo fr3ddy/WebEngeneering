@@ -19,6 +19,10 @@ label {
 	width: 8em;
 }
 
+table {
+	cursor: default;
+}
+
 .navbar-static-top {
 	margin-bottom: 19px;
 }
@@ -40,8 +44,9 @@ label {
 	width: 30px;
 }
 
-.stars {
-	display: inline-block
+.rating .stars {
+	display: inline-block;
+	cursor: pointer;
 }
 
 .switch-wrapper {
