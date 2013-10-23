@@ -10,7 +10,8 @@ var ratingIconOff = 'glyphicon-star-empty';
 var switchButtonSeen = "-11px";
 var switchButtonUnseen = "15px";
 
-var filter = new Array();
+//var filter = new Array();
+var filter = {movieTitle: null, movieSeen: null, movieTitleSorted: null};
 
 //@formatter:off
 var addMovieToList = _.template('<tr id="<%- rowID %>">'
@@ -59,6 +60,7 @@ $(document).ready(function() {
 		return false;
 	});
 
+
 	//@formatter:off	
 	//Initialisierung des Popovers
 	var popoverFilterContent = '<fieldset id="filterBox">'
@@ -70,14 +72,14 @@ $(document).ready(function() {
 											+'<input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Film Titel">'
 										+'</div>'
 										+'<div class="col-lg-2">'
-											+'<button type="button" id="closeDetailedView" class="close" aria-hidden="true" onclick="removeTitleFilter()"> ×</button>'
+											+'<button type="button" class="close" aria-hidden="true" onclick="removeTitleFilter()"> ×</button>'
 										+'</div>'
 									+'</div>'
 									+'<div class="btn-group" data-toggle="buttons">'
 										+'<label class="btn btn-primary"><input type="radio" name="options" id="movieWatched">Gesehen</label>'
 										+'<label class="btn btn-primary"><input type="radio" name="options" id="movieNotWatched">Nicht Gesehen</label>'
 									+'</div>'
-									+'<button type="button" id="closeDetailedView" class="close" aria-hidden="true" onclick="removeWatchFilter()"> ×</button>'
+									+'<button type="button" class="close" aria-hidden="true" onclick="removeWatchFilter()"> ×</button>'
 									+'<button class="btn btn-primary form-control" id="submitFilter" onclick="filterTable()">Filtern</button>'
 								+'</fieldset>'; 
 	//@formatter:on
@@ -259,22 +261,22 @@ $(document).ready(function() {
 	});
 
 	$('#sortTitleASC').on("click", function() {
-		if (filter[2] != 'true') {
+		if (filter.movieTitleSorted != 'true') {
 			sortTitleAlphabet(true);
-			filter[2] = 'true';			
+			filter.movieTitleSorted = 'true';			
 		}else{
 			removeTitleSort();
-			filter[2] = null;
+			filter.movieTitleSorted = null;
 		}
 	});
 
 	$('#sortTitleDESC').on("click", function() {
-		if (filter[2] != 'false') {
+		if (filter.movieTitleSorted != 'false') {
 			sortTitleAlphabet(false);
-			filter[2] = 'false';
+			filter.movieTitleSorted = 'false';
 		}else{
 			removeTitleSort();
-			filter[2] = null;
+			filter.movieTitleSorted = null;
 		}
 	});
 	//---------------------------------------------------------------------------------------------------------------------------------------
@@ -646,18 +648,18 @@ function setRating(selectedStars, forTableOrDetailedView) {
 function filterTable() {
 	$('tr[id*="tr-"]').show();
 
-	filter[0] = $('#filterBox').find('#movieTitle').val();
+	filter.movieTitle = $('#filterBox').find('#movieTitle').val();
 
 	if ($('#movieWatched').parent().attr('class') == "btn btn-primary active") {
-		filter[1] = "gesehen";
+		filter.movieSeen = "gesehen";
 	} else if ($('#movieNotWatched').parent().attr('class') == "btn btn-primary active") {
-		filter[1] = "nicht gesehen";
+		filter.movieSeen = "nicht gesehen";
 	} else {
-		filter[1] = null;
+		filter.movieSeen = null;
 	}
 
-	filterMovieTitle(filter[0]);
-	filterWatchStatus(filter[1]);
+	filterMovieTitle(filter.movieTitle);
+	filterWatchStatus(filter.movieSeen);
 }
 
 function removeWatchFilter() {
