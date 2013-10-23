@@ -60,7 +60,7 @@ $(document).ready(function() {
 	});
 	
 		
-	//Initialisierung des Popovers
+	//Initialisierung des Popovers für den Filter
 	var popoverFilterContent = '<fieldset id="filterBox"><div class="form-group"><div class="input-group col-lg-10"><span class="input-group-addon"><span class="glyphicon glyphicon-film"></span></span><input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Film Titel"></div><div class="col-lg-2"><button type="button" id="closeDetailedView" class="close" aria-hidden="true" onclick="removeTitleFilter()"> ×</button></div></div>'+
 							'<div class="btn-group" data-toggle="buttons"><label class="btn btn-primary"><input type="radio" name="options" id="movieWatched">Gesehen</label><label class="btn btn-primary"><input type="radio" name="options" id="movieNotWatched">Nicht Gesehen</label></div><button type="button" id="closeDetailedView" class="close" aria-hidden="true" onclick="removeWatchFilter()"> ×</button>'+
 							'<button class="btn btn-primary form-control" id="submitFilter" onclick="filterTable()">Filtern</button></fieldset>'; 
@@ -243,10 +243,12 @@ $(document).ready(function() {
 
 	$('#sortTitleASC').on("click", function() {
 		sortTitleAlphabet(true);
+		filter[2] = 'true';
 	});
 
 	$('#sortTitleDESC').on("click", function() {
 		sortTitleAlphabet(false);
+		filter[2] = 'false';
 	});
 	//---------------------------------------------------------------------------------------------------------------------------------------
 });
@@ -269,6 +271,8 @@ function createMovie(event) {
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
 function addNewTableLine(numberOfStars) {
+	
+	
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
 	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
@@ -642,6 +646,12 @@ function removeTitleFilter(){
 	filterTable();
 }
 
+function removeAllFilters(){
+	removeWatchFilter();
+	removeTitleFilter();
+	removeTitleSort();
+}
+
 function filterMovieTitle(movieTitle){
 	if(movieTitle != null){
 		var actRow = $('#list tbody tr:first-child');
@@ -664,6 +674,39 @@ function filterWatchStatus(gStatus) {
 			actRow = actRow.next();
 		}	
 	}
+}
+
+function removeTitleSort(){
+	var actRow = $('#list tbody tr:first-child');
+	var titles = new Array();
+	var counter = 0;
+	
+	while (actRow.length != 0) {
+		titles[counter] = actRow.attr('id') + "-" + actRow.find('.tableFilmTitle').text();
+		actRow = actRow.next();
+		counter++;
+	}
+
+	titles.sort();
+
+	//Aufbau der sortierten Tabelle
+	//erste Zeile in den Tabellen-Bauch hängen
+	var segments = titles[0].split('-');
+	actRow = '#tr-' + segments[1];
+		
+	$(actRow).appendTo($('#list tbody'));
+	var prevRow = actRow;
+	
+	//nun die restlichen Zeilen anhängen
+	for (var i = 1; i < titles.length; i++) {
+		var segments = titles[i].split('-');
+		actRow = '#tr-' + segments[1];
+		
+		$(actRow).insertAfter($(prevRow));
+
+		prevRow = actRow;
+	};
+	
 }
 
 function sortTitleAlphabet(direction) {
