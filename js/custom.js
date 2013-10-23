@@ -144,15 +144,19 @@ $(document).ready(function() {
 		var parent = $('#loginButton').parent();
 		login_ajax(userName, password).done(function(value) {
 			if (value == "") {
+				//Es wurden keine Logindaten eingeben
 				$('#passwordInput').parent().addClass("has-error");
 				$('#usernameInput').parent().addClass("has-error");
-			} else if (value == "muser") {
-				$('#usernameInput').parent().removeClass("has-error");
+			} else if (value == "wrongUser") {
+				//Es wurde ein falscher Benutzername eingegeben
+				$('#passwordInput').parent().removeClass("has-error");
 				$('#usernameInput').parent().addClass("has-error");
-			} else if (value == "mpw") {
+			} else if (value == "wrongPassword") {
+				//Es wurde ein falsches Passwort eingegeben
 				$('#passwordInput').parent().addClass("has-error");
 				$('#usernameInput').parent().removeClass("has-error");
 			} else {
+				//Alles war gut!
 				$('#usernameInput').parent().removeClass("has-error");
 				$('#passwordInput').parent().removeClass("has-error");
 				parent.empty();

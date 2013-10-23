@@ -12,8 +12,8 @@
 	}elseif(($username == "" || $username != $correctUser) && ($password == "" || $password != $correctPassword)){
 		echo "";	
 	}elseif($username == "" || $username != $correctUser){
-		echo "muser";
+		echo "wrongUser";
 	}elseif($password == "" || $password != $correctPassword){
-		echo "mpw";
+		echo "wrongPassword";
 	}
 ?>
