@@ -19,8 +19,12 @@ label {
 	width: 8em;
 }
 
-.navbar-static-top {
-	margin-bottom: 19px;
+table {
+	cursor: default;
+}
+
+.detailMagnifier {
+	cursor: pointer;
 }
 
 .form-control {
@@ -35,8 +39,25 @@ label {
 	display: none;
 }
 
+.magnifierTable{
+	width: 30px;
+}
+
+.navbar-static-top {
+	margin-bottom: 19px;
+}
+
+.rating .stars {
+	color: gold;
+	vertical-align: middle;
+	display: inline-block;
+	cursor: pointer;
+}
+
 .stars {
-	display: inline-block
+	color: gold;
+	font-size: 140%;
+	display: inline-block;
 }
 
 .switch-wrapper {
@@ -100,6 +121,7 @@ label {
 	position: absolute;
 	right: -100%;
 	background-color: #fff;
+	cursor: default;
 	/*z-index: 1060;*/
 }
 
@@ -132,8 +154,4 @@ label {
 
 #loginDropdown{
 	width: 250px;
-}
-
-.lupeTable{
-	width: 30px;
 }

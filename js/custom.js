@@ -5,15 +5,11 @@ var selectedRowId;
  * Sie darf aber nur uebernommen werden, wenn der User die Bewertung durch 'click' gesetzt hat */
 var mouseoverForRatingOn = true;
 
-/* Wird in der bearbeiten Ansicht der Status von nicht gesehen auf gesehen geaendert, dann muss eine Bewertung mit min. 1 Stern
- * erfolgen. Um das zu gewaehrleisten wird dieses Flag genutzt. */
-var rateWithOneStar = false;
-
 var ratingIconOn = 'glyphicon-star';
 var ratingIconOff = 'glyphicon-star-empty';
 var switchButtonSeen = "-11px";
 var switchButtonUnseen = "15px";
-var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="lupeTable"><span class="glyphicon glyphicon-search detailLupe" /></td><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td><button class="btn btn-sm edit loggedIn"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete loggedIn" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
+var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="magnifierTable"><span class="glyphicon glyphicon-search detailMagnifier" /></td><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td><button class="btn btn-sm edit loggedIn"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete loggedIn" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%= rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 
 sessionStorage.setItem("user", "");
@@ -106,12 +102,12 @@ $(document).ready(function() {
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		$('#detailedView').animate({
+		$('#detailedView').stop().animate({
 			right : "-100%"
 		}, function() {
 			$('#detailedView').hide();
 		});
-		$('#home').show().animate({
+		$('#home').stop().show().animate({
 			left : "0px"
 		});
 	});
@@ -119,12 +115,12 @@ $(document).ready(function() {
 	$('#listNav').on('click', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		$('#detailedView').animate({
+		$('#detailedView').stop().animate({
 			right : "-100%"
 		}, function() {
 			$('#detailedView').hide();
 		});
-		$('#home').show().animate({
+		$('#home').stop().show().animate({
 			left : "0px"
 		});
 	});
@@ -227,7 +223,7 @@ function createMovie(event) {
 }
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
-function addNewTableLine(numberOfStars){
+function addNewTableLine(numberOfStars) {
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
 	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
@@ -248,7 +244,7 @@ function addNewTableLine(numberOfStars){
 		numberOfStars = 0;
 	} else if (mouseoverForRatingOn) {
 		/* 'mouseover' Event ist noch an Bewertung gebunden, daher darf eine Bewertung nicht erfolgen.
-		* Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
+		 * Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
 		numberOfStars = 1;
 	}
 
@@ -256,7 +252,7 @@ function addNewTableLine(numberOfStars){
 		rowID : newID,
 		movieTitle : $('#filmTitle').val(),
 		movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
-		rating : setRating(numberOfStars)
+		rating : setRating(numberOfStars, true)
 	}));
 
 	/*Initialisiere PopOver fuer Delete-Button*/
@@ -270,7 +266,7 @@ function addNewTableLine(numberOfStars){
 
 	$('#createFilmModal').modal('hide');
 	/* Action Listener für Detail View Lupe */
-	$('.detailLupe').click('click' , function() {
+	$('.detailMagnifier').click('click', function() {
 		var clickedTr = $(this).parent().parent();
 		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
 	});
@@ -299,21 +295,18 @@ function changeTableRowValues(numberOfStars) {
 
 	// wurde ein Film als 'GESEHEN' markiert, erhält er die Anzahl an Sternen, mit denen er bewertet wurde. Ansonsten sind alle Sterne leer
 	if ("GESEHEN" === $(this).find('.on').text()) {
-		if (mouseoverForRatingOn && !rateWithOneStar) {
+		if (mouseoverForRatingOn) {
 			/* an die Bewertung ist noch ein 'mouseover' Event gebunden, daher darf die Bewertung nicht geaendert werden und die bestehende Bewertung bleibt bestehen.
-			 * Ist aber mindestens 1 Stern zu setzen, dann darf das Programm nicht hier rein springen und geht weiter. Ansonsten ist hier nichts zu tun.
+			 * Ist die bestehende Bewertung aber 0, dann muss min. 1 Stern gesetzt werden.
 			 */
-		} else if (rateWithOneStar) {
-			$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(1));
-		}else {
+			var numberOfStarsInTable = $('#filmtable').find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
+			$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStarsInTable >= 1 ? numberOfStarsInTable : 1, true));
+		} else {
 			$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStars));
 		}
 	} else {
-		$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(0));
-	} 
-	
-	// wurde einmal dieses Flag auf true gesetzt, dann muss es vor der nachsten Benutzung wieder zurueckgestellt werden
-	rateWithOneStar = false;
+		$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(0, true));
+	}
 
 	$('#editFilmModal').modal('hide');
 }
@@ -357,7 +350,7 @@ function buildDetailView(numberOfStars, movieTitle, movieSeen) {
 			$('#detailedView').html(detailedMovieView({
 				movieTitle : movieTitle,
 				movieSeen : movieSeen,
-				rating : setRating(numberOfStars),
+				rating : setRating(numberOfStars, true),
 				picture : poster,
 				release : data.Released,
 				runtime : data.Runtime,
@@ -366,10 +359,10 @@ function buildDetailView(numberOfStars, movieTitle, movieSeen) {
 				actors : data.Actors
 			}));
 
-			$('#detailedView').show().animate({
+			$('#detailedView').stop().show().animate({
 				right : "0px"
 			});
-			$('#home').animate({
+			$('#home').stop().animate({
 				left : "-100%"
 			}, function() {
 				$('#home').hide();
@@ -414,8 +407,6 @@ function animateSwitchButton() {
 
 			// blende Rating ein, da der Nutzer den Film schon gesehen hat
 			$(this).parent().parent().find('.rating').slideDown();
-			// setzte Flag, damit Bewertung mit min. 1 Sterne erfolgt
-			rateWithOneStar = true;
 		}
 	}
 }
@@ -456,9 +447,12 @@ function setModalSwitchButton(value) {
 function setRatingVisibility(numberOfSelectedStars) {
 	$(this).find('.stars').remove('div');
 
+	// zu beginn ist immer mindestens 1 Stern ausgefuellt
+	numberOfSelectedStars = numberOfSelectedStars >= 1 ? numberOfSelectedStars : 1;
+
 	/* Die Bewertung fuer die Filme. Dabei wird auf 'mouseover' Events die Sterne gefuellt. Bei 'click' Events die ausgewaehlten Sterne gespeichet
 	 * und bei 'mouseleave' keine Bewertung gespeichert, falls nicht voher ein 'click' Event ausgeloest wurde */
-	var starRating = $(setRating(numberOfSelectedStars)).on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', function() {
+	var starRating = $(setRating(numberOfSelectedStars, false)).on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', function() {
 		setRatingVisibility.call($(this).parent(), numberOfSelectedStars);
 	});
 
@@ -514,11 +508,12 @@ function toggleRatingClasses(elem, prev) {
 }
 
 /* stellt ein, wie viele Sterne beim Rating in der Tabelle oder Bearbeitungsansicht ausgefuellt sind */
-function setRating(selectedStars) {
+function setRating(selectedStars, forTableOrDetailedView) {
 	var starFull = _.template('<span class="glyphicon ' + ratingIconOn + '" title="<%- title %>"></span>');
 	var starEmpty = _.template('<span class="glyphicon ' + ratingIconOff + '" title="<%- title %>"></span>');
 	var result = "";
 	var tooltip = "";
+	var tableTooltip = "";
 
 	for (var i = 1; i <= 5; i++) {
 		switch(i) {
@@ -542,16 +537,30 @@ function setRating(selectedStars) {
 				break;
 		}
 
+		/* setze nur einen Tooltip auf das die Sterne umgebende DIV. In der Tabelle und Detailansicht kann die Bewertung nicht geaendert werden,
+		 * daher sind keine Tooltips auf die einzelnen Sterne, sondern nur auf die Gesamtbewertung, also das DIV zu setzen.
+		 * Ist keine Bewertung gesetzt, dann setze "nicht bewertet" als Tooltip */
+		if (forTableOrDetailedView) {
+			if (i <= selectedStars) {
+				tableTooltip = tooltip;
+			} else if (selectedStars === 0) {
+				tableTooltip = "nicht bewertet";
+			}
+			tooltip = "";
+		}
+
 		if (i <= selectedStars) {
 			result += starFull({
 				title : tooltip
 			});
 		} else {
-			result += starEmpty({title : tooltip});
+			result += starEmpty({
+				title : tooltip
+			});
 		}
 	}
 
-	return '<div class="stars">' + result + '</div>';
+	return '<div class="stars" title="' + tableTooltip + '">' + result + '</div>';
 }
 
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/
