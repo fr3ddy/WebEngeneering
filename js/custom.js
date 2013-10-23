@@ -251,7 +251,7 @@ function addNewTableLine(numberOfStars) {
 		rowID : newID,
 		movieTitle : $('#filmTitle').val(),
 		movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
-		rating : setRating(numberOfStars)
+		rating : setRating(numberOfStars, true)
 	}));
 
 	/*Initialisiere PopOver fuer Delete-Button*/
@@ -299,12 +299,12 @@ function changeTableRowValues(numberOfStars) {
 			 * Ist die bestehende Bewertung aber 0, dann muss min. 1 Stern gesetzt werden.
 			 */
 			var numberOfStarsInTable = $('#filmtable').find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
-			$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStarsInTable >= 1 ? numberOfStarsInTable : 1));
+			$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStarsInTable >= 1 ? numberOfStarsInTable : 1, true));
 		} else {
 			$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStars));
 		}
 	} else {
-		$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(0));
+		$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(0, true));
 	}
 
 	$('#editFilmModal').modal('hide');
@@ -349,7 +349,7 @@ function buildDetailView(numberOfStars, movieTitle, movieSeen) {
 			$('#detailedView').html(detailedMovieView({
 				movieTitle : movieTitle,
 				movieSeen : movieSeen,
-				rating : setRating(numberOfStars),
+				rating : setRating(numberOfStars, true),
 				picture : poster,
 				release : data.Released,
 				runtime : data.Runtime,
@@ -451,7 +451,7 @@ function setRatingVisibility(numberOfSelectedStars) {
 
 	/* Die Bewertung fuer die Filme. Dabei wird auf 'mouseover' Events die Sterne gefuellt. Bei 'click' Events die ausgewaehlten Sterne gespeichet
 	 * und bei 'mouseleave' keine Bewertung gespeichert, falls nicht voher ein 'click' Event ausgeloest wurde */
-	var starRating = $(setRating(numberOfSelectedStars)).on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', function() {
+	var starRating = $(setRating(numberOfSelectedStars, false)).on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', function() {
 		setRatingVisibility.call($(this).parent(), numberOfSelectedStars);
 	});
 
@@ -507,11 +507,12 @@ function toggleRatingClasses(elem, prev) {
 }
 
 /* stellt ein, wie viele Sterne beim Rating in der Tabelle oder Bearbeitungsansicht ausgefuellt sind */
-function setRating(selectedStars) {
+function setRating(selectedStars, forTableOrDetailedView) {
 	var starFull = _.template('<span class="glyphicon ' + ratingIconOn + '" title="<%- title %>"></span>');
 	var starEmpty = _.template('<span class="glyphicon ' + ratingIconOff + '" title="<%- title %>"></span>');
 	var result = "";
 	var tooltip = "";
+	var tableTooltip = "";
 
 	for (var i = 1; i <= 5; i++) {
 		switch(i) {
@@ -535,6 +536,15 @@ function setRating(selectedStars) {
 				break;
 		}
 
+		/* setze nur einen Tooltip auf das die Sterne umgebende DIV. In der Tabelle und Detailansicht kann die Bewertung nicht geaendert werden,
+		 * daher sind keine Tooltips auf die einzelnen Sterne, sondern nur auf die Gesamtbewertung, also das DIV zu setzen */
+		if (forTableOrDetailedView) {
+			if (i <= selectedStars) {
+				tableTooltip = tooltip;
+			}
+			tooltip = "";
+		}
+
 		if (i <= selectedStars) {
 			result += starFull({
 				title : tooltip
@@ -546,7 +556,7 @@ function setRating(selectedStars) {
 		}
 	}
 
-	return '<div class="stars">' + result + '</div>';
+	return '<div class="stars" title="' + tableTooltip + '">' + result + '</div>';
 }
 
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/

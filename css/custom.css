@@ -48,11 +48,15 @@ table {
 }
 
 .rating .stars {
+	color: gold;
+	vertical-align: middle;
 	display: inline-block;
 	cursor: pointer;
 }
 
 .stars {
+	color: gold;
+	font-size: 140%;
 	display: inline-block;
 }
 
