@@ -35,6 +35,11 @@ label {
 	display: none;
 }
 
+.magnifierTable{
+	cursor: pointer;
+	width: 30px;
+}
+
 .stars {
 	display: inline-block
 }
@@ -132,8 +137,4 @@ label {
 
 #loginDropdown{
 	width: 250px;
-}
-
-.lupeTable{
-	width: 30px;
 }

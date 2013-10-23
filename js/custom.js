@@ -9,7 +9,7 @@ var ratingIconOn = 'glyphicon-star';
 var ratingIconOff = 'glyphicon-star-empty';
 var switchButtonSeen = "-11px";
 var switchButtonUnseen = "15px";
-var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="lupeTable"><span class="glyphicon glyphicon-search detailLupe" /></td><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td><button class="btn btn-sm edit loggedIn"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete loggedIn" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
+var addMovieToList = _.template('<tr id="<%- rowID %>"><td class="magnifierTable"><span class="glyphicon glyphicon-search detailMagnifier" /></td><td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td><button class="btn btn-sm edit loggedIn"title="Edit"><span class="glyphicon glyphicon-pencil"></span></button></td>' + '<td><button class="btn btn-sm delete loggedIn" title="Delete"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
 var detailedMovieView = _.template('<div class="container"><h3><%- movieTitle %><button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button></h3><div class="row"><div class="col-xs-7"><label>Gesehen: </label><span><%- movieSeen %></span><br><label>Bewertung: </label><span><%= rating %></span><br><label>Release: </label><span><%- release %></span><br><label>Dauer: </label><span><%- runtime %></span><br><label>Genre: </label><span><%- genre %></span><br><label>Director: </label><span><%- director %></span><br><label>Schauspieler: </label><span><%- actors %></span></div><div class="col-xs-5"><img src="<%- picture %>" class="img-thumbnail"/></div></div></div>');
 
 sessionStorage.setItem("user", "");
@@ -265,7 +265,7 @@ function addNewTableLine(numberOfStars){
 
 	$('#createFilmModal').modal('hide');
 	/* Action Listener für Detail View Lupe */
-	$('.detailLupe').click('click' , function() {
+	$('.detailMagnifier').click('click' , function() {
 		var clickedTr = $(this).parent().parent();
 		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
 	});
