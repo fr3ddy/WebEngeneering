@@ -281,6 +281,9 @@ function createMovie(event) {
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
 function addNewTableLine(numberOfStars) {
+	filterSet = new Array();
+	filterSet = filter;
+	
 	if(filter[0] != null|| filter[1] != null){
 		removeAllFilters();	
 	}
@@ -335,6 +338,7 @@ function addNewTableLine(numberOfStars) {
 		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
 	});
 	
+	filter = filterSet;
 	if(filter[0] != null || filter[1] != null || filter[2] != null){
 		filterTable();
 	}
@@ -697,72 +701,77 @@ function filterWatchStatus(gStatus) {
 }
 
 function removeTitleSort(){
-	var actRow = $('#list tbody tr:first-child');
-	var titles = new Array();
-	var counter = 0;
-	
-	while (actRow.length != 0) {
-		titles[counter] = actRow.attr('id') + "-" + actRow.find('.tableFilmTitle').text();
-		actRow = actRow.next();
-		counter++;
-	}
-
-	titles.sort();
-
-	//Aufbau der sortierten Tabelle
-	//erste Zeile in den Tabellen-Bauch hängen
-	var segments = titles[0].split('-');
-	actRow = '#tr-' + segments[1];
+	var lastTableChild = $('tbody tr:last-child');
+	if(lastTableChild != null){
+		var actRow = $('#list tbody tr:first-child');
+		var titles = new Array();
+		var counter = 0;
 		
-	$(actRow).appendTo($('#list tbody'));
-	var prevRow = actRow;
+		while (actRow.length != 0) {
+			titles[counter] = actRow.attr('id') + "-" + actRow.find('.tableFilmTitle').text();
+			actRow = actRow.next();
+			counter++;
+		}
 	
-	//nun die restlichen Zeilen anhängen
-	for (var i = 1; i < titles.length; i++) {
-		var segments = titles[i].split('-');
+		titles.sort();
+	
+		//Aufbau der sortierten Tabelle
+		//erste Zeile in den Tabellen-Bauch hängen
+		var segments = titles[0].split('-');
 		actRow = '#tr-' + segments[1];
+			
+		$(actRow).appendTo($('#list tbody'));
+		var prevRow = actRow;
 		
-		$(actRow).insertAfter($(prevRow));
-
-		prevRow = actRow;
-	};
+		//nun die restlichen Zeilen anhängen
+		for (var i = 1; i < titles.length; i++) {
+			var segments = titles[i].split('-');
+			actRow = '#tr-' + segments[1];
+			
+			$(actRow).insertAfter($(prevRow));
 	
+			prevRow = actRow;
+		};		
+	}	
 }
 
 function sortTitleAlphabet(direction) {
-	var actRow = $('#list tbody tr:first-child');
-	var titles = new Array();
-	var counter = 0;
-	
-	while (actRow.length != 0) {
-		titles[counter] = actRow.find('.tableFilmTitle').text() + "-" + actRow.attr('id');
-		actRow = actRow.next();
-		counter++;
-	}
-
-	titles.sort();
-
-	if (direction == 'false') {
-		titles.reverse();
-	}
-
-	//Aufbau der sortierten Tabelle
-	//erste Zeile in den Tabellen-Bauch hängen
-	var segments = titles[0].split('-tr-');
-	actRow = '#tr-' + segments[1];
+	var lastTableChild = $('tbody tr:last-child');
+	if(lastTableChild != null){
+		var actRow = $('#list tbody tr:first-child');
+		var titles = new Array();
+		var counter = 0;
 		
-	$(actRow).appendTo($('#list tbody'));
-	var prevRow = actRow;
+		while (actRow.length != 0) {
+			titles[counter] = actRow.find('.tableFilmTitle').text() + "-" + actRow.attr('id');
+			actRow = actRow.next();
+			counter++;
+		}
 	
-	//nun die restlichen Zeilen anhängen
-	for (var i = 1; i < titles.length; i++) {
-		var segments = titles[i].split('-tr-');
+		titles.sort();
+	
+		if (direction == 'false') {
+			titles.reverse();
+		}
+	
+		//Aufbau der sortierten Tabelle
+		//erste Zeile in den Tabellen-Bauch hängen
+		var segments = titles[0].split('-tr-');
 		actRow = '#tr-' + segments[1];
+			
+		$(actRow).appendTo($('#list tbody'));
+		var prevRow = actRow;
 		
-		$(actRow).insertAfter($(prevRow));
-
-		prevRow = actRow;
-	};
+		//nun die restlichen Zeilen anhängen
+		for (var i = 1; i < titles.length; i++) {
+			var segments = titles[i].split('-tr-');
+			actRow = '#tr-' + segments[1];
+			
+			$(actRow).insertAfter($(prevRow));
+	
+			prevRow = actRow;
+		};
+	}
 }
 
 
