@@ -9,6 +9,7 @@ var ratingIconOn = 'glyphicon-star';
 var ratingIconOff = 'glyphicon-star-empty';
 var switchButtonSeen = "-11px";
 var switchButtonUnseen = "15px";
+
 //@formatter:off
 var addMovieToList = _.template('<tr id="<%- rowID %>">'
 									+'<td class="magnifierTable"><span class="glyphicon glyphicon-search detailMagnifier"/></td>'
@@ -28,7 +29,7 @@ var addMovieToList = _.template('<tr id="<%- rowID %>">'
 								+'</tr>');
 
 var detailedMovieView = _.template('<div class="container">'
-										+'<h3><%- movieTitle %>'+
+										+'<h3 id="detailViewMovieTitle"><%- movieTitle %>'+
 											'<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>'
 										+'</h3><div class="row">'
 										+'<div class="col-xs-7">'
@@ -45,6 +46,7 @@ var detailedMovieView = _.template('<div class="container">'
 										+'</div>'
 									+'</div>');
 //@formatter:on
+
 sessionStorage.setItem("user", "");
 // Initialisierung des Items 'User' im Sessionstorage
 
@@ -162,7 +164,11 @@ $(document).ready(function() {
 	/*-----LOGIN--------*/
 	// TODO kommentieren
 	if (sessionStorage.getItem("user") != "") {
-		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
+		//@formatter:off
+		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">'
+											+'<span class="glyphicon glyphicon-remove-circle"></span> Logout'
+										+'</button>');
+		//@formatter:on
 	}
 
 	$('#submitLoginButton').on('click', function(event) {

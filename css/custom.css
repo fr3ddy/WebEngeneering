@@ -24,6 +24,12 @@ table {
 }
 
 .detailMagnifier {
+	color: #d3d3d3;
+	cursor: pointer;
+}
+
+.detailMagnifier:hover {
+	color: #808080;
 	cursor: pointer;
 }
 
@@ -48,14 +54,14 @@ table {
 }
 
 .rating .stars {
-	color: gold;
+	color: #ffd700 ;
 	vertical-align: middle;
 	display: inline-block;
 	cursor: pointer;
 }
 
 .stars {
-	color: gold;
+	color: #ffd700 ;
 	font-size: 140%;
 	display: inline-block;
 }
@@ -123,6 +129,10 @@ table {
 	background-color: #fff;
 	cursor: default;
 	/*z-index: 1060;*/
+}
+
+#filmTitle, #filmTitleEdit, #detailViewMovieTitle {
+	text-transform: capitalize;	
 }
 
 #home {
