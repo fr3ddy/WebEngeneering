@@ -242,13 +242,23 @@ $(document).ready(function() {
 
 
 	$('#sortTitleASC').on("click", function() {
-		sortTitleAlphabet(true);
-		filter[2] = 'true';
+		if (filter[2] != 'true') {
+			sortTitleAlphabet(true);
+			filter[2] = 'true';			
+		}else{
+			removeTitleSort();
+			filter[2] = null;
+		}
 	});
 
 	$('#sortTitleDESC').on("click", function() {
-		sortTitleAlphabet(false);
-		filter[2] = 'false';
+		if (filter[2] != 'false') {
+			sortTitleAlphabet(false);
+			filter[2] = 'false';
+		}else{
+			removeTitleSort();
+			filter[2] = null;
+		}
 	});
 	//---------------------------------------------------------------------------------------------------------------------------------------
 });
