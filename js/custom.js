@@ -92,16 +92,6 @@ $(document).ready(function() {
 		placement : 'bottom'
 	});
 
-	/*TODO Issue 34*/
-	$('#loginButton').on('click', function() {
-		/* TODO for IE and FF */
-		/* wenn der loginButton geklickt wurde, wurde das DropDown Menue noch nicht gerendert, daher wird ein Timeout gemacht,
-		 * dass den Fokus nach 100ms auf das Benutzername-Feld setzt. Nach 100ms ist damit zu rechnen, dass das DropDown Menue
-		 * angezeigt wird
-		 */
-		setTimeout('$("#usernameInput").focus()', 100);
-	});
-
 	/* Setze Focus auf Film Titel Input, wenn Modal geoeffnet wird */
 	$("#createFilmModal").on('focus', function() {
 		$('#filmTitle').focus();
@@ -205,7 +195,10 @@ $(document).ready(function() {
 										+'</button>');
 		//@formatter:on
 	}
-
+	//Login Button Listener
+	$('#loginButton').on('click', function() {
+		setTimeout('$("#usernameInput").focus()', 100);
+	});
 	$('#submitLoginButton').on('click', function(event) {
 		// TODO Issue 35
 		event.preventDefault();
@@ -241,6 +234,10 @@ $(document).ready(function() {
 
 						isLoggedInOrNot();
 						setTimeout('$("#usernameInput").focus()', 100);
+						//Login Button Listener
+						$('#loginButton').on('click', function() {
+							setTimeout('$("#usernameInput").focus()', 100);
+						});
 					});
 				});
 				$('#passwordInput').val("");
