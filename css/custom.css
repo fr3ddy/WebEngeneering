@@ -33,6 +33,14 @@ table {
 	cursor: pointer;
 }
 
+.filterActive {
+	color: #000;	
+}
+
+.filterInactive {
+	color: #d3d3d3;
+}
+
 .form-control {
 	margin: 0px 0 5px 0;
 }
