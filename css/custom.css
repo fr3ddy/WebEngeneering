@@ -81,6 +81,8 @@ table {
 
 .switch-button-background {
 	position: relative;
+	width: 50px; 
+	height: 20px;
 	float: left;
 	background-color: #ccc;
 	border: 1px solid #aaa;
@@ -92,12 +94,14 @@ table {
 .switch-button-button {
 	position: absolute;
 	top: -2px;
+	width: 25px; 
+	height: 20px; 
+	left: 14px;
 	background-color: #fafafa;
 	border: 1px solid #aaa;
 	margin: 1px 10px;
 	border-radius: 5px;
 	cursor: pointer;
-	/*-webkit-transition: left 0.4s ease-in-out;*/
 }
 
 .switch-button-label {

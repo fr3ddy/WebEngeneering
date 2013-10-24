@@ -11,7 +11,11 @@ var switchButtonSeen = "-11px";
 var switchButtonUnseen = "15px";
 
 //var filter = new Array();
-var filter = {movieTitle: null, movieSeen: null, movieTitleSorted: null};
+var filter = {
+	movieTitle : null,
+	movieSeen : null,
+	movieTitleSorted : null
+};
 
 //@formatter:off
 var addMovieToList = _.template('<tr id="<%- rowID %>">'
@@ -60,7 +64,6 @@ $(document).ready(function() {
 		return false;
 	});
 
-
 	//@formatter:off	
 	//Initialisierung des Popovers
 	var popoverFilterContent = '<fieldset id="filterBox">'
@@ -85,6 +88,13 @@ $(document).ready(function() {
 													+'Nicht Gesehen</label>'
 											+'</div>'
 										+'</div>'
+										/*+'<div class="col-m-10 filterInactive switch-wrapper">'
+											+'<span class="switch-button-label off">GESEHEN</span>'
+											+'<div class="switch-button-background">'
+												+'<div class="switch-button-button" style="left:' + switchButtonUnseen + '"></div>'
+												+'</div><span class="switch-button-label on">NICHT GESEHEN</span><div style="clear: left;"></div>'
+										+'</div>'*/
+										+'<div class="col-sm-10">'+ setRating(0, false); +'</div>'
 										+'<div class="col-sm-2">'
 											+'<button type="button" class="close" aria-hidden="true" onclick="removeWatchFilter()">'
 												+'×'
@@ -273,17 +283,18 @@ $(document).ready(function() {
 	$('#filterButton').on("click", function() {
 		$(this).popover();
 		$('#filterBox').find('#movieTitle').val(filter.movieTitle);
+		$('#filterBox').find('.stars').on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', removeRatingFilter);
 		
-		if(filter.movieSeen == 'gesehen'){
+		if (filter.movieSeen == 'gesehen') {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary active');
-			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');			
-			
-		}else if(filter.movieSeen == 'nicht gesehen'){
+			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');
+
+		} else if (filter.movieSeen == 'nicht gesehen') {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary');
-			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary active');						
-		}else if(filter.movieSeen == null){
+			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary active');
+		} else if (filter.movieSeen == null) {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary');
-			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');			
+			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');
 		}
 	});
 
@@ -291,8 +302,8 @@ $(document).ready(function() {
 
 		if (filter.movieTitleSorted != 'true') {
 			sortTitleAlphabet(true);
-			filter.movieTitleSorted = 'true';			
-		}else{
+			filter.movieTitleSorted = 'true';
+		} else {
 			removeTitleSort();
 			filter.movieTitleSorted = null;
 		}
@@ -302,7 +313,7 @@ $(document).ready(function() {
 		if (filter.movieTitleSorted != 'false') {
 			sortTitleAlphabet(false);
 			filter.movieTitleSorted = 'false';
-		}else{
+		} else {
 			removeTitleSort();
 			filter.movieTitleSorted = null;
 		}
@@ -328,15 +339,19 @@ function createMovie(event) {
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
 function addNewTableLine(numberOfStars) {
-	var filterSetting = {movieTitle: filter.movieTitle, movieSeen: filter.movieSeen, movieTitleSorted: filter.movieTitleSorted};
-	
-	if(filter.movieTitleSorted != null){
+	var filterSetting = {
+		movieTitle : filter.movieTitle,
+		movieSeen : filter.movieSeen,
+		movieTitleSorted : filter.movieTitleSorted
+	};
+
+	if (filter.movieTitleSorted != null) {
 		removeTitleSort();
 	}
-	if(filter.movieSeen != null){
+	if (filter.movieSeen != null) {
 		removeWatchFilter();
 	}
-	if(filter.movieTitle != null){
+	if (filter.movieTitle != null) {
 		removeTitleFilter();
 	}
 	/*ID Ermitteln*/
@@ -385,18 +400,18 @@ function addNewTableLine(numberOfStars) {
 		var clickedTr = $(this).parent().parent();
 		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
 	});
-	
+
 	filter.movieSeen = filterSetting.movieSeen;
 	filter.movieTitle = filterSetting.movieTitle;
 	filter.movieTitleSorted = filterSetting.movieTitleSorted;
-	
-	if(filter.movieTitleSorted != null){
+
+	if (filter.movieTitleSorted != null) {
 		sortTitleAlphabet(filter.movieTitleSorted);
 	}
-	if(filter.movieSeen != null){
+	if (filter.movieSeen != null) {
 		filterWatchStatus(filter.movieSeen);
 	}
-	if(filter.movieTitle != null){
+	if (filter.movieTitle != null) {
 		filterMovieTitle(filter.movieTitle);
 	}
 }
@@ -602,10 +617,14 @@ function fillTableStar(event) {
 	// klickt ein User auf die Bewertung, wird das Event 'mouseover' entfernt und die Bewertung lässt sich nur per 'click' öndern
 	if (event.type === 'click') {
 		mouseoverForRatingOn = false;
-		$(this).parent().off('mouseover', 'span');
 		// entferne 'mouseover' Event, da Bewertung fest steht
-		$(this).parent().off('mouseleave');
+		$(this).parent().off('mouseover', 'span');
+	
 		// entferne 'mouseleave' Event, da Bewertung fest steht
+		$(this).parent().off('mouseleave');
+		
+		// setze den Wert wie viele Sterne gesetzt sind ins data Attribut und als data, welche mit dem Feld assoziiert wird
+		$(this).parent().attr('data-rated', $(this).parent().find(ratingIconOn).length).data('rated', $(this).parent().find(ratingIconOn).length);
 	}
 
 	// fuellen des Sterns, ueber dem der Mauszeiger ist
@@ -689,7 +708,7 @@ function setRating(selectedStars, forTableOrDetailedView) {
 		}
 	}
 
-	return '<div class="stars" title="' + tableTooltip + '" data-rated="'+ selectedStars +'">' + result + '</div>';
+	return '<div class="stars" title="' + tableTooltip + '" data-rated="' + selectedStars + '">' + result + '</div>';
 }
 
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/
@@ -726,13 +745,13 @@ function removeTitleFilter() {
 	filterTable();
 }
 
-function removeAllFilters(){
+function removeAllFilters() {
 	removeWatchFilter();
 	removeTitleFilter();
 }
 
-function filterMovieTitle(movieTitle){
-	if(movieTitle != null){
+function filterMovieTitle(movieTitle) {
+	if (movieTitle != null) {
 		var actRow = $('#list tbody tr:first-child');
 		while (actRow.length != 0) {
 			if (actRow.find('.tableFilmTitle').text().toLowerCase().search(movieTitle.toLowerCase()) == -1) {
@@ -755,39 +774,39 @@ function filterWatchStatus(gStatus) {
 	}
 }
 
-function removeTitleSort(){
+function removeTitleSort() {
 	var lastTableChild = $('tbody tr:last-child');
-	if(lastTableChild != null){
+	if (lastTableChild != null) {
 		var actRow = $('#list tbody tr:first-child');
 		var titles = new Array();
 		var counter = 0;
-		
+
 		while (actRow.length != 0) {
 			titles[counter] = actRow.attr('id') + "-" + actRow.find('.tableFilmTitle').text();
 			actRow = actRow.next();
 			counter++;
 		}
-	
+
 		titles.sort();
-	
+
 		//Aufbau der sortierten Tabelle
 		//erste Zeile in den Tabellen-Bauch hängen
 		var segments = titles[0].split('-');
 		actRow = '#tr-' + segments[1];
-			
+
 		$(actRow).appendTo($('#list tbody'));
 		var prevRow = actRow;
-		
+
 		//nun die restlichen Zeilen anhängen
 		for (var i = 1; i < titles.length; i++) {
 			var segments = titles[i].split('-');
 			actRow = '#tr-' + segments[1];
-			
+
 			$(actRow).insertAfter($(prevRow));
-	
+
 			prevRow = actRow;
-		};		
-	}	
+		};
+	}
 }
 
 function sortTitleAlphabet(direction) {
@@ -825,6 +844,14 @@ function sortTitleAlphabet(direction) {
 		prevRow = actRow;
 	};
 
+}
+
+/* leere alle Sterne im Filter wieder, wenn nicht durch Klicken ein Wert gesetzt wurde */
+function removeRatingFilter() {
+			var parentElem = $(this).parent();
+			parentElem.find('.stars').remove('div');
+			parentElem.append(setRating(0, false));
+			parentElem.find('.stars').on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', removeRatingFilter);
 }
 
 //---------------------------Ajax-Methoden-------------------------------------------------------------
