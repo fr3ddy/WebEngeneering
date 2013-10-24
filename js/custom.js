@@ -284,7 +284,7 @@ $(document).ready(function() {
 		$(this).popover();
 		$('#filterBox').find('#movieTitle').val(filter.movieTitle);
 		$('#filterBox').find('.stars').on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', removeRatingFilter);
-		
+
 		if (filter.movieSeen == 'gesehen') {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary active');
 			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');
@@ -614,19 +614,6 @@ function setRatingVisibility(numberOfSelectedStars) {
 
 /* Die Film Bewertung wird durch 'click' auf Sterne festgelegt */
 function fillTableStar(event) {
-	// klickt ein User auf die Bewertung, wird das Event 'mouseover' entfernt und die Bewertung lässt sich nur per 'click' öndern
-	if (event.type === 'click') {
-		mouseoverForRatingOn = false;
-		// entferne 'mouseover' Event, da Bewertung fest steht
-		$(this).parent().off('mouseover', 'span');
-	
-		// entferne 'mouseleave' Event, da Bewertung fest steht
-		$(this).parent().off('mouseleave');
-		
-		// setze den Wert wie viele Sterne gesetzt sind ins data Attribut und als data, welche mit dem Feld assoziiert wird
-		$(this).parent().attr('data-rated', $(this).parent().find(ratingIconOn).length).data('rated', $(this).parent().find(ratingIconOn).length);
-	}
-
 	// fuellen des Sterns, ueber dem der Mauszeiger ist
 	toggleRatingClasses(this, true);
 
@@ -639,6 +626,19 @@ function fillTableStar(event) {
 	$(this).nextAll().each(function() {
 		toggleRatingClasses(this, false);
 	});
+
+	// klickt ein User auf die Bewertung, wird das Event 'mouseover' entfernt und die Bewertung lässt sich nur per 'click' öndern
+	if (event.type === 'click') {
+		mouseoverForRatingOn = false;
+		// entferne 'mouseover' Event, da Bewertung fest steht
+		$(this).parent().off('mouseover', 'span');
+
+		// entferne 'mouseleave' Event, da Bewertung fest steht
+		$(this).parent().off('mouseleave');
+
+		// setze den Wert wie viele Sterne gesetzt sind ins data Attribut und als data, welche mit dem Feld assoziiert wird
+		$(this).parent().attr('data-rated', $(this).parent().find('.' + ratingIconOn).length).data('rated', $(this).parent().find('.' + ratingIconOn).length);
+	}
 }
 
 /* Legt fest, ob ein Stern beim Mouseover gefüllt oder leer dargestellt wird.
@@ -848,10 +848,10 @@ function sortTitleAlphabet(direction) {
 
 /* leere alle Sterne im Filter wieder, wenn nicht durch Klicken ein Wert gesetzt wurde */
 function removeRatingFilter() {
-			var parentElem = $(this).parent();
-			parentElem.find('.stars').remove('div');
-			parentElem.append(setRating(0, false));
-			parentElem.find('.stars').on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', removeRatingFilter);
+	var parentElem = $(this).parent();
+	parentElem.find('.stars').remove('div');
+	parentElem.append(setRating(0, false));
+	parentElem.find('.stars').on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', removeRatingFilter);
 }
 
 //---------------------------Ajax-Methoden-------------------------------------------------------------
