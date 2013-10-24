@@ -115,9 +115,9 @@ table {
 	color: #adadad;
 }
 
-.tableFilmTitle {
+/*.tableFilmTitle {
 	text-transform: capitalize;
-}
+}*/
 
 #closeDetailedView {
 	left: -20px;
@@ -139,9 +139,9 @@ table {
 	/*z-index: 1060;*/
 }
 
-#filmTitle, #filmTitleEdit, #detailViewMovieTitle {
+/*#filmTitle, #filmTitleEdit, #detailViewMovieTitle {
 	text-transform: capitalize;	
-}
+}*/
 
 #home {
 	width: 100%;
