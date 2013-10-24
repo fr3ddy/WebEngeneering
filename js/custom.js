@@ -291,10 +291,13 @@ $(document).ready(function() {
 
 		if (filter.movieTitleSorted != 'true') {
 			sortTitleAlphabet(true);
-			filter.movieTitleSorted = 'true';			
+			filter.movieTitleSorted = 'true';
+			$('#sortTitleASC').removeClass('sortInactive');	
+			$('#sortTitleDESC').addClass('sortInactive');	
 		}else{
 			removeTitleSort();
 			filter.movieTitleSorted = null;
+			$('#sortTitleASC').addClass('sortInactive');	
 		}
 	});
 
@@ -302,9 +305,12 @@ $(document).ready(function() {
 		if (filter.movieTitleSorted != 'false') {
 			sortTitleAlphabet(false);
 			filter.movieTitleSorted = 'false';
+			$('#sortTitleDESC').removeClass('sortInactive');	
+			$('#sortTitleASC').addClass('sortInactive');	
 		}else{
 			removeTitleSort();
 			filter.movieTitleSorted = null;
+			$('#sortTitleDESC').addClass('sortInactive');	
 		}
 	});
 	//---------------------------------------------------------------------------------------------------------------------------------------
