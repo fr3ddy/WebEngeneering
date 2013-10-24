@@ -33,11 +33,7 @@ table {
 	cursor: pointer;
 }
 
-.filterActive {
-	color: #000;	
-}
-
-.filterInactive {
+.sortInactive {
 	color: #d3d3d3;
 }
 
