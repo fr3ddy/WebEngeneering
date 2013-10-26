@@ -12,9 +12,10 @@ var switchButtonUnseen = "15px";
 
 //var filter = new Array();
 var filter = {
-	movieTitle : null,
-	movieSeen : null,
-	movieTitleSorted : null
+	movieTitle : 		null,
+	movieSeen : 		null,
+	movieTitleSorted : 	null,
+	movieRatingSorted:	null,
 };
 
 //@formatter:off
@@ -88,15 +89,22 @@ $(document).ready(function() {
 													+'Nicht Gesehen</label>'
 											+'</div>'
 										+'</div>'
+										+'<div class="col-sm-2">'
+											+'<button type="button" class="close" aria-hidden="true" onclick="removeWatchFilter()">'
+												+'×'
+											+'</button>'
+										+'</div>'
+										+'</div>'
 										/*+'<div class="col-m-10 filterInactive switch-wrapper">'
 											+'<span class="switch-button-label off">GESEHEN</span>'
 											+'<div class="switch-button-background">'
 												+'<div class="switch-button-button" style="left:' + switchButtonUnseen + '"></div>'
 												+'</div><span class="switch-button-label on">NICHT GESEHEN</span><div style="clear: left;"></div>'
 										+'</div>'*/
+									+'<div class="row">'
 										+'<div class="col-sm-10">'+ setRating(0, false); +'</div>'
 										+'<div class="col-sm-2">'
-											+'<button type="button" class="close" aria-hidden="true" onclick="removeWatchFilter()">'
+											+'<button type="button" class="close" aria-hidden="true" onclick="removeRatingFilter()">'
 												+'×'
 											+'</button>'
 										+'</div>'
@@ -306,7 +314,7 @@ $(document).ready(function() {
 			$('#sortTitleASC').removeClass('sortInactive');	
 			$('#sortTitleDESC').addClass('sortInactive');	
 		}else{
-			removeTitleSort();
+			removeSort();
 			filter.movieTitleSorted = null;
 			$('#sortTitleASC').addClass('sortInactive');	
 		}
@@ -319,9 +327,37 @@ $(document).ready(function() {
 			$('#sortTitleDESC').removeClass('sortInactive');	
 			$('#sortTitleASC').addClass('sortInactive');	
 		}else{
-			removeTitleSort();
+			removeSort();
 			filter.movieTitleSorted = null;
 			$('#sortTitleDESC').addClass('sortInactive');	
+		}
+	});
+		
+	$('#sortRatingASC').on("click", function() {
+
+		if (filter.movieRatingSorted != 'true') {
+			sortRating(true);
+			filter.movieRatingSorted = 'true';
+			$('#sortRatingASC').removeClass('sortInactive');	
+			$('#sortRatingDESC').addClass('sortInactive');	
+		}else{
+			removeSort();
+			filter.movieRatingSorted = null;
+			$('#sortRatingASC').addClass('sortInactive');	
+		}
+	});
+	
+	
+	$('#sortRatingDESC').on("click", function() {
+		if (filter.movieRatingSorted != 'false') {
+			sortRating(false);
+			filter.movieRatingSorted = 'false';
+			$('#sortRatingDESC').removeClass('sortInactive');	
+			$('#sortRatingASC').addClass('sortInactive');	
+		}else{
+			removeSort();
+			filter.movieRatingSorted = null;
+			$('#sortRatingDESC').addClass('sortInactive');	
 		}
 	});
 	//---------------------------------------------------------------------------------------------------------------------------------------
@@ -352,7 +388,7 @@ function addNewTableLine(numberOfStars) {
 	};
 
 	if (filter.movieTitleSorted != null) {
-		removeTitleSort();
+		removeSort();
 	}
 	if (filter.movieSeen != null) {
 		removeWatchFilter();
@@ -780,32 +816,32 @@ function filterWatchStatus(gStatus) {
 	}
 }
 
-function removeTitleSort() {
+function removeSort() {
 	var lastTableChild = $('tbody tr:last-child');
 	if (lastTableChild != null) {
 		var actRow = $('#list tbody tr:first-child');
-		var titles = new Array();
+		var rows = new Array();
 		var counter = 0;
 
 		while (actRow.length != 0) {
-			titles[counter] = actRow.attr('id') + "-" + actRow.find('.tableFilmTitle').text();
+			rows[counter] = actRow.attr('id');
 			actRow = actRow.next();
 			counter++;
 		}
 
-		titles.sort();
+		rows.sort();
 
 		//Aufbau der sortierten Tabelle
 		//erste Zeile in den Tabellen-Bauch hängen
-		var segments = titles[0].split('-');
+		var segments = rows[0].split('-');
 		actRow = '#tr-' + segments[1];
 
 		$(actRow).appendTo($('#list tbody'));
 		var prevRow = actRow;
 
 		//nun die restlichen Zeilen anhängen
-		for (var i = 1; i < titles.length; i++) {
-			var segments = titles[i].split('-');
+		for (var i = 1; i < rows.length; i++) {
+			var segments = rows[i].split('-');
 			actRow = '#tr-' + segments[1];
 
 			$(actRow).insertAfter($(prevRow));
@@ -850,6 +886,43 @@ function sortTitleAlphabet(direction) {
 		prevRow = actRow;
 	};
 
+}
+
+
+function sortRating(direction){
+	var actRow = $('#list tbody tr:first-child');
+	var rating = new Array();
+	var counter = 0;
+
+	while (actRow.length != 0) {
+		rating[counter] = actRow.find('.tableRating .stars').data('rated') + "-" + actRow.attr('id');
+		actRow = actRow.next();
+		counter++;
+	}
+
+	rating.sort();
+
+	if (direction == false) {
+		rating.reverse();
+	}
+
+	//Aufbau der sortierten Tabelle
+	//erste Zeile in den Tabellen-Bauch hängen
+	var segments = rating[0].split('-tr-');
+	actRow = '#tr-' + segments[1];
+
+	$(actRow).appendTo($('#list tbody'));
+	var prevRow = actRow;
+
+	//nun die restlichen Zeilen anhängen
+	for (var i = 1; i < rating.length; i++) {
+		var segments = rating[i].split('-tr-');
+		actRow = '#tr-' + segments[1];
+
+		$(actRow).insertAfter($(prevRow));
+
+		prevRow = actRow;
+	};	
 }
 
 /* leere alle Sterne im Filter wieder, wenn nicht durch Klicken ein Wert gesetzt wurde */
