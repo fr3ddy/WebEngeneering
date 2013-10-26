@@ -14,6 +14,7 @@ var switchButtonUnseen = "15px";
 var filter = {
 	movieTitle : 		null,
 	movieSeen : 		null,
+	movieRating:		null,
 	movieTitleSorted : 	null,
 	movieRatingSorted:	null,
 };
@@ -103,11 +104,12 @@ $(document).ready(function() {
 										+'</div>'*/
 									+'<div class="row">'
 										+'<div class="col-sm-10">'
-										+'<div id="filterStars"><span id="filterStar1" class="glyphicon glyphicon-star-empty"></span>'+
-											'<span id="filterStar2" class="glyphicon glyphicon-star-empty"></span>'+
-											'<span id="filterStar3" class="glyphicon glyphicon-star-empty"></span>'+
-											'<span id="filterStar4" class="glyphicon glyphicon-star-empty"></span>'+
-											'<span id="filterStar5" class="glyphicon glyphicon-star-empty"></span>'+
+										+'<div id="filterStars">'+
+											'<span id="filterStar-1" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>'+
+											'<span id="filterStar-2" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>'+
+											'<span id="filterStar-3" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>'+
+											'<span id="filterStar-4" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>'+
+											'<span id="filterStar-5" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>'+
 										'</div>'
 										+'</div>'
 										+'<div class="col-sm-2">'
@@ -291,7 +293,6 @@ $(document).ready(function() {
 	$('#filterButton').on("click", function() {
 		$(this).popover();
 		$('#filterBox').find('#movieTitle').val(filter.movieTitle);
-		$('#filterBox').find('.stars').on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', removeRatingFilter);
 
 		if (filter.movieSeen == 'gesehen') {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary active');
@@ -764,11 +765,67 @@ function movieTitleFilterKeyUp(){
 		filterTable();
 	}, 1000);
 }
+
+function fillStars(starid){
+	if (starid != null) {
+		var id = starid.split('-');
+		
+		for (var i=1; i <= 5; i++) {
+			if (i <= id[1]) {
+				$('#filterStar-' + i).removeClass('glyphicon-star-empty');
+				$('#filterStar-' + i).addClass('glyphicon-star');
+			}else{
+				$('#filterStar-' + i).addClass('glyphicon-star-empty');
+				$('#filterStar-' + i).removeClass('glyphicon-star');			
+			}
+		}		
+	}else{
+		if(filter.movieRating == null){
+			$('#filterStars').find('span[id*="filterStar-"]').addClass('glyphicon-star-empty');
+			$('#filterStars').find('span[id*="filterStar-"]').removeClass('glyphicon-star');					
+		}else{
+			for (var i=1; i <= 5; i++) {
+				if (i <= filter.movieRating) {
+					$('#filterStar-' + i).removeClass('glyphicon-star-empty');
+					$('#filterStar-' + i).addClass('glyphicon-star');
+				}else{
+					$('#filterStar-' + i).addClass('glyphicon-star-empty');
+					$('#filterStar-' + i).removeClass('glyphicon-star');			
+				}
+			}				
+		}
+	}
+	
+	$('#filterStars').find('span[id*="filterStar-"]').attr('onmouseout', 'fillStars(null)');
+}
+
+function setFilterRating(starid){
+	var id = starid.split('-');
+	filter.movieRating = id[1];
+	
+	filterTable();	
+}
+
+function filterRating(rating){
+	if(rating != null){
+		var actRow = $('#list tbody tr:first-child');
+		while (actRow.length != 0) {
+			if (actRow.find('.tableRating .stars').data('rated') != filter.movieRating) {
+				actRow.hide();
+			}
+			actRow = actRow.next();
+		}			
+	}
+	
+	$('#filterStars').find('span[id*="filterStar-"]').attr('onmouseout', '');
+}
+
 function filterTable() {
 	$('tr[id*="tr-"]').show();
 
 	filterMovieTitle(filter.movieTitle);
 	filterWatchStatus(filter.movieSeen);
+	filterRating(filter.movieRating);
 }
 
 function filterWatchStatusSet(seen){
@@ -778,6 +835,7 @@ function filterWatchStatusSet(seen){
 		filter.movieSeen = "gesehen";
 	} else if (seen == false) {
 		filter.movieSeen = "nicht gesehen";
+		removeRatingFilter();
 	} else {
 		filter.movieSeen = null;
 	}
@@ -805,6 +863,9 @@ function removeTitleFilter() {
 function removeAllFilters() {
 	removeWatchFilter();
 	removeTitleFilter();
+	removeRatingFilter();
+	
+	filterTable();
 }
 
 function filterMovieTitle(movieTitle) {
@@ -942,10 +1003,16 @@ function sortRating(direction){
 
 /* leere alle Sterne im Filter wieder, wenn nicht durch Klicken ein Wert gesetzt wurde */
 function removeRatingFilter() {
-	var parentElem = $(this).parent();
-	parentElem.find('.stars').remove('div');
-	parentElem.append(setRating(0, false));
-	parentElem.find('.stars').on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', removeRatingFilter);
+	// var parentElem = $(this).parent();
+	// parentElem.find('.stars').remove('div');
+	// parentElem.append(setRating(0, false));
+	// parentElem.find('.stars').on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', removeRatingFilter);
+	$('#filterStars').find('span[id*="filterStar-"]').addClass('glyphicon-star-empty');
+	$('#filterStars').find('span[id*="filterStar-"]').removeClass('glyphicon-star');
+	
+	filter.movieRating = null;
+	filterTable();
+	
 }
 
 //---------------------------Ajax-Methoden-------------------------------------------------------------
