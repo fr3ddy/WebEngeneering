@@ -82,9 +82,9 @@ $(document).ready(function() {
 									+'<div class="row">'
 										+'<div class="col-sm-10">'
 											+'<div class="btn-group" data-toggle="buttons">'
-												+'<label class="btn btn-primary">'
+												+'<label class="btn btn-primary"  onclick="filterWatchStatusSet(true)">'
 													+'<input type="radio" name="options" id="movieWatched">'
-													+'Gesehen</label><label class="btn btn-primary">'
+													+'Gesehen</label><label class="btn btn-primary" onclick="filterWatchStatusSet(false)">'
 													+'<input type="radio" name="options" id="movieNotWatched">'
 													+'Nicht Gesehen</label>'
 											+'</div>'
@@ -759,35 +759,45 @@ function setRating(selectedStars, forTableOrDetailedView) {
 /*------------------------------ Filter --------------------------------*/
 function movieTitleFilterKeyUp(){
 	setTimeout(function(){
+		filter.movieTitle = $('#filterBox #movieTitle').val();
+		
 		filterTable();
 	}, 1000);
 }
 function filterTable() {
 	$('tr[id*="tr-"]').show();
 
-	filter.movieTitle = $('#filterBox').find('#movieTitle').val();
+	filterMovieTitle(filter.movieTitle);
+	filterWatchStatus(filter.movieSeen);
+}
 
-	if ($('#movieWatched').parent().attr('class') == "btn btn-primary active") {
+function filterWatchStatusSet(seen){
+	var gesehen = seen;
+	
+	if (seen == true) {
 		filter.movieSeen = "gesehen";
-	} else if ($('#movieNotWatched').parent().attr('class') == "btn btn-primary active") {
+	} else if (seen == false) {
 		filter.movieSeen = "nicht gesehen";
 	} else {
 		filter.movieSeen = null;
 	}
 
-	filterMovieTitle(filter.movieTitle);
-	filterWatchStatus(filter.movieSeen);
+	filterTable();	
 }
 
 function removeWatchFilter() {
 	$('#movieWatched').parent().attr('class', 'btn btn-primary');
 	$('#movieNotWatched').parent().attr('class', 'btn btn-primary');
 
+	filter.movieSeen = null;
+
 	filterTable();
 }
 
 function removeTitleFilter() {
 	$('#filterBox').find('#movieTitle').val(null);
+
+	filter.movieTitle = null;
 
 	filterTable();
 }
