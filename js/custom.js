@@ -71,7 +71,7 @@ $(document).ready(function() {
 									+'<div class="form-group row">'
 										+'<div class="input-group col-sm-10">'
 											+'<span class="input-group-addon"><span class="glyphicon glyphicon-film"></span></span>'
-											+'<input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Film Titel">'
+											+'<input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Film Titel" onkeyup="movieTitleFilterKeyUp()">'
 										+'</div>'
 										+'<div class="col-sm-2">'
 											+'<button type="button" class="close" aria-hidden="true" onclick="removeTitleFilter()">'
@@ -102,17 +102,17 @@ $(document).ready(function() {
 												+'</div><span class="switch-button-label on">NICHT GESEHEN</span><div style="clear: left;"></div>'
 										+'</div>'*/
 									+'<div class="row">'
-										+'<div class="col-sm-10">'+ setRating(0, false); +'</div>'
+										+'<div class="col-sm-10">'
+										+'<div id="filterStars"><span id="filterStar1" class="glyphicon glyphicon-star-empty"></span>'+
+											'<span id="filterStar2" class="glyphicon glyphicon-star-empty"></span>'+
+											'<span id="filterStar3" class="glyphicon glyphicon-star-empty"></span>'+
+											'<span id="filterStar4" class="glyphicon glyphicon-star-empty"></span>'+
+											'<span id="filterStar5" class="glyphicon glyphicon-star-empty"></span>'+
+										'</div>'
+										+'</div>'
 										+'<div class="col-sm-2">'
 											+'<button type="button" class="close" aria-hidden="true" onclick="removeRatingFilter()">'
 												+'×'
-											+'</button>'
-										+'</div>'
-									+'</div>'
-									+'<div class="row">'
-										+'<div class="col-xs-12">'
-											+'<button class="btn btn-primary form-control" id="submitFilter" onclick="filterTable()">'
-												+'Filtern'
 											+'</button>'
 										+'</div>'
 									+'</div>'
@@ -360,6 +360,7 @@ $(document).ready(function() {
 			$('#sortRatingDESC').addClass('sortInactive');	
 		}
 	});
+
 	//---------------------------------------------------------------------------------------------------------------------------------------
 });
 
@@ -756,7 +757,11 @@ function setRating(selectedStars, forTableOrDetailedView) {
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/
 
 /*------------------------------ Filter --------------------------------*/
-
+function movieTitleFilterKeyUp(){
+	setTimeout(function(){
+		filterTable();
+	}, 1000);
+}
 function filterTable() {
 	$('tr[id*="tr-"]').show();
 
