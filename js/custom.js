@@ -305,60 +305,114 @@ $(document).ready(function() {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary');
 			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');
 		}
+		
+		for (var i=1; i <= 5; i++) {
+			if (i <= filter.movieRating) {
+				$('#filterStar-' + i).removeClass('glyphicon-star-empty');
+				$('#filterStar-' + i).addClass('glyphicon-star');
+			}else{
+				$('#filterStar-' + i).addClass('glyphicon-star-empty');
+				$('#filterStar-' + i).removeClass('glyphicon-star');			
+			}
+		}
 	});
 
 	$('#sortTitleASC').on("click", function() {
 
-		if (filter.movieTitleSorted != 'true') {
+		if (filter.movieTitleSorted != 'true' && filter.movieRatingSorted == null) {	//alphabetische Sortierung von A zu Z und Ratingfilter nicht aktiv
 			sortTitleAlphabet(true);
 			filter.movieTitleSorted = 'true';
 			$('#sortTitleASC').removeClass('sortInactive');	
 			$('#sortTitleDESC').addClass('sortInactive');	
-		}else{
+		}else if(filter.movieTitleSorted == 'true' && filter.movieRatingSorted == null){ //alphabetische Sortierung von A zu Z aktiv und Ratingfilter nicht aktiv
 			removeSort();
 			filter.movieTitleSorted = null;
 			$('#sortTitleASC').addClass('sortInactive');	
+		}else if(filter.movieTitleSorted != 'true' && filter.movieRatingSorted != null){ //alphabetische Sortierung von A zu Z inaktiv und Ratingfilter aktiv
+			filter.movieTitleSorted = 'true';
+			$('#sortTitleASC').removeClass('sortInactive');	
+			$('#sortTitleDESC').addClass('sortInactive');	
+			
+			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);			
+		}else if(filter.movieTitleSorted == 'true' && filter.movieRatingSorted != null){ //alphabetische Sortierung von A zu Z und Ratingfilter aktiv
+			removeSort();
+			sortRating(filter.movieRatingSorted);
+			filter.movieTitleSorted = null;
+			$('#sortTitleASC').addClass('sortInactive');				
 		}
 	});
 
 	$('#sortTitleDESC').on("click", function() {
-		if (filter.movieTitleSorted != 'false') {
+		if (filter.movieTitleSorted != 'false' && filter.movieRatingSorted == null) { //alphabetische Sortierung von Z zu A und Ratingfilter nicht aktiv
 			sortTitleAlphabet(false);
 			filter.movieTitleSorted = 'false';
 			$('#sortTitleDESC').removeClass('sortInactive');	
 			$('#sortTitleASC').addClass('sortInactive');	
-		}else{
+		}else if(filter.movieTitleSorted == 'false' && filter.movieRatingSorted == null){ //alphabetische Sortierung von Z zu A aktiv und Ratingfilter nicht aktiv
 			removeSort();
 			filter.movieTitleSorted = null;
 			$('#sortTitleDESC').addClass('sortInactive');	
+		}else if(filter.movieTitleSorted != 'false' && filter.movieRatingSorted != null){ //alphabetische Sortierung von Z zu A inaktiv und Ratingfilter aktiv
+			filter.movieTitleSorted = 'false';
+			$('#sortTitleDESC').removeClass('sortInactive');	
+			$('#sortTitleASC').addClass('sortInactive');	
+			
+			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);			
+		}else if(filter.movieTitleSorted == 'false' && filter.movieRatingSorted != null){ //alphabetische Sortierung von Z zu A und Ratingfilter aktiv
+			removeSort();
+			sortRating(filter.movieRatingSorted);
+			filter.movieTitleSorted = null;
+			$('#sortTitleDESC').addClass('sortInactive');				
 		}
 	});
 		
 	$('#sortRatingASC').on("click", function() {
 
-		if (filter.movieRatingSorted != 'true') {
+		if (filter.movieRatingSorted != 'true' && filter.movieTitleSorted == null) {
 			sortRating(true);
 			filter.movieRatingSorted = 'true';
 			$('#sortRatingASC').removeClass('sortInactive');	
 			$('#sortRatingDESC').addClass('sortInactive');	
-		}else{
+		}else if(filter.movieRatingSorted == 'true' && filter.movieTitleSorted == null){
 			removeSort();
 			filter.movieRatingSorted = null;
 			$('#sortRatingASC').addClass('sortInactive');	
+		}else if(filter.movieRatingSorted != 'true' && filter.movieTitleSorted != null){ 
+			filter.movieRatingSorted = 'true';
+			$('#sortRatingASC').removeClass('sortInactive');	
+			$('#sortRatingDESC').addClass('sortInactive');	
+			
+			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);			
+		}else if(filter.movieRatingSorted == 'true' && filter.movieTitleSorted != null){ 
+			removeSort();
+			sortTitleAlphabet(filter.movieTitleSorted);
+			filter.movieRatingSorted = null;
+			$('#sortRatingASC').addClass('sortInactive');				
 		}
 	});
 	
 	
 	$('#sortRatingDESC').on("click", function() {
-		if (filter.movieRatingSorted != 'false') {
+		if (filter.movieRatingSorted != 'false' && filter.movieTitleSorted == null) {
 			sortRating(false);
 			filter.movieRatingSorted = 'false';
 			$('#sortRatingDESC').removeClass('sortInactive');	
 			$('#sortRatingASC').addClass('sortInactive');	
-		}else{
+		}else if(filter.movieRatingSorted == 'false' && filter.movieTitleSorted == null){
 			removeSort();
 			filter.movieRatingSorted = null;
 			$('#sortRatingDESC').addClass('sortInactive');	
+		}else if(filter.movieRatingSorted != 'false' && filter.movieTitleSorted != null){ 
+			filter.movieRatingSorted = 'false';
+			$('#sortRatingDESC').removeClass('sortInactive');	
+			$('#sortRatingASC').addClass('sortInactive');	
+			
+			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);			
+		}else if(filter.movieRatingSorted == 'false' && filter.movieTitleSorted != null){ 
+			removeSort();
+			sortTitleAlphabet(filter.movieTitleSorted);
+			filter.movieRatingSorted = null;
+			$('#sortRatingDESC').addClass('sortInactive');				
 		}
 	});
 
@@ -369,11 +423,11 @@ $(document).ready(function() {
 function createMovie(event) {
 	switch(event.type) {
 		case ('click'):
-			addNewTableLine($(this).parent().parent().find('.stars').find('.' + ratingIconOn).length);
+			searchMovie($(this).parent().parent().find('.stars').find('.' + ratingIconOn).length, $('#filmTitle').val());
 			break;
 		case ('keypress'):
 			if (event.keyCode === 13) {
-				addNewTableLine($(this).parent().find('.stars').find('.' + ratingIconOn).length);
+				searchMovie($(this).parent().find('.stars').find('.' + ratingIconOn).length, $('#filmTitle').val());
 			}
 			break;
 		default:
@@ -381,83 +435,131 @@ function createMovie(event) {
 	}
 }
 
+function searchMovie(numberOfStars, movieTitle){
+	$.getJSON("http://www.omdbapi.com/?s=" + movieTitle.replace(" ", "+")).done(function(data) {
+		if (data.Response == "False") {
+			// TODO Fehlermeldung machen
+			alert('Fehler');
+		} else {// data.Response == "True"
+			var poster;
+			if (data.Poster === "N/A") {
+				poster = './img/noposter.png';
+			} else {
+				poster = data.Poster;
+			}
+			$('#detailedView').html(detailedMovieView({
+				movieTitle : movieTitle,
+				movieSeen : movieSeen,
+				rating : setRating(numberOfStars, true),
+				picture : poster,
+				release : data.Released,
+				runtime : data.Runtime,
+				genre : data.Genre,
+				director : data.Director,
+				actors : data.Actors
+			}));
+
+			$('#detailedView').stop().show().animate({
+				right : "0px"
+			});
+			$('#home').stop().animate({
+				left : "-100%"
+			}, function() {
+				$('#home').hide();
+			});
+		}
+		
+		//wenn alles stimmt /addNewTableLine(numberOfStars, movieTitle);
+	});
+}
+
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
-function addNewTableLine(numberOfStars) {
-	var filterSetting = {
-		movieTitle : filter.movieTitle,
-		movieSeen : filter.movieSeen,
-		movieTitleSorted : filter.movieTitleSorted
-	};
+function addNewTableLine(numberOfStars, movieTitle) {
+	var id = searchMovie(movieTitle);
+	
+	if(id != null){
+		//Je nachdem was die Suche ergibt kann der restlich Teil abgebrochen oder durchgeführt werden
+		var filterSetting = {
+			movieTitle : filter.movieTitle,
+			movieSeen : filter.movieSeen,
+			movieTitleSorted : filter.movieTitleSorted
+		};
+	
+		if (filter.movieTitleSorted != null) {
+			removeSort();
+		}
+		if (filter.movieSeen != null) {
+			removeWatchFilter();
+		}
+		if (filter.movieTitle != null) {
+			removeTitleFilter();
+		}
+		/*ID Ermitteln*/
+		var newID = $('#filmtable').find('tr').last().attr('id');
+		//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
+	
+		if ( typeof newID == 'undefined') {
+			var newID = 'tr-1';
+			//falls noch keine Zeile existiert
+		} else {
+			var tmpId = newID.split('-');
+			//ID der letzten Zeile splitten (ID = "tr-ZAHL")
+			tmpId[1] = parseInt(tmpId[1]) + 1;
+			//Anzahl der Zeilen steht im 2. Feld, muss von String in Integer geparst werden
+			newID = 'tr-' + tmpId[1];
+			//ID fuer die neue Zeile zusammensetzen
+		}
+		/*Tabelleneintrag hinzufuegen*/
+		if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text().toUpperCase()) {
+			numberOfStars = 0;
+		} else if (mouseoverForRatingOn) {
+			/* 'mouseover' Event ist noch an Bewertung gebunden, daher darf eine Bewertung nicht erfolgen.
+			 * Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
+			numberOfStars = 1;
+		}
+	
+		$('#filmtable').append(addMovieToList({
+			rowID : newID,
+			movieTitle : $('#filmTitle').val(),
+			movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
+			rating : setRating(numberOfStars, true)
+		}));
+	
+		/*Initialisiere PopOver fuer Delete-Button*/
+		var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
+		$('#' + newID).find('.delete').popover({
+			trigger : 'focus',
+			title : 'Löschen',
+			content : popoverContent,
+			html : 'true'
+		});
+	
+		$('#createFilmModal').modal('hide');
+		/* Action Listener für Detail View Lupe */
+		$('.detailMagnifier').click('click', function() {
+			var clickedTr = $(this).parent().parent();
+			buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
+		});
+	
+		filter.movieSeen = filterSetting.movieSeen;
+		filter.movieTitle = filterSetting.movieTitle;
+		filter.movieTitleSorted = filterSetting.movieTitleSorted;
+	
+		if (filter.movieTitleSorted != null) {
+			sortTitleAlphabet(filter.movieTitleSorted);
+		}
+		if (filter.movieSeen != null) {
+			filterWatchStatus(filter.movieSeen);
+		}
+		if (filter.movieTitle != null) {
+			filterMovieTitle(filter.movieTitle);
+		}
+		
+		//TODO filter GUI wieder setzen!!!		
+	}else{
+		//$('#createFilmModal').modal('hide');		
+	}
 
-	if (filter.movieTitleSorted != null) {
-		removeSort();
-	}
-	if (filter.movieSeen != null) {
-		removeWatchFilter();
-	}
-	if (filter.movieTitle != null) {
-		removeTitleFilter();
-	}
-	/*ID Ermitteln*/
-	var newID = $('#filmtable').find('tr').last().attr('id');
-	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
-
-	if ( typeof newID == 'undefined') {
-		var newID = 'tr-1';
-		//falls noch keine Zeile existiert
-	} else {
-		var tmpId = newID.split('-');
-		//ID der letzten Zeile splitten (ID = "tr-ZAHL")
-		tmpId[1] = parseInt(tmpId[1]) + 1;
-		//Anzahl der Zeilen steht im 2. Feld, muss von String in Integer geparst werden
-		newID = 'tr-' + tmpId[1];
-		//ID fuer die neue Zeile zusammensetzen
-	}
-	/*Tabelleneintrag hinzufuegen*/
-	if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text().toUpperCase()) {
-		numberOfStars = 0;
-	} else if (mouseoverForRatingOn) {
-		/* 'mouseover' Event ist noch an Bewertung gebunden, daher darf eine Bewertung nicht erfolgen.
-		 * Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
-		numberOfStars = 1;
-	}
-
-	$('#filmtable').append(addMovieToList({
-		rowID : newID,
-		movieTitle : $('#filmTitle').val(),
-		movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
-		rating : setRating(numberOfStars, true)
-	}));
-
-	/*Initialisiere PopOver fuer Delete-Button*/
-	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
-	$('#' + newID).find('.delete').popover({
-		trigger : 'focus',
-		title : 'Löschen',
-		content : popoverContent,
-		html : 'true'
-	});
-
-	$('#createFilmModal').modal('hide');
-	/* Action Listener für Detail View Lupe */
-	$('.detailMagnifier').click('click', function() {
-		var clickedTr = $(this).parent().parent();
-		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
-	});
-
-	filter.movieSeen = filterSetting.movieSeen;
-	filter.movieTitle = filterSetting.movieTitle;
-	filter.movieTitleSorted = filterSetting.movieTitleSorted;
-
-	if (filter.movieTitleSorted != null) {
-		sortTitleAlphabet(filter.movieTitleSorted);
-	}
-	if (filter.movieSeen != null) {
-		filterWatchStatus(filter.movieSeen);
-	}
-	if (filter.movieTitle != null) {
-		filterMovieTitle(filter.movieTitle);
-	}
 }
 
 /* Das 'editFilmModul' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */
@@ -806,8 +908,6 @@ function setFilterRating(starid){
 	filterTable();	
 }
 function filterWatchStatusSet(seen){
-	var gesehen = seen;
-	
 	if (seen == true) {
 		filter.movieSeen = "gesehen";
 	} else if (seen == false) {
@@ -889,6 +989,9 @@ function removeTitleFilter() {
 }
 
 function removeAllFilters() {
+	
+	//TODO Performance technisch sehr unglücklich -> in jeder remove-Methode wird filterTable() aufgerufen.
+	//nach aktuellem Stand würde die Tabelle also 4 Mal gefiltert werden!!!!
 	removeWatchFilter();
 	removeTitleFilter();
 	removeRatingFilter();
@@ -1005,6 +1108,9 @@ function sortRating(direction){
 	};	
 }
 
+function groupRatingSortTitle(ratingSortDirection, titleSortDirection){
+	
+}
 /*	
  * Alte Filtermethoden die durch den neuen Algorithmus ersetzt wurden
 function filterRating(rating){
