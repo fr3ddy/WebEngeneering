@@ -890,7 +890,6 @@ function setRating(selectedStars, forTableOrDetailedView) {
 }
 
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/
-<<<<<<< HEAD
 /*---------------------------------- Anfang Doppelte Eintraege verhindern -------------------------------------------------------------------------------*/
 
 /* Ueberprueft ob der Film in der Tabelle schon existiert */
@@ -909,8 +908,6 @@ var checkForDuplicate = function(imdbID) {
 };
 
 /*---------------------------------- Ende Doppelte Eintraege verhindern -------------------------------------------------------------------------------*/
-=======
->>>>>>> 2ef710a9c90b79d12001d7e93ff06a0b791598fd
 
 /*------------------------------ Filter --------------------------------*/
 function fillStars(starid){
@@ -1128,10 +1125,6 @@ function sortTitleAlphabet(direction) {
 	}
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> cad3451c2c0f6fc01cf85b486b6deb8bf7e5154e
 function sortRating(direction){
 	if($('#filmtable').find('tr').length !== 0){
 		var actRow = $('#list tbody tr:first-child');
