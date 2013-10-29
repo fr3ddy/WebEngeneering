@@ -483,10 +483,10 @@ function buildChooseTable(foundMovies, numberOfStars){
 	
 	for (var i=0; i < foundMovies.length; i++) {
 		$('<tr data-imdbID="'+ foundMovies[i].imdbID +'"><td>'+ foundMovies[i].Title +'</td><td>'+ foundMovies[i].Year +'</td><td>'+ foundMovies[i].Type +'</td>'+
-		'<td><button type="button" class="btn btn-primary">Auswahl</button></td></tr>').appendTo('#createFilmModal .modal-body tbody');
+		'<td><button type="button" class="btn btn-primary select">Auswahl</button></td></tr>').appendTo('#createFilmModal .modal-body tbody');
 	};
 	
-	$('tbody .btn').on('click', function(){
+	$('tbody .select').on('click', function(){ 
 		addNewTableLine(numberOfStars, $(this).parent().parent().find('td:first-child').text(), $(this).parent().parent().attr('data-imdbID'));
 		
 		$('#createFilmModal').find('#saveFilm').show();
