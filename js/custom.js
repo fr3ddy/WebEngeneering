@@ -922,11 +922,15 @@ function setFilterRating(starid){
 	var id = starid.split('-');
 	filter.movieRating = id[1];
 	
+	if(filter.movieSeen == 'nicht gesehen'){
+		removeWatchFilter();
+	}
+	
 	filterTable();	
 }
 function filterWatchStatusSet(seen){
 	if (seen == true) {
-		filter.movieSeen = "gesehen";
+		filter.movieSeen = "gesehen";		
 	} else if (seen == false) {
 		filter.movieSeen = "nicht gesehen";
 		removeRatingFilter();
