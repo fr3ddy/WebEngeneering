@@ -177,3 +177,9 @@ table {
 #loginDropdown{
 	width: 250px;
 }
+
+#register{
+	padding-left: 75px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+}

@@ -7,7 +7,6 @@
 		<meta name="author" content="">
 
 		<title>Filmverwaltung</title>
-
 		<!-- jQuery -->
 		<script src="http://code.jquery.com/jquery-2.0.3.js"></script>
 
@@ -17,7 +16,11 @@
 
 		<!-- Underscore -->
 		<script src="js/underscore-min.js"></script>
-
+		
+		<!-- Parse -->
+		<script src="http://www.parsecdn.com/js/parse-1.2.12.min.js"></script>
+		<script src="js/parse.js"></script>
+		
 		<!-- Custom -->
 		<link href="css/custom.css" rel="stylesheet">
 		<script src="js/custom.js"></script>
@@ -61,9 +64,10 @@
 											<input type="password" class="form-control" id="passwordInput" name="password" placeholder="Passwort">
 										</div>
 
-										<button class="btn btn-primary form-control" id="submitLoginButton">
+										<button class="btn btn-primary form-control" id="submitLoginButton" data-loading-text="Loggin In...">
 											Log In
 										</button>
+										<button class="btn btn-link" id="register">Registrieren</button>
 									</fieldset>
 								</form>
 							</div>
@@ -188,6 +192,34 @@
 						</button>
 						<button type="button" class="btn btn-primary" id="changeMovie">
 							Ändern
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Register Movie-->
+		<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+							&times;
+						</button>
+						<h4 class="modal-title">Registrieren</h4>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<input type="text" id="regUsernameInput" class="form-control" placeholder="Username"/>
+							<input type="password" id="regPasswordInput" class="form-control" placeholder="Password"/>
+						</div>
+						<div class="alert alert-danger" style="display: none;" ></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">
+							Cancel
+						</button>
+						<button type="button" class="btn btn-primary" id="submitRegistration">
+							Registrieren
 						</button>
 					</div>
 				</div>

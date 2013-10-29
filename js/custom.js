@@ -237,17 +237,41 @@ $(document).ready(function() {
 	/*--------------------------------Ende Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
 
 	/*-----LOGIN--------*/
-	// TODO kommentieren
-	if (sessionStorage.getItem("user") != "") {
+	// prüft ob angemeldet oder nicht!
+	if (Parse.User.current() == null){
+		// do stuff with the user
+	} else {
 		//@formatter:off
+		isLoggedInOrNot();
 		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">'
 											+'<span class="glyphicon glyphicon-remove-circle"></span> Logout'
 										+'</button>');
+		$('#logoutButton').on('click', function() {
+				$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
+
+				Parse.User.logOut();
+
+				$('#loginDropdown').show();
+				setTimeout('$("#usernameInput").focus()', 100);
+				//Login Button Listener
+				$('#loginButton').on('click', function() {
+					setTimeout('$("#usernameInput").focus()', 100);
+				});
+				$('#passwordInput').val("");
+				$('#usernameInput').val("");
+				isLoggedInOrNot();
+		});
 		//@formatter:on
 	}
 	//Login Button Listener
 	$('#loginButton').on('click', function() {
-		setTimeout('$("#usernameInput").focus()', 100);
+		if(!$(this).parent().parent().hasClass("open")){
+			$('#loginDropdown').show();
+			setTimeout('$("#usernameInput").focus()', 100);
+		}else{
+			//Bei klick auf Login ausblenden vom Inputfeld
+			$('#loginDropdown').hide();
+		}
 	});
 	$('#submitLoginButton').on('click', function(event) {
 		// TODO Issue 35
@@ -255,52 +279,23 @@ $(document).ready(function() {
 		var userName = $('#usernameInput').val();
 		var password = $('#passwordInput').val();
 		var parent = $('#loginButton').parent();
-		login_ajax(userName, password).done(function(value) {
-			if (value == "") {
-				//Es wurden keine Logindaten eingeben
-				$('#passwordInput').parent().addClass("has-error");
-				$('#usernameInput').parent().addClass("has-error");
-			} else if (value == "wrongUser") {
-				//Es wurde ein falscher Benutzername eingegeben
-				$('#passwordInput').parent().removeClass("has-error");
-				$('#usernameInput').parent().addClass("has-error");
-			} else if (value == "wrongPassword") {
-				//Es wurde ein falsches Passwort eingegeben
-				$('#passwordInput').parent().addClass("has-error");
-				$('#usernameInput').parent().removeClass("has-error");
-			} else {
-				//Alles war gut!
-				$('#usernameInput').parent().removeClass("has-error");
-				$('#passwordInput').parent().removeClass("has-error");
-				parent.empty();
-				parent.append(value);
-				$('#submitLoginButton').parent().parent().parent().parent().removeClass("open");
-				$('#logoutButton').on('click', function() {
-					var parent = $('#logoutButton').parent();
-					logout_ajax().done(function(value) {
-						parent.empty();
-						parent.append(value);
-						sessionStorage.setItem("user", "");
-
-						isLoggedInOrNot();
-						setTimeout('$("#usernameInput").focus()', 100);
-						//Login Button Listener
-						$('#loginButton').on('click', function() {
-							setTimeout('$("#usernameInput").focus()', 100);
-						});
-					});
-				});
-				$('#passwordInput').val("");
-				$('#usernameInput').val("");
-
-				//SET SESSION
-				sessionStorage.setItem("user", userName);
-
-				isLoggedInOrNot();
-			}
-		});
+		$('#submitLoginButton').button('loading');
+		loginUser(userName , password);
 	});
-
+	
+	/* Registrieren */
+	$('#register').on("click" , function(){
+		event.preventDefault();
+		$('#registerModal').modal('show');
+	});
+	
+	$('#submitRegistration').on("click" , function(){
+		var username = $('#registerModal .modal-body #regUsernameInput').val();
+		var password = $('#registerModal .modal-body #regPasswordInput').val();
+		registerUser(username , password);
+	});
+	
+	
 	/* Filter */
 
 	$('#filterButton').on("click", function() {
@@ -1172,21 +1167,3 @@ function filterWatchStatus(gStatus) {
 	}
 }
 */
-//---------------------------Ajax-Methoden-------------------------------------------------------------
-function login_ajax(n, p) {
-	return $.ajax({
-		type : "POST",
-		url : "ajax/login.php",
-		data : {
-			username : n,
-			password : p
-		},
-	});
-}
-
-function logout_ajax() {
-	return $.ajax({
-		type : "POST",
-		url : "ajax/logout.php",
-	});
-}
