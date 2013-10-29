@@ -95,7 +95,10 @@
 								<span class="glyphicon glyphicon-chevron-up sortInactive" id="sortRatingASC"></span><span class="glyphicon glyphicon-chevron-down sortInactive" id="sortRatingDESC"></span>
 							</div></th>
 							<th><!--Bearbeiten--></th>
-							<th><!--Loeschen/Filter--><button class="btn btn-default btn-sm"  id="filterButton"><span class="glyphicon glyphicon-filter"></span></button></th>
+							<th><!--Loeschen/Filter-->
+							<button class="btn btn-default btn-sm"  id="filterButton">
+								<span class="glyphicon glyphicon-filter"></span>
+							</button></th>
 						<tr>
 					</thead>
 					<tbody id="filmtable"></tbody>
@@ -128,6 +131,19 @@
 							<div class="rating">
 								<label>Bewertung:</label>
 							</div>
+						</div>
+						<div id="chooseTable">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Titel</th>
+										<th>Jahr</th>
+										<th>Type</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
 						</div>
 					</div>
 					<div class="modal-footer">

@@ -23,6 +23,10 @@ table {
 	cursor: default;
 }
 
+#chooseTable{
+	display: none;
+}
+
 .detailMagnifier {
 	color: #d3d3d3;
 	cursor: pointer;

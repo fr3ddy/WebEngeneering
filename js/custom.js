@@ -20,7 +20,7 @@ var filter = {
 };
 
 //@formatter:off
-var addMovieToList = _.template('<tr id="<%- rowID %>">'
+var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %> ">'
 									+'<td class="magnifierTable"><span class="glyphicon glyphicon-search detailMagnifier"/></td>'
 									+'<td class="tableFilmTitle"><%- movieTitle %></td>' 
 									+'<td class="tableMovieSeen"><%- movieSeen %></td>' 
@@ -470,9 +470,10 @@ function searchMovie(numberOfStars, movieTitle){
 }
 
 function buildChooseTable(foundMovies, numberOfStars){
-	$('#createFilmModal').find('.modal-body').empty();
-	$('<table class="table table-hover"><thead><tr><th>Titel</th><th>Jahr</th><th>Type</th><th></th></tr></thead><tbody></tbody></table>').appendTo('#createFilmModal .modal-body');
-	$('#createFilmModal').find('#saveFilm').css('visibility', 'hide');
+	$('#createFilmModal').find('.modal-body .form-group').hide();
+	$('#createFilmModal').find('#saveFilm').hide();
+	$('#createFilmModal').find('#chooseTable').show();
+	$('#createFilmModal').find('#chooseTable tbody').empty();
 	
 	for (var i=0; i < foundMovies.length; i++) {
 		$('<tr data-imdbID="'+ foundMovies[i].imdbID +'"><td>'+ foundMovies[i].Title +'</td><td>'+ foundMovies[i].Year +'</td><td>'+ foundMovies[i].Type +'</td>'+
@@ -482,9 +483,10 @@ function buildChooseTable(foundMovies, numberOfStars){
 	$('tbody .btn').on('click', function(){
 		addNewTableLine(numberOfStars, $(this).parent().parent().find('td:first-child').text(), $(this).parent().parent().attr('data-imdbID'));
 		
-		$('#createFilmModal').find('#saveFilm').css('visibilitiy', 'visible');
-		$('#createFilmModal').find('.modal-body').empty();
-		$(insertCreateFilmModal).appendTo('#createFilmModal .modal-body');
+		$('#createFilmModal').find('#saveFilm').show();
+		$('#createFilmModal').find('.modal-body .form-group').show();
+		$('#createFilmModal').find('#chooseTable').hide();
+
 	});
 }
 
@@ -522,15 +524,16 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		//ID fuer die neue Zeile zusammensetzen
 	}
 	/*Tabelleneintrag hinzufuegen*/
-	// if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text().toUpperCase()) {
-		// numberOfStars = 0;
-	// } else if (mouseoverForRatingOn) {
-		// /* 'mouseover' Event ist noch an Bewertung gebunden, daher darf eine Bewertung nicht erfolgen.
-		 // * Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
-		// numberOfStars = 1;
-	// }
+	if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text().toUpperCase()) {
+		numberOfStars = 0;
+	} else if (mouseoverForRatingOn) {
+		/* 'mouseover' Event ist noch an Bewertung gebunden, daher darf eine Bewertung nicht erfolgen.
+		 * Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
+		numberOfStars = 1;
+	}
 
 	$('#filmtable').append(addMovieToList({
+		imdbID: imdbID,
 		rowID : newID,
 		movieTitle : movieTitle,
 		movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
@@ -550,7 +553,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 	/* Action Listener für Detail View Lupe */
 	$('.detailMagnifier').click('click', function() {
 		var clickedTr = $(this).parent().parent();
-		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
+		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
 	});
 	
 	filter.movieSeen = filterSetting.movieSeen;
@@ -632,9 +635,9 @@ function toggleClassOnAllElements(element) {
 
 /*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
 /* Detailansicht wird aufgebaut. Dafuer werden Daten von der OMDB Database als JSON geholt */
-function buildDetailView(numberOfStars, movieTitle, movieSeen) {
+function buildDetailView(numberOfStars, movieSeen, imdbID) {
 	// alternative Quelle könnte "http://mymovieapi.com/?title=" sein
-	$.getJSON("http://www.omdbapi.com/?t=" + movieTitle.replace(" ", "+")).done(function(data) {
+	$.getJSON("http://www.omdbapi.com/?i=" + imdbID).done(function(data) {
 		if (data.Response == "False") {
 			// TODO Fehlermeldung machen
 			alert('Fehler');
@@ -646,7 +649,7 @@ function buildDetailView(numberOfStars, movieTitle, movieSeen) {
 				poster = data.Poster;
 			}
 			$('#detailedView').html(detailedMovieView({
-				movieTitle : movieTitle,
+				movieTitle : data.Title,
 				movieSeen : movieSeen,
 				rating : setRating(numberOfStars, true),
 				picture : poster,
