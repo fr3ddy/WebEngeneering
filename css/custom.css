@@ -61,14 +61,14 @@ table {
 	margin-bottom: 19px;
 }
 
-.rating .stars {
+.rating .stars, #filterStars {
 	color: #ffd700 ;
 	vertical-align: middle;
 	display: inline-block;
 	cursor: pointer;
 }
 
-.stars {
+.stars, #filterStars {
 	color: #ffd700 ;
 	font-size: 140%;
 	display: inline-block;
