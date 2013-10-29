@@ -455,7 +455,7 @@ function createMovie(event) {
 
 function searchMovie(numberOfStars, movieTitle){
 	$.getJSON("http://www.omdbapi.com/?s=" + movieTitle.replace(" ", "+")).done(function(data) {
-		if(data.Search.length != 0){
+		if(data.Response == 'undefined'){
 			var elementsFound = $.map( data.Search, function( value, key ) {
 				if(value.Type != 'game'){
 					return value;	
@@ -467,10 +467,12 @@ function searchMovie(numberOfStars, movieTitle){
 			}else if(elementsFound == 1){
 				addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
 			}else{
-				$('#createFilmModal').modal('hide');				
+				$('#createFilmModal').modal('hide');
+				//TODO Fehlermeldung weil Film nicht gefunden				
 			}
 		}else{
 			$('#createFilmModal').modal('hide');
+			//TODO Fehlermeldung weil Film nicht gefunden	
 		}		
 		//wenn alles stimmt /addNewTableLine(numberOfStars, movieTitle);
 	});
