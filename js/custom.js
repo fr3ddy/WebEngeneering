@@ -386,16 +386,16 @@ $(document).ready(function() {
 		
 	$('#sortRatingASC').on("click", function() {
 
-		if (filter.movieRatingSorted != 'true' && filter.movieTitleSorted == null) {
+		if (filter.movieRatingSorted != 'true' && filter.movieTitleSorted == null) { //Rating nicht aufsteigen sortiert und Titelfilter inaktiv
 			sortRating(true);
 			filter.movieRatingSorted = 'true';
 			$('#sortRatingASC').removeClass('sortInactive');	
 			$('#sortRatingDESC').addClass('sortInactive');	
-		}else if(filter.movieRatingSorted == 'true' && filter.movieTitleSorted == null){
+		}else if(filter.movieRatingSorted == 'true' && filter.movieTitleSorted == null){ //Rating aufsteigend sortiert und Titelfilter inaktiv
 			removeSort();
 			filter.movieRatingSorted = null;
 			$('#sortRatingASC').addClass('sortInactive');	
-		}else if(filter.movieRatingSorted != 'true' && filter.movieTitleSorted != null){ 
+		}else if(filter.movieRatingSorted != 'true' && filter.movieTitleSorted != null){ //Rating nicht aufsteigen sortiert und Titelfilter inaktiv
 			filter.movieRatingSorted = 'true';
 			$('#sortRatingASC').removeClass('sortInactive');	
 			$('#sortRatingDESC').addClass('sortInactive');	
@@ -469,6 +469,8 @@ function searchMovie(numberOfStars, movieTitle){
 			}else{
 				$('#createFilmModal').modal('hide');				
 			}
+		}else{
+			$('#createFilmModal').modal('hide');
 		}		
 		//wenn alles stimmt /addNewTableLine(numberOfStars, movieTitle);
 	});
