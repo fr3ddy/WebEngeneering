@@ -54,6 +54,19 @@ var detailedMovieView = _.template('<div class="container">'
 											+'<img src="<%- picture %>" class="img-thumbnail"/>'
 										+'</div>'
 									+'</div>');
+									
+var insertCreateFilmModal = '<div class="form-group">'+
+										'<input type="text" class="form-control" id="filmTitle" placeholder="Film eingeben">'+
+											'<div class="switch-wrapper">'+
+												'<span class="switch-button-label off">GESEHEN</span>'+
+											'<div class="switch-button-background">'+
+											'<div class="switch-button-button"></div>'+
+										'</div><span class="switch-button-label on">NICHT GESEHEN</span><div style="clear: left;"></div>'+
+										'</div>'+
+										'<div class="rating">'+
+											'<label>Bewertung:</label>'+
+										'</div>'+
+										'</div>';									
 //@formatter:on
 
 sessionStorage.setItem("user", "");
@@ -414,7 +427,7 @@ $(document).ready(function() {
 			filter.movieRatingSorted = null;
 			$('#sortRatingDESC').addClass('sortInactive');				
 		}
-	});
+	});	
 
 	//---------------------------------------------------------------------------------------------------------------------------------------
 });
@@ -437,129 +450,124 @@ function createMovie(event) {
 
 function searchMovie(numberOfStars, movieTitle){
 	$.getJSON("http://www.omdbapi.com/?s=" + movieTitle.replace(" ", "+")).done(function(data) {
-		if (data.Response == "False") {
-			// TODO Fehlermeldung machen
-			alert('Fehler');
-		} else {// data.Response == "True"
-			var poster;
-			if (data.Poster === "N/A") {
-				poster = './img/noposter.png';
-			} else {
-				poster = data.Poster;
+		if(data.Search.length != 0){
+			var elementsFound = $.map( data.Search, function( value, key ) {
+				if(value.Type != 'game'){
+					return value;	
+				}
+			});
+			
+			if(elementsFound.length > 1){
+				buildChooseTable(elementsFound, numberOfStars);
+			}else if(elementsFound == 1){
+				addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
+			}else{
+				$('#createFilmModal').modal('hide');				
 			}
-			$('#detailedView').html(detailedMovieView({
-				movieTitle : movieTitle,
-				movieSeen : movieSeen,
-				rating : setRating(numberOfStars, true),
-				picture : poster,
-				release : data.Released,
-				runtime : data.Runtime,
-				genre : data.Genre,
-				director : data.Director,
-				actors : data.Actors
-			}));
-
-			$('#detailedView').stop().show().animate({
-				right : "0px"
-			});
-			$('#home').stop().animate({
-				left : "-100%"
-			}, function() {
-				$('#home').hide();
-			});
-		}
-		
+		}		
 		//wenn alles stimmt /addNewTableLine(numberOfStars, movieTitle);
 	});
 }
 
-/* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
-function addNewTableLine(numberOfStars, movieTitle) {
-	var id = searchMovie(movieTitle);
+function buildChooseTable(foundMovies, numberOfStars){
+	$('#createFilmModal').find('.modal-body').empty();
+	$('<table class="table table-hover"><thead><tr><th>Titel</th><th>Jahr</th><th>Type</th><th></th></tr></thead><tbody></tbody></table>').appendTo('#createFilmModal .modal-body');
+	$('#createFilmModal').find('#saveFilm').css('visibility', 'hide');
 	
-	if(id != null){
-		//Je nachdem was die Suche ergibt kann der restlich Teil abgebrochen oder durchgeführt werden
-		var filterSetting = {
-			movieTitle : filter.movieTitle,
-			movieSeen : filter.movieSeen,
-			movieTitleSorted : filter.movieTitleSorted
-		};
+	for (var i=0; i < foundMovies.length; i++) {
+		$('<tr data-imdbID="'+ foundMovies[i].imdbID +'"><td>'+ foundMovies[i].Title +'</td><td>'+ foundMovies[i].Year +'</td><td>'+ foundMovies[i].Type +'</td>'+
+		'<td><button type="button" class="btn btn-primary">Auswahl</button></td></tr>').appendTo('#createFilmModal .modal-body tbody');
+	};
 	
-		if (filter.movieTitleSorted != null) {
-			removeSort();
-		}
-		if (filter.movieSeen != null) {
-			removeWatchFilter();
-		}
-		if (filter.movieTitle != null) {
-			removeTitleFilter();
-		}
-		/*ID Ermitteln*/
-		var newID = $('#filmtable').find('tr').last().attr('id');
-		//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
-	
-		if ( typeof newID == 'undefined') {
-			var newID = 'tr-1';
-			//falls noch keine Zeile existiert
-		} else {
-			var tmpId = newID.split('-');
-			//ID der letzten Zeile splitten (ID = "tr-ZAHL")
-			tmpId[1] = parseInt(tmpId[1]) + 1;
-			//Anzahl der Zeilen steht im 2. Feld, muss von String in Integer geparst werden
-			newID = 'tr-' + tmpId[1];
-			//ID fuer die neue Zeile zusammensetzen
-		}
-		/*Tabelleneintrag hinzufuegen*/
-		if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text().toUpperCase()) {
-			numberOfStars = 0;
-		} else if (mouseoverForRatingOn) {
-			/* 'mouseover' Event ist noch an Bewertung gebunden, daher darf eine Bewertung nicht erfolgen.
-			 * Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
-			numberOfStars = 1;
-		}
-	
-		$('#filmtable').append(addMovieToList({
-			rowID : newID,
-			movieTitle : $('#filmTitle').val(),
-			movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
-			rating : setRating(numberOfStars, true)
-		}));
-	
-		/*Initialisiere PopOver fuer Delete-Button*/
-		var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
-		$('#' + newID).find('.delete').popover({
-			trigger : 'focus',
-			title : 'Löschen',
-			content : popoverContent,
-			html : 'true'
-		});
-	
-		$('#createFilmModal').modal('hide');
-		/* Action Listener für Detail View Lupe */
-		$('.detailMagnifier').click('click', function() {
-			var clickedTr = $(this).parent().parent();
-			buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
-		});
-	
-		filter.movieSeen = filterSetting.movieSeen;
-		filter.movieTitle = filterSetting.movieTitle;
-		filter.movieTitleSorted = filterSetting.movieTitleSorted;
-	
-		if (filter.movieTitleSorted != null) {
-			sortTitleAlphabet(filter.movieTitleSorted);
-		}
-		if (filter.movieSeen != null) {
-			filterWatchStatus(filter.movieSeen);
-		}
-		if (filter.movieTitle != null) {
-			filterMovieTitle(filter.movieTitle);
-		}
+	$('tbody .btn').on('click', function(){
+		addNewTableLine(numberOfStars, $(this).parent().parent().find('td:first-child').text(), $(this).parent().parent().attr('data-imdbID'));
 		
-		//TODO filter GUI wieder setzen!!!		
-	}else{
-		//$('#createFilmModal').modal('hide');		
-	}
+		$('#createFilmModal').find('#saveFilm').css('visibilitiy', 'visible');
+		$('#createFilmModal').find('.modal-body').empty();
+		$(insertCreateFilmModal).appendTo('#createFilmModal .modal-body');
+	});
+}
 
+/* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
+function addNewTableLine(numberOfStars, movieTitle, imdbID) {
+	//Je nachdem was die Suche ergibt kann der restlich Teil abgebrochen oder durchgeführt werden
+	var filterSetting = {
+		movieTitle : filter.movieTitle,
+		movieSeen : filter.movieSeen,
+		movieTitleSorted : filter.movieTitleSorted
+	};
+
+	if (filter.movieTitleSorted != null) {
+		removeSort();
+	}
+	if (filter.movieSeen != null) {
+		removeWatchFilter();
+	}
+	if (filter.movieTitle != null) {
+		removeTitleFilter();
+	}
+	/*ID Ermitteln*/
+	var newID = $('#filmtable').find('tr').last().attr('id');
+	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
+
+	if ( typeof newID == 'undefined') {
+		var newID = 'tr-1';
+		//falls noch keine Zeile existiert
+	} else {
+		var tmpId = newID.split('-');
+		//ID der letzten Zeile splitten (ID = "tr-ZAHL")
+		tmpId[1] = parseInt(tmpId[1]) + 1;
+		//Anzahl der Zeilen steht im 2. Feld, muss von String in Integer geparst werden
+		newID = 'tr-' + tmpId[1];
+		//ID fuer die neue Zeile zusammensetzen
+	}
+	/*Tabelleneintrag hinzufuegen*/
+	// if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text().toUpperCase()) {
+		// numberOfStars = 0;
+	// } else if (mouseoverForRatingOn) {
+		// /* 'mouseover' Event ist noch an Bewertung gebunden, daher darf eine Bewertung nicht erfolgen.
+		 // * Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
+		// numberOfStars = 1;
+	// }
+
+	$('#filmtable').append(addMovieToList({
+		rowID : newID,
+		movieTitle : movieTitle,
+		movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
+		rating : setRating(numberOfStars, true)
+	}));
+	
+	/*Initialisiere PopOver fuer Delete-Button*/
+	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
+	$('#' + newID).find('.delete').popover({
+		trigger : 'focus',
+		title : 'Löschen',
+		content : popoverContent,
+		html : 'true'
+	});
+	
+	$('#createFilmModal').modal('hide');
+	/* Action Listener für Detail View Lupe */
+	$('.detailMagnifier').click('click', function() {
+		var clickedTr = $(this).parent().parent();
+		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableFilmTitle').text(), clickedTr.find('.tableMovieSeen').text().toLowerCase());
+	});
+	
+	filter.movieSeen = filterSetting.movieSeen;
+	filter.movieTitle = filterSetting.movieTitle;
+	filter.movieTitleSorted = filterSetting.movieTitleSorted;
+
+	if (filter.movieTitleSorted != null) {
+		sortTitleAlphabet(filter.movieTitleSorted);
+	}
+	if (filter.movieSeen != null) {
+		filterWatchStatus(filter.movieSeen);
+	}
+	if (filter.movieTitle != null) {
+		filterMovieTitle(filter.movieTitle);
+	}
+		
+	//TODO filter GUI wieder setzen!!!		
 }
 
 /* Das 'editFilmModul' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */
