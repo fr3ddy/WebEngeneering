@@ -160,6 +160,11 @@ $(document).ready(function() {
 
 	/* Modal öffnen, um neuen Film hinzuzufügen 'createFilmModal'*/
 	$('#add').on('click', function() {
+		//Falls Auswahl abgebrochen wurde		
+		$('#createFilmModal').find('#saveFilm').show();
+		$('#createFilmModal').find('.modal-body .form-group').show();
+		$('#createFilmModal').find('#chooseTable').hide();
+
 		// leere Film Input Feld, falls noch etwas drin stehen sollte
 		$('#filmTitle').val("");
 
