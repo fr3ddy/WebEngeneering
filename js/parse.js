@@ -35,7 +35,13 @@ function loginUser(username, password) {
 				setTimeout('$("#usernameInput").focus()', 100);
 				//Login Button Listener
 				$('#loginButton').on('click', function() {
-					setTimeout('$("#usernameInput").focus()', 100);
+					if(!$(this).parent().parent().hasClass("open")){
+						$('#loginDropdown').show();
+						setTimeout('$("#usernameInput").focus()', 100);
+					}else{
+						//Bei klick auf Login ausblenden vom Inputfeld
+						$('#loginDropdown').hide();
+					}
 				});
 				$('#passwordInput').val("");
 				$('#usernameInput').val("");
