@@ -1138,8 +1138,6 @@ function sortTitleAlphabet(direction) {
 	}
 }
 
-<<<<<<< HEAD
-
 function sortRating(direction){
 	if($('#filmtable').find('tr').length !== 0){
 		var actRow = $('#list tbody tr:first-child');
