@@ -566,21 +566,40 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
 	});
 
+
+//----------------------Filter wieder setzten und neue Tabelle filtern!	
+
 	filter.movieSeen = filterSetting.movieSeen;
 	filter.movieTitle = filterSetting.movieTitle;
 	filter.movieTitleSorted = filterSetting.movieTitleSorted;
 
-	if (filter.movieTitleSorted != null) {
+	if (filter.movieTitleSorted != null && filter.movieRatingSorted == null) {
 		sortTitleAlphabet(filter.movieTitleSorted);
+	}else if(filter.movieTitleSorted == null && filter.movieRatingSorted != null){
+		sortRating(filter.movieRatingSorted);
+	}else{
+		groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);
 	}
+	
 	if (filter.movieSeen != null) {
-		filterWatchStatus(filter.movieSeen);
+		if (filter.movieSeen == 'gesehen') {
+			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary active');
+			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');
+
+		} else if (filter.movieSeen == 'nicht gesehen') {
+			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary');
+			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary active');
+		} else if (filter.movieSeen == null) {
+			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary');
+			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');
+		}
 	}
 	if (filter.movieTitle != null) {
-		filterMovieTitle(filter.movieTitle);
+		$('#filterBox #movieTitle').val(filter.movieTitle);
 	}
 
-	//TODO filter GUI wieder setzen!!!
+	filterTable();	
+
 }
 
 /* Das 'editFilmModul' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */
@@ -932,9 +951,9 @@ function fillStars(starid) {
 }
 
 // Setzt den zu Filternden im Filter-Objekt und starten dann das Filtern
-function movieTitleFilterKeyUp() {
-	setTimeout(function() {
-		filter.movieTitle = $('#filterBox #movieTitle').val();
+function movieTitleFilterKeyUp(){
+	setTimeout(function(){
+		filter.movieTitle = $('#filterBox #movieTitle').val().toLowerCase();
 
 		filterTable();
 	}, 1000);
@@ -993,8 +1012,10 @@ function filterRow(actRow) {
 			return true;
 		}
 	}
-	if (filter.movieTitle != null && filter.movieTitle != "" && $.trim(filter.movieTitle) != "") {
-		if ($(actRow).find('.tableFilmTitle').text().search(filter.movieTitle) == -1) {
+
+	if(filter.movieTitle != null && filter.movieTitle != "" && $.trim(filter.movieTitle) != ""){
+		if($(actRow).find('.tableFilmTitle').text().toLowerCase().search(filter.movieTitle) == -1){
+
 			return true;
 		}
 	}
