@@ -561,8 +561,9 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 	$('#createFilmModal').modal('hide');
 	/* Action Listener für Detail View Lupe */
 	$('.detailMagnifier').click('click', function() {
+		$(this).css({cursor: "progress"});
 		var clickedTr = $(this).parent().parent();
-		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
+		buildDetailView.call(this, clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
 	});
 
 	//----------------------Filter wieder setzten und neue Tabelle filtern!
@@ -660,6 +661,7 @@ function toggleClassOnAllElements(element) {
 /*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
 /* Detailansicht wird aufgebaut. Dafuer werden Daten von der OMDB Database als JSON geholt */
 function buildDetailView(numberOfStars, movieSeen, imdbID) {
+	var that = this;
 	// alternative Quelle könnte "http://mymovieapi.com/?title=" sein
 	$.getJSON("http://www.omdbapi.com/?i=" + imdbID).done(function(data) {
 		if (data.Response == "False") {
@@ -693,6 +695,7 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 				$('#home').hide();
 			});
 		}
+		$(that).css({cursor: "default"});
 	});
 }
 
