@@ -1107,7 +1107,10 @@ function sortTitleAlphabet(direction) {
 	}
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> cad3451c2c0f6fc01cf85b486b6deb8bf7e5154e
 function sortRating(direction){
 	if($('#filmtable').find('tr').length !== 0){
 		var actRow = $('#list tbody tr:first-child');
