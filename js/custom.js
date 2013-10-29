@@ -147,11 +147,6 @@ $(document).ready(function() {
 		$('#filmTitle').focus();
 	});
 
-	/* Setze Focus auf Film Titel Input, wenn Modal geoeffnet wird */
-	$('#editFilmModal').on('focus', function() {
-		filmTitleEdit.focus();
-	});
-
 	/*Speicher-Button von Modal 'createFilmModal'*/
 	$('#saveFilm').on('click', createMovie);
 
@@ -395,13 +390,13 @@ $(document).ready(function() {
 			removeSort();
 			filter.movieRatingSorted = null;
 			$('#sortRatingASC').addClass('sortInactive');	
-		}else if(filter.movieRatingSorted != 'true' && filter.movieTitleSorted != null){ //Rating nicht aufsteigen sortiert und Titelfilter inaktiv
+		}else if(filter.movieRatingSorted != 'true' && filter.movieTitleSorted != null){ //Rating nicht aufsteigen sortiert und Titelfilter aktiv
 			filter.movieRatingSorted = 'true';
 			$('#sortRatingASC').removeClass('sortInactive');	
 			$('#sortRatingDESC').addClass('sortInactive');	
 			
 			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);			
-		}else if(filter.movieRatingSorted == 'true' && filter.movieTitleSorted != null){ 
+		}else if(filter.movieRatingSorted == 'true' && filter.movieTitleSorted != null){ //Rating aufsteigen sortiert und Titelfilter aktiv
 			removeSort();
 			sortTitleAlphabet(filter.movieTitleSorted);
 			filter.movieRatingSorted = null;
@@ -411,22 +406,22 @@ $(document).ready(function() {
 	
 	
 	$('#sortRatingDESC').on("click", function() {
-		if (filter.movieRatingSorted != 'false' && filter.movieTitleSorted == null) {
+		if (filter.movieRatingSorted != 'false' && filter.movieTitleSorted == null) {//Rating nicht absteigend sortiert und Titelfilter inaktiv
 			sortRating(false);
 			filter.movieRatingSorted = 'false';
 			$('#sortRatingDESC').removeClass('sortInactive');	
 			$('#sortRatingASC').addClass('sortInactive');	
-		}else if(filter.movieRatingSorted == 'false' && filter.movieTitleSorted == null){
+		}else if(filter.movieRatingSorted == 'false' && filter.movieTitleSorted == null){//Rating absteigend sortiert und Titelfilter inaktiv
 			removeSort();
 			filter.movieRatingSorted = null;
 			$('#sortRatingDESC').addClass('sortInactive');	
-		}else if(filter.movieRatingSorted != 'false' && filter.movieTitleSorted != null){ 
+		}else if(filter.movieRatingSorted != 'false' && filter.movieTitleSorted != null){ //Rating nicht absteigen sortiert und Titelfilter aktiv
 			filter.movieRatingSorted = 'false';
 			$('#sortRatingDESC').removeClass('sortInactive');	
 			$('#sortRatingASC').addClass('sortInactive');	
 			
 			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);			
-		}else if(filter.movieRatingSorted == 'false' && filter.movieTitleSorted != null){ 
+		}else if(filter.movieRatingSorted == 'false' && filter.movieTitleSorted != null){ //Rating absteigen sortiert und Titelfilter aktiv
 			removeSort();
 			sortTitleAlphabet(filter.movieTitleSorted);
 			filter.movieRatingSorted = null;
@@ -454,28 +449,30 @@ function createMovie(event) {
 }
 
 function searchMovie(numberOfStars, movieTitle){
-	$.getJSON("http://www.omdbapi.com/?s=" + movieTitle.replace(" ", "+")).done(function(data) {
-		if(data.Response == 'undefined'){
-			var elementsFound = $.map( data.Search, function( value, key ) {
-				if(value.Type != 'game'){
-					return value;	
-				}
-			});
-			
-			if(elementsFound.length > 1){
-				buildChooseTable(elementsFound, numberOfStars);
-			}else if(elementsFound == 1){
-				addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
-			}else{
-				$('#createFilmModal').modal('hide');
-				//TODO Fehlermeldung weil Film nicht gefunden				
-			}
-		}else{
-			$('#createFilmModal').modal('hide');
-			//TODO Fehlermeldung weil Film nicht gefunden	
-		}		
-		//wenn alles stimmt /addNewTableLine(numberOfStars, movieTitle);
-	});
+	$.ajax( {url: "http://www.omdbapi.com/?s=" + movieTitle.replace(" ", "+"),  
+			dataType: 'json',
+		}).done(function(data) {
+						if(typeof(data.Response) == 'undefined'){
+							var elementsFound = $.map( data.Search, function( value, key ) {
+								if(value.Type != 'game'){
+									return value;	
+								}
+							});
+							
+							if(elementsFound.length > 1){
+								buildChooseTable(elementsFound, numberOfStars);
+							}else if(elementsFound == 1){
+								addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
+							}else{
+								$('#createFilmModal').modal('hide');
+								//TODO Fehlermeldung weil Film nicht gefunden				
+							}
+						}else{
+							$('#createFilmModal').modal('hide');
+							//TODO Fehlermeldung weil Film nicht gefunden	
+						}		
+						//wenn alles stimmt /addNewTableLine(numberOfStars, movieTitle);
+					});
 }
 
 function buildChooseTable(foundMovies, numberOfStars){
@@ -600,7 +597,7 @@ function changeMovieValues(event) {
 
 /* Die geaenderten Werte aus dem 'editFilmModal' werden in die entsprechende Zeile der Tabelle uebertragen. 'This' entspricht dem <div>, das die Sterne umgibt */
 function changeTableRowValues(numberOfStars) {
-	$('#filmtable').find('#' + selectedRowId).find('.tableFilmTitle').text($('#filmTitleEdit').val());
+
 	$('#filmtable').find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text().toLowerCase());
 
 	// wurde ein Film als 'GESEHEN' markiert, erhält er die Anzahl an Sternen, mit denen er bewertet wurde. Ansonsten sind alle Sterne leer
