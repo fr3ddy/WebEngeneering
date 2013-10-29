@@ -903,6 +903,7 @@ function setRating(selectedStars, forTableOrDetailedView) {
 /* Ueberprueft ob der Film in der Tabelle schon existiert */
 var checkForDuplicate = function(imdbID) {
 	var discoveredNoDuplicate = true;
+	
 	if ($('#filmtable').find('tr').length !== 0) {
 		$('#filmtable').find('tr').each(function() {
 			if (imdbID === $(this).attr('data-imdbid')) {
