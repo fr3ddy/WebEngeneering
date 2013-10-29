@@ -160,6 +160,11 @@ $(document).ready(function() {
 
 	/* Modal öffnen, um neuen Film hinzuzufügen 'createFilmModal'*/
 	$('#add').on('click', function() {
+		//Falls Auswahl abgebrochen wurde		
+		$('#createFilmModal').find('#saveFilm').show();
+		$('#createFilmModal').find('.modal-body .form-group').show();
+		$('#createFilmModal').find('#chooseTable').hide();
+
 		// leere Film Input Feld, falls noch etwas drin stehen sollte
 		$('#filmTitle').val("");
 
@@ -381,16 +386,16 @@ $(document).ready(function() {
 		
 	$('#sortRatingASC').on("click", function() {
 
-		if (filter.movieRatingSorted != 'true' && filter.movieTitleSorted == null) {
+		if (filter.movieRatingSorted != 'true' && filter.movieTitleSorted == null) { //Rating nicht aufsteigen sortiert und Titelfilter inaktiv
 			sortRating(true);
 			filter.movieRatingSorted = 'true';
 			$('#sortRatingASC').removeClass('sortInactive');	
 			$('#sortRatingDESC').addClass('sortInactive');	
-		}else if(filter.movieRatingSorted == 'true' && filter.movieTitleSorted == null){
+		}else if(filter.movieRatingSorted == 'true' && filter.movieTitleSorted == null){ //Rating aufsteigend sortiert und Titelfilter inaktiv
 			removeSort();
 			filter.movieRatingSorted = null;
 			$('#sortRatingASC').addClass('sortInactive');	
-		}else if(filter.movieRatingSorted != 'true' && filter.movieTitleSorted != null){ 
+		}else if(filter.movieRatingSorted != 'true' && filter.movieTitleSorted != null){ //Rating nicht aufsteigen sortiert und Titelfilter inaktiv
 			filter.movieRatingSorted = 'true';
 			$('#sortRatingASC').removeClass('sortInactive');	
 			$('#sortRatingDESC').addClass('sortInactive');	
@@ -450,7 +455,7 @@ function createMovie(event) {
 
 function searchMovie(numberOfStars, movieTitle){
 	$.getJSON("http://www.omdbapi.com/?s=" + movieTitle.replace(" ", "+")).done(function(data) {
-		if(data.Search.length != 0){
+		if(data.Response == 'undefined'){
 			var elementsFound = $.map( data.Search, function( value, key ) {
 				if(value.Type != 'game'){
 					return value;	
@@ -462,8 +467,12 @@ function searchMovie(numberOfStars, movieTitle){
 			}else if(elementsFound == 1){
 				addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
 			}else{
-				$('#createFilmModal').modal('hide');				
+				$('#createFilmModal').modal('hide');
+				//TODO Fehlermeldung weil Film nicht gefunden				
 			}
+		}else{
+			$('#createFilmModal').modal('hide');
+			//TODO Fehlermeldung weil Film nicht gefunden	
 		}		
 		//wenn alles stimmt /addNewTableLine(numberOfStars, movieTitle);
 	});
