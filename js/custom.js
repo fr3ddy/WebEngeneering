@@ -12,15 +12,15 @@ var switchButtonUnseen = "15px";
 
 //var filter = new Array();
 var filter = {
-	movieTitle : 		null,
-	movieSeen : 		null,
-	movieRating:		null,
-	movieTitleSorted : 	null,
-	movieRatingSorted:	null,
+	movieTitle : null,
+	movieSeen : null,
+	movieRating : null,
+	movieTitleSorted : null,
+	movieRatingSorted : null,
 };
 
 //@formatter:off
-var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %> ">'
+var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %>">'
 									+'<td class="magnifierTable"><span class="glyphicon glyphicon-search detailMagnifier"/></td>'
 									+'<td class="tableFilmTitle"><%- movieTitle %></td>' 
 									+'<td class="tableMovieSeen"><%- movieSeen %></td>' 
@@ -155,7 +155,7 @@ $(document).ready(function() {
 
 	/* Modal öffnen, um neuen Film hinzuzufügen 'createFilmModal'*/
 	$('#add').on('click', function() {
-		//Falls Auswahl abgebrochen wurde		
+		//Falls Auswahl abgebrochen wurde
 		$('#createFilmModal').find('#saveFilm').show();
 		$('#createFilmModal').find('.modal-body .form-group').show();
 		$('#createFilmModal').find('#chooseTable').hide();
@@ -318,116 +318,115 @@ $(document).ready(function() {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary');
 			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');
 		}
-		
-		for (var i=1; i <= 5; i++) {
+
+		for (var i = 1; i <= 5; i++) {
 			if (i <= filter.movieRating) {
 				$('#filterStar-' + i).removeClass('glyphicon-star-empty');
 				$('#filterStar-' + i).addClass('glyphicon-star');
-			}else{
+			} else {
 				$('#filterStar-' + i).addClass('glyphicon-star-empty');
-				$('#filterStar-' + i).removeClass('glyphicon-star');			
+				$('#filterStar-' + i).removeClass('glyphicon-star');
 			}
 		}
 	});
 
 	$('#sortTitleASC').on("click", function() {
 
-		if (filter.movieTitleSorted != 'true' && filter.movieRatingSorted == null) {	//alphabetische Sortierung von A zu Z und Ratingfilter nicht aktiv
+		if (filter.movieTitleSorted != 'true' && filter.movieRatingSorted == null) {//alphabetische Sortierung von A zu Z und Ratingfilter nicht aktiv
 			sortTitleAlphabet(true);
 			filter.movieTitleSorted = 'true';
-			$('#sortTitleASC').removeClass('sortInactive');	
-			$('#sortTitleDESC').addClass('sortInactive');	
-		}else if(filter.movieTitleSorted == 'true' && filter.movieRatingSorted == null){ //alphabetische Sortierung von A zu Z aktiv und Ratingfilter nicht aktiv
+			$('#sortTitleASC').removeClass('sortInactive');
+			$('#sortTitleDESC').addClass('sortInactive');
+		} else if (filter.movieTitleSorted == 'true' && filter.movieRatingSorted == null) {//alphabetische Sortierung von A zu Z aktiv und Ratingfilter nicht aktiv
 			removeSort();
 			filter.movieTitleSorted = null;
-			$('#sortTitleASC').addClass('sortInactive');	
-		}else if(filter.movieTitleSorted != 'true' && filter.movieRatingSorted != null){ //alphabetische Sortierung von A zu Z inaktiv und Ratingfilter aktiv
+			$('#sortTitleASC').addClass('sortInactive');
+		} else if (filter.movieTitleSorted != 'true' && filter.movieRatingSorted != null) {//alphabetische Sortierung von A zu Z inaktiv und Ratingfilter aktiv
 			filter.movieTitleSorted = 'true';
-			$('#sortTitleASC').removeClass('sortInactive');	
-			$('#sortTitleDESC').addClass('sortInactive');	
-			
-			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);			
-		}else if(filter.movieTitleSorted == 'true' && filter.movieRatingSorted != null){ //alphabetische Sortierung von A zu Z und Ratingfilter aktiv
+			$('#sortTitleASC').removeClass('sortInactive');
+			$('#sortTitleDESC').addClass('sortInactive');
+
+			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);
+		} else if (filter.movieTitleSorted == 'true' && filter.movieRatingSorted != null) {//alphabetische Sortierung von A zu Z und Ratingfilter aktiv
 			removeSort();
 			sortRating(filter.movieRatingSorted);
 			filter.movieTitleSorted = null;
-			$('#sortTitleASC').addClass('sortInactive');				
+			$('#sortTitleASC').addClass('sortInactive');
 		}
 	});
 
 	$('#sortTitleDESC').on("click", function() {
-		if (filter.movieTitleSorted != 'false' && filter.movieRatingSorted == null) { //alphabetische Sortierung von Z zu A und Ratingfilter nicht aktiv
+		if (filter.movieTitleSorted != 'false' && filter.movieRatingSorted == null) {//alphabetische Sortierung von Z zu A und Ratingfilter nicht aktiv
 			sortTitleAlphabet(false);
 			filter.movieTitleSorted = 'false';
-			$('#sortTitleDESC').removeClass('sortInactive');	
-			$('#sortTitleASC').addClass('sortInactive');	
-		}else if(filter.movieTitleSorted == 'false' && filter.movieRatingSorted == null){ //alphabetische Sortierung von Z zu A aktiv und Ratingfilter nicht aktiv
+			$('#sortTitleDESC').removeClass('sortInactive');
+			$('#sortTitleASC').addClass('sortInactive');
+		} else if (filter.movieTitleSorted == 'false' && filter.movieRatingSorted == null) {//alphabetische Sortierung von Z zu A aktiv und Ratingfilter nicht aktiv
 			removeSort();
 			filter.movieTitleSorted = null;
-			$('#sortTitleDESC').addClass('sortInactive');	
-		}else if(filter.movieTitleSorted != 'false' && filter.movieRatingSorted != null){ //alphabetische Sortierung von Z zu A inaktiv und Ratingfilter aktiv
+			$('#sortTitleDESC').addClass('sortInactive');
+		} else if (filter.movieTitleSorted != 'false' && filter.movieRatingSorted != null) {//alphabetische Sortierung von Z zu A inaktiv und Ratingfilter aktiv
 			filter.movieTitleSorted = 'false';
-			$('#sortTitleDESC').removeClass('sortInactive');	
-			$('#sortTitleASC').addClass('sortInactive');	
-			
-			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);			
-		}else if(filter.movieTitleSorted == 'false' && filter.movieRatingSorted != null){ //alphabetische Sortierung von Z zu A und Ratingfilter aktiv
+			$('#sortTitleDESC').removeClass('sortInactive');
+			$('#sortTitleASC').addClass('sortInactive');
+
+			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);
+		} else if (filter.movieTitleSorted == 'false' && filter.movieRatingSorted != null) {//alphabetische Sortierung von Z zu A und Ratingfilter aktiv
 			removeSort();
 			sortRating(filter.movieRatingSorted);
 			filter.movieTitleSorted = null;
-			$('#sortTitleDESC').addClass('sortInactive');				
+			$('#sortTitleDESC').addClass('sortInactive');
 		}
 	});
-		
+
 	$('#sortRatingASC').on("click", function() {
 
-		if (filter.movieRatingSorted != 'true' && filter.movieTitleSorted == null) { //Rating nicht aufsteigen sortiert und Titelfilter inaktiv
+		if (filter.movieRatingSorted != 'true' && filter.movieTitleSorted == null) {//Rating nicht aufsteigen sortiert und Titelfilter inaktiv
 			sortRating(true);
 			filter.movieRatingSorted = 'true';
-			$('#sortRatingASC').removeClass('sortInactive');	
-			$('#sortRatingDESC').addClass('sortInactive');	
-		}else if(filter.movieRatingSorted == 'true' && filter.movieTitleSorted == null){ //Rating aufsteigend sortiert und Titelfilter inaktiv
+			$('#sortRatingASC').removeClass('sortInactive');
+			$('#sortRatingDESC').addClass('sortInactive');
+		} else if (filter.movieRatingSorted == 'true' && filter.movieTitleSorted == null) {//Rating aufsteigend sortiert und Titelfilter inaktiv
 			removeSort();
 			filter.movieRatingSorted = null;
-			$('#sortRatingASC').addClass('sortInactive');	
-		}else if(filter.movieRatingSorted != 'true' && filter.movieTitleSorted != null){ //Rating nicht aufsteigen sortiert und Titelfilter aktiv
+			$('#sortRatingASC').addClass('sortInactive');
+		} else if (filter.movieRatingSorted != 'true' && filter.movieTitleSorted != null) {//Rating nicht aufsteigen sortiert und Titelfilter aktiv
 			filter.movieRatingSorted = 'true';
-			$('#sortRatingASC').removeClass('sortInactive');	
-			$('#sortRatingDESC').addClass('sortInactive');	
-			
-			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);			
-		}else if(filter.movieRatingSorted == 'true' && filter.movieTitleSorted != null){ //Rating aufsteigen sortiert und Titelfilter aktiv
+			$('#sortRatingASC').removeClass('sortInactive');
+			$('#sortRatingDESC').addClass('sortInactive');
+
+			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);
+		} else if (filter.movieRatingSorted == 'true' && filter.movieTitleSorted != null) {//Rating aufsteigen sortiert und Titelfilter aktiv
 			removeSort();
 			sortTitleAlphabet(filter.movieTitleSorted);
 			filter.movieRatingSorted = null;
-			$('#sortRatingASC').addClass('sortInactive');				
+			$('#sortRatingASC').addClass('sortInactive');
 		}
 	});
-	
-	
+
 	$('#sortRatingDESC').on("click", function() {
 		if (filter.movieRatingSorted != 'false' && filter.movieTitleSorted == null) {//Rating nicht absteigend sortiert und Titelfilter inaktiv
 			sortRating(false);
 			filter.movieRatingSorted = 'false';
-			$('#sortRatingDESC').removeClass('sortInactive');	
-			$('#sortRatingASC').addClass('sortInactive');	
-		}else if(filter.movieRatingSorted == 'false' && filter.movieTitleSorted == null){//Rating absteigend sortiert und Titelfilter inaktiv
+			$('#sortRatingDESC').removeClass('sortInactive');
+			$('#sortRatingASC').addClass('sortInactive');
+		} else if (filter.movieRatingSorted == 'false' && filter.movieTitleSorted == null) {//Rating absteigend sortiert und Titelfilter inaktiv
 			removeSort();
 			filter.movieRatingSorted = null;
-			$('#sortRatingDESC').addClass('sortInactive');	
-		}else if(filter.movieRatingSorted != 'false' && filter.movieTitleSorted != null){ //Rating nicht absteigen sortiert und Titelfilter aktiv
+			$('#sortRatingDESC').addClass('sortInactive');
+		} else if (filter.movieRatingSorted != 'false' && filter.movieTitleSorted != null) {//Rating nicht absteigen sortiert und Titelfilter aktiv
 			filter.movieRatingSorted = 'false';
-			$('#sortRatingDESC').removeClass('sortInactive');	
-			$('#sortRatingASC').addClass('sortInactive');	
-			
-			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);			
-		}else if(filter.movieRatingSorted == 'false' && filter.movieTitleSorted != null){ //Rating absteigen sortiert und Titelfilter aktiv
+			$('#sortRatingDESC').removeClass('sortInactive');
+			$('#sortRatingASC').addClass('sortInactive');
+
+			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);
+		} else if (filter.movieRatingSorted == 'false' && filter.movieTitleSorted != null) {//Rating absteigen sortiert und Titelfilter aktiv
 			removeSort();
 			sortTitleAlphabet(filter.movieTitleSorted);
 			filter.movieRatingSorted = null;
-			$('#sortRatingDESC').addClass('sortInactive');				
+			$('#sortRatingDESC').addClass('sortInactive');
 		}
-	});	
+	});
 
 	//---------------------------------------------------------------------------------------------------------------------------------------
 });
@@ -448,51 +447,56 @@ function createMovie(event) {
 	}
 }
 
-function searchMovie(numberOfStars, movieTitle){
-	$.ajax( {url: "http://www.omdbapi.com/?s=" + movieTitle.replace(" ", "+"),  
-			dataType: 'json',
-		}).done(function(data) {
-						if(typeof(data.Response) == 'undefined'){
-							var elementsFound = $.map( data.Search, function( value, key ) {
-								if(value.Type != 'game'){
-									return value;	
-								}
-							});
-							
-							if(elementsFound.length > 1){
-								buildChooseTable(elementsFound, numberOfStars);
-							}else if(elementsFound == 1){
-								addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
-							}else{
-								$('#createFilmModal').modal('hide');
-								//TODO Fehlermeldung weil Film nicht gefunden				
-							}
-						}else{
-							$('#createFilmModal').modal('hide');
-							//TODO Fehlermeldung weil Film nicht gefunden	
-						}		
-						//wenn alles stimmt /addNewTableLine(numberOfStars, movieTitle);
-					});
+function searchMovie(numberOfStars, movieTitle) {
+	$.ajax({
+		url : "http://www.omdbapi.com/?s=" + movieTitle.replace(" ", "+"),
+		dataType : 'json',
+	}).done(function(data) {
+		if ( typeof (data.Response) == 'undefined') {
+			var elementsFound = $.map(data.Search, function(value, key) {
+				if (value.Type != 'game') {
+					return value;
+				}
+			});
+
+			if (elementsFound.length > 1) {
+				buildChooseTable(elementsFound, numberOfStars);
+			} else if (elementsFound == 1) {
+				addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
+			} else {
+				$('#createFilmModal').modal('hide');
+				//TODO Fehlermeldung weil Film nicht gefunden
+			}
+		} else {
+			$('#createFilmModal').modal('hide');
+			//TODO Fehlermeldung weil Film nicht gefunden
+		}
+		//wenn alles stimmt /addNewTableLine(numberOfStars, movieTitle);
+	});
 }
 
-function buildChooseTable(foundMovies, numberOfStars){
+function buildChooseTable(foundMovies, numberOfStars) {
 	$('#createFilmModal').find('.modal-body .form-group').hide();
 	$('#createFilmModal').find('#saveFilm').hide();
 	$('#createFilmModal').find('#chooseTable').show();
 	$('#createFilmModal').find('#chooseTable tbody').empty();
-	
-	for (var i=0; i < foundMovies.length; i++) {
-		$('<tr data-imdbID="'+ foundMovies[i].imdbID +'"><td>'+ foundMovies[i].Title +'</td><td>'+ foundMovies[i].Year +'</td><td>'+ foundMovies[i].Type +'</td>'+
-		'<td><button type="button" class="btn btn-primary select">Auswahl</button></td></tr>').appendTo('#createFilmModal .modal-body tbody');
-	};
-	
-	$('tbody .select').on('click', function(){ 
-		addNewTableLine(numberOfStars, $(this).parent().parent().find('td:first-child').text(), $(this).parent().parent().attr('data-imdbID'));
-		
-		$('#createFilmModal').find('#saveFilm').show();
-		$('#createFilmModal').find('.modal-body .form-group').show();
-		$('#createFilmModal').find('#chooseTable').hide();
 
+	for (var i = 0; i < foundMovies.length; i++) {
+		$('<tr data-imdbID="' + foundMovies[i].imdbID + '"><td>' + foundMovies[i].Title + '</td><td>' + foundMovies[i].Year + '</td><td>' + foundMovies[i].Type + '</td>' + '<td><button type="button" class="btn btn-primary select">Auswahl</button></td></tr>').appendTo('#createFilmModal .modal-body tbody');
+	};
+
+	$('tbody .select').on('click', function() {
+		var imdbID = $(this).parent().parent().attr('data-imdbID');
+
+		if (checkForDuplicate(imdbID)) {
+			addNewTableLine(numberOfStars, $(this).parent().parent().find('td:first-child').text(), imdbID);
+
+			$('#createFilmModal').find('#saveFilm').show();
+			$('#createFilmModal').find('.modal-body .form-group').show();
+			$('#createFilmModal').find('#chooseTable').hide();
+		} else {
+			alert("Dieser Film ist schon in der Liste vorhanden");
+		}
 	});
 }
 
@@ -539,13 +543,13 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 	}
 
 	$('#filmtable').append(addMovieToList({
-		imdbID: imdbID,
+		imdbID : imdbID,
 		rowID : newID,
 		movieTitle : movieTitle,
 		movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
 		rating : setRating(numberOfStars, true)
 	}));
-	
+
 	/*Initialisiere PopOver fuer Delete-Button*/
 	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
 	$('#' + newID).find('.delete').popover({
@@ -554,14 +558,14 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		content : popoverContent,
 		html : 'true'
 	});
-	
+
 	$('#createFilmModal').modal('hide');
 	/* Action Listener für Detail View Lupe */
 	$('.detailMagnifier').click('click', function() {
 		var clickedTr = $(this).parent().parent();
 		buildDetailView(clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
 	});
-	
+
 	filter.movieSeen = filterSetting.movieSeen;
 	filter.movieTitle = filterSetting.movieTitle;
 	filter.movieTitleSorted = filterSetting.movieTitleSorted;
@@ -575,8 +579,8 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 	if (filter.movieTitle != null) {
 		filterMovieTitle(filter.movieTitle);
 	}
-		
-	//TODO filter GUI wieder setzen!!!		
+
+	//TODO filter GUI wieder setzen!!!
 }
 
 /* Das 'editFilmModul' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */
@@ -875,62 +879,81 @@ function setRating(selectedStars, forTableOrDetailedView) {
 }
 
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/
+/*---------------------------------- Anfang Doppelte Eintraege verhindern -------------------------------------------------------------------------------*/
+
+/* Ueberprueft ob der Film in der Tabelle schon existiert */
+var checkForDuplicate = function(imdbID) {
+	var discoveredNoDuplicate = true;
+	if ($('#filmtable').find('tr').length !== 0) {
+		$('#filmtable').find('tr').each(function() {
+			if (imdbID === $(this).attr('data-imdbid')) {
+				discoveredNoDuplicate = false;
+				return false;
+			}
+		});
+	}
+	return discoveredNoDuplicate;
+};
+
+/*---------------------------------- Ende Doppelte Eintraege verhindern -------------------------------------------------------------------------------*/
 
 /*------------------------------ Filter --------------------------------*/
-function fillStars(starid){
+function fillStars(starid) {
 	if (starid != null) {
 		var id = starid.split('-');
-		
-		for (var i=1; i <= 5; i++) {
+
+		for (var i = 1; i <= 5; i++) {
 			if (i <= id[1]) {
 				$('#filterStar-' + i).removeClass('glyphicon-star-empty');
 				$('#filterStar-' + i).addClass('glyphicon-star');
-			}else{
+			} else {
 				$('#filterStar-' + i).addClass('glyphicon-star-empty');
-				$('#filterStar-' + i).removeClass('glyphicon-star');			
+				$('#filterStar-' + i).removeClass('glyphicon-star');
 			}
-		}		
-	}else{
-		if(filter.movieRating == null){
+		}
+	} else {
+		if (filter.movieRating == null) {
 			$('#filterStars').find('span[id*="filterStar-"]').addClass('glyphicon-star-empty');
-			$('#filterStars').find('span[id*="filterStar-"]').removeClass('glyphicon-star');					
-		}else{
-			for (var i=1; i <= 5; i++) {
+			$('#filterStars').find('span[id*="filterStar-"]').removeClass('glyphicon-star');
+		} else {
+			for (var i = 1; i <= 5; i++) {
 				if (i <= filter.movieRating) {
 					$('#filterStar-' + i).removeClass('glyphicon-star-empty');
 					$('#filterStar-' + i).addClass('glyphicon-star');
-				}else{
+				} else {
 					$('#filterStar-' + i).addClass('glyphicon-star-empty');
-					$('#filterStar-' + i).removeClass('glyphicon-star');			
+					$('#filterStar-' + i).removeClass('glyphicon-star');
 				}
-			}				
+			}
 		}
 	}
-	
+
 	$('#filterStars').find('span[id*="filterStar-"]').attr('onmouseout', 'fillStars(null)');
 }
 
 // Setzt den zu Filternden im Filter-Objekt und starten dann das Filtern
-function movieTitleFilterKeyUp(){
-	setTimeout(function(){
+function movieTitleFilterKeyUp() {
+	setTimeout(function() {
 		filter.movieTitle = $('#filterBox #movieTitle').val();
 
-		filterTable();		
+		filterTable();
 	}, 1000);
 }
-function setFilterRating(starid){
+
+function setFilterRating(starid) {
 	var id = starid.split('-');
 	filter.movieRating = id[1];
-	
-	if(filter.movieSeen == 'nicht gesehen'){
+
+	if (filter.movieSeen == 'nicht gesehen') {
 		removeWatchFilter();
 	}
-	
-	filterTable();	
+
+	filterTable();
 }
-function filterWatchStatusSet(seen){
+
+function filterWatchStatusSet(seen) {
 	if (seen == true) {
-		filter.movieSeen = "gesehen";		
+		filter.movieSeen = "gesehen";
 	} else if (seen == false) {
 		filter.movieSeen = "nicht gesehen";
 		removeRatingFilter();
@@ -938,46 +961,46 @@ function filterWatchStatusSet(seen){
 		filter.movieSeen = null;
 	}
 
-	filterTable();	
+	filterTable();
 }
 
 //filtert die Tabelle
 function filterTable() {
 	$('tr[id*="tr-"]').show();
 
-	if(filter.movieRating == null && filter.movieSeen == null && filter.movieTitle == null){
-			
-	}else{
+	if (filter.movieRating == null && filter.movieSeen == null && filter.movieTitle == null) {
+
+	} else {
 		var actRow = $('#list tbody tr:first-child');
 		while (actRow.length != 0) {
 			if (filterRow(actRow)) {
 				actRow.hide();
 			}
 			actRow = actRow.next();
-		}		
-	}
-}
-//überprüft ob die übergebene Zeile einem Filterkriterium entspricht.
-function filterRow(actRow){
-	if(filter.movieRating != null){
-		if($(actRow).find('.tableRating .stars').data('rated') != filter.movieRating){
-			return true;
 		}
 	}
-	if(filter.movieSeen != null){
-		if($(actRow).find('.tableMovieSeen').text() != filter.movieSeen){
-			return true;
-		}
-	}
-	if(filter.movieTitle != null && filter.movieTitle != "" && $.trim(filter.movieTitle) != ""){
-		if($(actRow).find('.tableFilmTitle').text().search(filter.movieTitle) == -1){
-			return true;
-		}
-	}
-	
-	return false;
 }
 
+//überprüft ob die übergebene Zeile einem Filterkriterium entspricht.
+function filterRow(actRow) {
+	if (filter.movieRating != null) {
+		if ($(actRow).find('.tableRating .stars').data('rated') != filter.movieRating) {
+			return true;
+		}
+	}
+	if (filter.movieSeen != null) {
+		if ($(actRow).find('.tableMovieSeen').text() != filter.movieSeen) {
+			return true;
+		}
+	}
+	if (filter.movieTitle != null && filter.movieTitle != "" && $.trim(filter.movieTitle) != "") {
+		if ($(actRow).find('.tableFilmTitle').text().search(filter.movieTitle) == -1) {
+			return true;
+		}
+	}
+
+	return false;
+}
 
 /* leere alle Sterne im Filter wieder, wenn nicht durch Klicken ein Wert gesetzt wurde */
 function removeRatingFilter() {
@@ -987,11 +1010,12 @@ function removeRatingFilter() {
 	// parentElem.find('.stars').on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', removeRatingFilter);
 	$('#filterStars').find('span[id*="filterStar-"]').addClass('glyphicon-star-empty');
 	$('#filterStars').find('span[id*="filterStar-"]').removeClass('glyphicon-star');
-	
+
 	filter.movieRating = null;
 	filterTable();
-	
+
 }
+
 function removeWatchFilter() {
 	$('#movieWatched').parent().attr('class', 'btn btn-primary');
 	$('#movieNotWatched').parent().attr('class', 'btn btn-primary');
@@ -1010,15 +1034,16 @@ function removeTitleFilter() {
 }
 
 function removeAllFilters() {
-	
+
 	//TODO Performance technisch sehr unglücklich -> in jeder remove-Methode wird filterTable() aufgerufen.
 	//nach aktuellem Stand würde die Tabelle also 4 Mal gefiltert werden!!!!
 	removeWatchFilter();
 	removeTitleFilter();
 	removeRatingFilter();
-	
+
 	filterTable();
 }
+
 //---------------------------------------------Sortierung
 function removeSort() {
 	var lastTableChild = $('tbody tr:last-child');
@@ -1092,8 +1117,7 @@ function sortTitleAlphabet(direction) {
 
 }
 
-
-function sortRating(direction){
+function sortRating(direction) {
 	var actRow = $('#list tbody tr:first-child');
 	var rating = new Array();
 	var counter = 0;
@@ -1126,50 +1150,51 @@ function sortRating(direction){
 		$(actRow).insertAfter($(prevRow));
 
 		prevRow = actRow;
-	};	
+	};
 }
 
-function groupRatingSortTitle(ratingSortDirection, titleSortDirection){
-	
+function groupRatingSortTitle(ratingSortDirection, titleSortDirection) {
+
 }
-/*	
- * Alte Filtermethoden die durch den neuen Algorithmus ersetzt wurden
+
+/*
+* Alte Filtermethoden die durch den neuen Algorithmus ersetzt wurden
 function filterRating(rating){
-	if(rating != null){
-		var actRow = $('#list tbody tr:first-child');
-		while (actRow.length != 0) {
-			if (actRow.find('.tableRating .stars').data('rated') != filter.movieRating) {
-				actRow.hide();
-			}
-			actRow = actRow.next();
-		}			
-	}
-	
-	$('#filterStars').find('span[id*="filterStar-"]').attr('onmouseout', '');
+if(rating != null){
+var actRow = $('#list tbody tr:first-child');
+while (actRow.length != 0) {
+if (actRow.find('.tableRating .stars').data('rated') != filter.movieRating) {
+actRow.hide();
+}
+actRow = actRow.next();
+}
+}
+
+$('#filterStars').find('span[id*="filterStar-"]').attr('onmouseout', '');
 }
 
 function filterMovieTitle(movieTitle) {
-	if (movieTitle != null) {
-		var actRow = $('#list tbody tr:first-child');
-		while (actRow.length != 0) {
-			if (actRow.find('.tableFilmTitle').text().toLowerCase().search(movieTitle.toLowerCase()) == -1) {
-				actRow.hide();
-			}
-			actRow = actRow.next();
-		}
-	}
+if (movieTitle != null) {
+var actRow = $('#list tbody tr:first-child');
+while (actRow.length != 0) {
+if (actRow.find('.tableFilmTitle').text().toLowerCase().search(movieTitle.toLowerCase()) == -1) {
+actRow.hide();
+}
+actRow = actRow.next();
+}
+}
 }
 
 function filterWatchStatus(gStatus) {
-	if (gStatus != null) {
-		var actRow = $('#list tbody tr:first-child');
-		while (actRow.length != 0) {
-			if (actRow.find('.tableMovieSeen').text() != gStatus) {
-				actRow.hide();
-			}
-			actRow = actRow.next();
-		}
-	}
+if (gStatus != null) {
+var actRow = $('#list tbody tr:first-child');
+while (actRow.length != 0) {
+if (actRow.find('.tableMovieSeen').text() != gStatus) {
+actRow.hide();
+}
+actRow = actRow.next();
+}
+}
 }
 */
 //---------------------------Ajax-Methoden-------------------------------------------------------------
