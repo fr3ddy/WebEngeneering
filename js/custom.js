@@ -1036,8 +1036,7 @@ function removeAllFilters() {
 }
 //---------------------------------------------Sortierung
 function removeSort() {
-	var lastTableChild = $('tbody tr:last-child');
-	if (lastTableChild != null) {
+	if($('#filmtable').find('tr').length !== 0){
 		var actRow = $('#list tbody tr:first-child');
 		var rows = new Array();
 		var counter = 0;
@@ -1071,77 +1070,80 @@ function removeSort() {
 }
 
 function sortTitleAlphabet(direction) {
-	var actRow = $('#list tbody tr:first-child');
-	var titles = new Array();
-	var counter = 0;
-
-	while (actRow.length != 0) {
-		titles[counter] = actRow.find('.tableFilmTitle').text() + "-" + actRow.attr('id');
-		actRow = actRow.next();
-		counter++;
-	}
-
-	titles.sort();
-
-	if (direction == false) {
-		titles.reverse();
-	}
-
-	//Aufbau der sortierten Tabelle
-	//erste Zeile in den Tabellen-Bauch hängen
-	var segments = titles[0].split('-tr-');
-	actRow = '#tr-' + segments[1];
-
-	$(actRow).appendTo($('#list tbody'));
-	var prevRow = actRow;
-
-	//nun die restlichen Zeilen anhängen
-	for (var i = 1; i < titles.length; i++) {
-		var segments = titles[i].split('-tr-');
+	if($('#filmtable').find('tr').length !== 0){
+		var actRow = $('#list tbody tr:first-child');
+		var titles = new Array();
+		var counter = 0;
+	
+		while (actRow.length != 0) {
+			titles[counter] = actRow.find('.tableFilmTitle').text() + "-" + actRow.attr('id');
+			actRow = actRow.next();
+			counter++;
+		}
+	
+		titles.sort();
+	
+		if (direction == false) {
+			titles.reverse();
+		}
+	
+		//Aufbau der sortierten Tabelle
+		//erste Zeile in den Tabellen-Bauch hängen
+		var segments = titles[0].split('-tr-');
 		actRow = '#tr-' + segments[1];
-
-		$(actRow).insertAfter($(prevRow));
-
-		prevRow = actRow;
-	};
-
+	
+		$(actRow).appendTo($('#list tbody'));
+		var prevRow = actRow;
+	
+		//nun die restlichen Zeilen anhängen
+		for (var i = 1; i < titles.length; i++) {
+			var segments = titles[i].split('-tr-');
+			actRow = '#tr-' + segments[1];
+	
+			$(actRow).insertAfter($(prevRow));
+	
+			prevRow = actRow;
+		};
+	}
 }
 
 
 function sortRating(direction){
-	var actRow = $('#list tbody tr:first-child');
-	var rating = new Array();
-	var counter = 0;
-
-	while (actRow.length != 0) {
-		rating[counter] = actRow.find('.tableRating .stars').data('rated') + "-" + actRow.attr('id');
-		actRow = actRow.next();
-		counter++;
-	}
-
-	rating.sort();
-
-	if (direction == false) {
-		rating.reverse();
-	}
-
-	//Aufbau der sortierten Tabelle
-	//erste Zeile in den Tabellen-Bauch hängen
-	var segments = rating[0].split('-tr-');
-	actRow = '#tr-' + segments[1];
-
-	$(actRow).appendTo($('#list tbody'));
-	var prevRow = actRow;
-
-	//nun die restlichen Zeilen anhängen
-	for (var i = 1; i < rating.length; i++) {
-		var segments = rating[i].split('-tr-');
+	if($('#filmtable').find('tr').length !== 0){
+		var actRow = $('#list tbody tr:first-child');
+		var rating = new Array();
+		var counter = 0;
+	
+		while (actRow.length != 0) {
+			rating[counter] = actRow.find('.tableRating .stars').data('rated') + "-" + actRow.attr('id');
+			actRow = actRow.next();
+			counter++;
+		}
+	
+		rating.sort();
+	
+		if (direction == false) {
+			rating.reverse();
+		}
+	
+		//Aufbau der sortierten Tabelle
+		//erste Zeile in den Tabellen-Bauch hängen
+		var segments = rating[0].split('-tr-');
 		actRow = '#tr-' + segments[1];
-
-		$(actRow).insertAfter($(prevRow));
-
-		prevRow = actRow;
-	};	
+	
+		$(actRow).appendTo($('#list tbody'));
+		var prevRow = actRow;
+	
+		//nun die restlichen Zeilen anhängen
+		for (var i = 1; i < rating.length; i++) {
+			var segments = rating[i].split('-tr-');
+			actRow = '#tr-' + segments[1];
+	
+			$(actRow).insertAfter($(prevRow));
+	
+			prevRow = actRow;
+		};	
+	}
 }
 
 function groupRatingSortTitle(ratingSortDirection, titleSortDirection){
