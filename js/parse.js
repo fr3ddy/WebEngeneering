@@ -66,7 +66,7 @@ function parse_initialLoadMovieTable() {
 		var movie = new Parse.Query(Movie);
 		movie.find().then(function(results) {
 			_.each(results, function(object) {
-				initiateTableRow(object.get('avgRating'), object.get('Title'), object.get('imdbID'));
+				initiateTableRow(object.get('avgRating'), object.get('Title'), object.get('imdbID'), true);
 			});
 		}, function(error) {
 			alert("Error: " + error.code + " " + error.message);
@@ -78,13 +78,13 @@ function parse_initialLoadMovieTable() {
 			_.each(results, function(object) {
 				var edit = new Parse.Query(Edit);
 				edit.equalTo("movieID", object);
-				edit.find().then(function(editResults) {
+				edit.find().then( function(editResults) {
 					_.each(editResults, function(editResult) {
 						// wenn der Film vom aktuellen User bewertet wurde, dessen Bewertung setzen. Ansonsten 0 als Bewertung setzen
 						if(editResult.get('userID') == Parse.User.current()) {
-							initiateTableRow(editResult.get('rating'), object.get('Title'), object.get('imdbID'));
+							initiateTableRow(editResult.get('rating'), object.get('Title'), object.get('imdbID'), editResult.get('movieSeen'));
 						} else {
-							initiateTableRow("0", object.get('Title'), object.get('imdbID'));
+							initiateTableRow("0", object.get('Title'), object.get('imdbID'), editResult.get('movieSeen'));
 						}
 					});
 				});

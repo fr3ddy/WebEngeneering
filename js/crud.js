@@ -237,7 +237,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 }
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
-function initiateTableRow(numberOfStars, movieTitle, imdbID) {
+function initiateTableRow(numberOfStars, movieTitle, imdbID, seen) {
 
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
@@ -254,12 +254,21 @@ function initiateTableRow(numberOfStars, movieTitle, imdbID) {
 		newID = 'tr-' + tmpId[1];
 		//ID fuer die neue Zeile zusammensetzen
 	}
-
+	
+	var seenText;
+	if(seen) {
+		// Film wurde gesehen
+		seenText = "gesehen";	
+	} else {
+		// Film wurde nicht gesehen
+		seenText = "nicht gesehen";
+	}
+	
 	$('#filmtable').append(addMovieToList({
 		imdbID : imdbID,
 		rowID : newID,
 		movieTitle : movieTitle,
-		movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
+		movieSeen : seenText,
 		rating : setRating(numberOfStars, true)
 	}));
 
