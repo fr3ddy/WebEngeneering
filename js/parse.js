@@ -1,6 +1,9 @@
 // Connect to Parse
 Parse.initialize("L6o5RS5o7y3L2qq0MdbUUx1rTm8dIzLVJR6etJ5K", "QyEYNDiJAI3ctZ9pZC8fX7ncgVsyQ665094o3nPA");
 
+var Movie = Parse.Object.extend("Movie");
+var Edit = Parse.Object.extend("Edit");
+
 function registerUser(username, password) {
 	var user = new Parse.User();
 	user.set("username", username);
@@ -57,11 +60,34 @@ function loginUser(username, password) {
 	});
 }
 
+function parse_initialLoadMovieTable() {
+	if (Parse.User.current() == null) {
+		// lade Daten, als unangemeldeter User mit Durchschnittsbewertung und ohne dass gesehen/nicht gesehen angezeigt wird
+		var movie = new Parse.Query(Movie);
+		movie.find({
+			success : function(results) {
+				// Do something with the returned Parse.Object values
+				for (var i = 0; i < results.length; i++) {
+					var object = results[i];
+					initiateTableRow(object.get('avgRating'), object.get('Title'), object.get('imdbID'));
+				}
+			},
+			error : function(error) {
+				alert("Error: " + error.code + " " + error.message);
+			}
+		});
+	} else {
+		// lade Daten, als angemeldeter User mit eigener Bewertung und gesehen/nicht gesehen
+
+	}
+}
+
 function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
-	var Movie = Parse.Object.extend("Movie");
 	var movie = new Movie();
 
 	movie.set("imdbID", imdbID);
+	// TODO berechne durchscnittliches Rating
+	movie.set("avgRating", numberOfStars);
 	movie.set("Title", movieTitle);
 	movie.set("Owner", Parse.User.current());
 
@@ -79,10 +105,27 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
 	});
 }
 
-function parse_saveRating(numberOfStars, seen, movie) {
-	var Edit = Parse.Object.extend("Edit");
+function calculateAverageRating(numberOfStars, movieID) {
 	var edit = new Edit();
-	
+	edit.equalTo("movieID", movieID);
+	edit.find({
+		success : function(results) {
+			var sum = 0;
+			for (var i = 0; i < results.length; i++) {
+				sum += results[i].get('rating');
+			}
+			return sum/result.length;
+		},
+		error : function(error) {
+			// Er kann nicht nichts finden, weil wir ihm ja eine MovieID uebergeben
+			//alert("Error: " + error.code + " " + error.message);
+		}
+	});
+}
+
+function parse_saveRating(numberOfStars, seen, movie) {
+	var edit = new Edit();
+
 	edit.set("rating", numberOfStars);
 	edit.set("movieSeen", seen);
 	// Object of Movie

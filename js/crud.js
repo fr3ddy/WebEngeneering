@@ -1,4 +1,6 @@
 $(document).ready(function() {
+	parse_initialLoadMovieTable();
+
 	/* Setze Focus auf Film Titel Input, wenn Modal geoeffnet wird */
 	$("#createFilmModal").on('focus', function() {
 		$('#filmTitle').focus();
@@ -166,7 +168,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		//ID fuer die neue Zeile zusammensetzen
 	}
 	/*Tabelleneintrag hinzufuegen*/
-	var seen =  true;
+	var seen = true;
 	if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text().toUpperCase()) {
 		seen = false;
 		numberOfStars = 0;
@@ -231,7 +233,53 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		$('#filterBox #movieTitle').val(filter.movieTitle);
 	}
 	filterTable();
-	parse_saveMovie(movieTitle , imdbID, numberOfStars, seen);
+	parse_saveMovie(movieTitle, imdbID, numberOfStars, seen);
+}
+
+/* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
+function initiateTableRow(numberOfStars, movieTitle, imdbID) {
+
+	/*ID Ermitteln*/
+	var newID = $('#filmtable').find('tr').last().attr('id');
+	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
+
+	if ( typeof newID == 'undefined') {
+		var newID = 'tr-1';
+		//falls noch keine Zeile existiert
+	} else {
+		var tmpId = newID.split('-');
+		//ID der letzten Zeile splitten (ID = "tr-ZAHL")
+		tmpId[1] = parseInt(tmpId[1]) + 1;
+		//Anzahl der Zeilen steht im 2. Feld, muss von String in Integer geparst werden
+		newID = 'tr-' + tmpId[1];
+		//ID fuer die neue Zeile zusammensetzen
+	}
+
+	$('#filmtable').append(addMovieToList({
+		imdbID : imdbID,
+		rowID : newID,
+		movieTitle : movieTitle,
+		movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
+		rating : setRating(numberOfStars, true)
+	}));
+
+	/*Initialisiere PopOver fuer Delete-Button*/
+	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
+	$('#' + newID).find('.delete').popover({
+		trigger : 'focus',
+		title : 'Löschen',
+		content : popoverContent,
+		html : 'true'
+	});
+
+	/* Action Listener für Detail View Lupe */
+	$('.detailMagnifier').click('click', function() {
+		$(this).css({
+			cursor : "progress"
+		});
+		var clickedTr = $(this).parent().parent();
+		buildDetailView.call(this, clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
+	});
 }
 
 /* Das 'editFilmModal' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */
