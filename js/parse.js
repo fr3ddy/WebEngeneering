@@ -68,7 +68,6 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
 	movie.save(null, {
 		success : function(movie) {
 			// Execute any logic that should take place after the object is saved.
-			alert('New object created with objectId: ' + movie.id);
 			parse_saveRating(numberOfStars, seen, movie);
 		},
 		error : function(movie, error) {
@@ -93,7 +92,6 @@ function parse_saveRating(numberOfStars, seen, movie) {
 	edit.save(null, {
 		success : function(edit) {
 			// Execute any logic that should take place after the object is saved.
-			alert('New object created with objectId: ' + edit.id);
 		},
 		error : function(edit, error) {
 			// Execute any logic that should take place if the save fails.
