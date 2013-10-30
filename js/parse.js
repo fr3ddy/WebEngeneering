@@ -57,23 +57,45 @@ function loginUser(username, password) {
 	});
 }
 
-function parse_saveRating(numberOfStars, seen) {
+function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
+	var Movie = Parse.Object.extend("Movie");
+	var movie = new Movie();
+
+	movie.set("imdbID", imdbID);
+	movie.set("Title", movieTitle);
+	movie.set("Owner", Parse.User.current());
+
+	movie.save(null, {
+		success : function(movie) {
+			// Execute any logic that should take place after the object is saved.
+			alert('New object created with objectId: ' + movie.id);
+			parse_saveRating(numberOfStars, seen, movie);
+		},
+		error : function(movie, error) {
+			// Execute any logic that should take place if the save fails.
+			// error is a Parse.Error with an error code and description.
+			alert('Failed to create new object, with error code: ' + error.description);
+		}
+	});
+}
+
+function parse_saveRating(numberOfStars, seen, movie) {
 	var Edit = Parse.Object.extend("Edit");
 	var edit = new Edit();
-
+	
 	edit.set("rating", numberOfStars);
 	edit.set("movieSeen", seen);
 	// Object of Movie
-	edit.set("movie", Parse.User.current());
+	edit.set("movieID", movie);
 	// Object of User
-	edit.set("owner", Parse.User.current());
+	edit.set("userID", Parse.User.current());
 
 	edit.save(null, {
-		success : function(gameScore) {
+		success : function(edit) {
 			// Execute any logic that should take place after the object is saved.
 			alert('New object created with objectId: ' + edit.id);
 		},
-		error : function(gameScore, error) {
+		error : function(edit, error) {
 			// Execute any logic that should take place if the save fails.
 			// error is a Parse.Error with an error code and description.
 			alert('Failed to create new object, with error code: ' + error.description);

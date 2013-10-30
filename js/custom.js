@@ -54,7 +54,8 @@ var detailedMovieView = _.template('<div class="container">'
 											+'<img src="<%- picture %>" class="img-thumbnail"/>'
 										+'</div>'
 									+'</div>');
-									
+
+//Initialisierung von FilmModal Content
 var insertCreateFilmModal = '<div class="form-group">'+
 										'<input type="text" class="form-control" id="filmTitle" placeholder="Film eingeben">'+
 											'<div class="switch-wrapper">'+
@@ -96,12 +97,6 @@ var popoverFilterContent = '<fieldset id="filterBox">'
 											+'</button>'
 										+'</div>'
 										+'</div>'
-										/*+'<div class="col-m-10 filterInactive switch-wrapper">'
-											+'<span class="switch-button-label off">GESEHEN</span>'
-											+'<div class="switch-button-background">'
-												+'<div class="switch-button-button" style="left:' + switchButtonUnseen + '"></div>'
-												+'</div><span class="switch-button-label on">NICHT GESEHEN</span><div style="clear: left;"></div>'
-										+'</div>'*/
 									+'<div class="row">'
 										+'<div class="col-sm-10">'
 										+'<div id="filterStars">'+
@@ -210,8 +205,6 @@ $(document).ready(function() {
 		registerUser(username , password);
 	});
 });
-
-
 
 // Toggle Klassen fuer Edit-, Delete- und Hinzufuege-Buttons
 function isLoggedInOrNot() {
