@@ -56,3 +56,24 @@ function loginUser(username, password) {
 		}
 	});
 }
+
+function parse_saveMovie(movieTitle , imdbID){
+	var Movie = Parse.Object.extend("Movie");
+	var movie = new Movie();
+	 
+	movie.set("imdbID", imdbID);
+	movie.set("Title", movieTitle);
+	movie.set("Owner", Parse.User.current());
+	 
+	movie.save(null, {
+	  success: function(movie) {
+	    // Execute any logic that should take place after the object is saved.
+	    alert('New object created with objectId: ' + movie.id);
+	  },
+	  error: function(movie, error) {
+	    // Execute any logic that should take place if the save fails.
+	    // error is a Parse.Error with an error code and description.
+	    alert('Failed to create new object, with error code: ' + error.description);
+	  }
+	});
+}

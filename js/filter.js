@@ -14,7 +14,6 @@ $(document).ready(function() {
 		if (filter.movieSeen == 'gesehen') {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary active');
 			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');
-
 		} else if (filter.movieSeen == 'nicht gesehen') {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary');
 			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary active');
@@ -69,7 +68,7 @@ function fillStars(starid) {
 	$('#filterStars').find('span[id*="filterStar-"]').attr('onmouseout', 'fillStars(null)');
 }
 
-// Setzt den zu Filternden im Filter-Objekt und starten dann das Filtern
+// Setzt den zu Filternden Film im Filter-Objekt und starten dann das Filtern
 function movieTitleFilterKeyUp() {
 	setTimeout(function() {
 		filter.movieTitle = $('#filterBox #movieTitle').val().toLowerCase();
@@ -142,16 +141,11 @@ function filterRow(actRow) {
 
 /* leere alle Sterne im Filter wieder, wenn nicht durch Klicken ein Wert gesetzt wurde */
 function removeRatingFilter() {
-	// var parentElem = $(this).parent();
-	// parentElem.find('.stars').remove('div');
-	// parentElem.append(setRating(0, false));
-	// parentElem.find('.stars').on('mouseover', 'span', fillTableStar).on('click', 'span', fillTableStar).on('mouseleave', removeRatingFilter);
 	$('#filterStars').find('span[id*="filterStar-"]').addClass('glyphicon-star-empty');
 	$('#filterStars').find('span[id*="filterStar-"]').removeClass('glyphicon-star');
 
 	filter.movieRating = null;
 	filterTable();
-
 }
 
 function removeWatchFilter() {

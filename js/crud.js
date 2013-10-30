@@ -104,10 +104,10 @@ function searchMovie(numberOfStars, movieTitle) {
 			$('#createFilmModal').modal('hide');
 			//TODO Fehlermeldung weil Film nicht gefunden
 		}
-		//wenn alles stimmt /addNewTableLine(numberOfStars, movieTitle);
 	});
 }
 
+// Wenn mehre Filme gefunden erscheint Modal mit Liste der gefunden Filme
 function buildChooseTable(foundMovies, numberOfStars) {
 	$('#createFilmModal').find('.modal-body .form-group').hide();
 	$('#createFilmModal').find('#saveFilm').hide();
@@ -210,8 +210,6 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		sortTitleAlphabet(filter.movieTitleSorted);
 	} else if (filter.movieTitleSorted == null && filter.movieRatingSorted != null) {
 		sortRating(filter.movieRatingSorted);
-	} else {
-		groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);
 	}
 
 	if (filter.movieSeen != null) {
@@ -231,9 +229,10 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		$('#filterBox #movieTitle').val(filter.movieTitle);
 	}
 	filterTable();
+	parse_saveMovie(movieTitle , imdbID);
 }
 
-/* Das 'editFilmModul' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */
+/* Das 'editFilmModal' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */
 function changeMovieValues(event) {
 	switch(event.type) {
 		case ('click'):
