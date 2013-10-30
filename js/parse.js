@@ -1,4 +1,4 @@
-// Connect to Parse
+// Verbinde mit Parse
 Parse.initialize("L6o5RS5o7y3L2qq0MdbUUx1rTm8dIzLVJR6etJ5K", "QyEYNDiJAI3ctZ9pZC8fX7ncgVsyQ665094o3nPA");
 
 var Movie = Parse.Object.extend("Movie");
@@ -64,21 +64,35 @@ function parse_initialLoadMovieTable() {
 	if (Parse.User.current() == null) {
 		// lade Daten, als unangemeldeter User mit Durchschnittsbewertung und ohne dass gesehen/nicht gesehen angezeigt wird
 		var movie = new Parse.Query(Movie);
-		movie.find({
-			success : function(results) {
-				// Do something with the returned Parse.Object values
-				for (var i = 0; i < results.length; i++) {
-					var object = results[i];
-					initiateTableRow(object.get('avgRating'), object.get('Title'), object.get('imdbID'));
-				}
-			},
-			error : function(error) {
-				alert("Error: " + error.code + " " + error.message);
-			}
+		movie.find().then(function(results) {
+			_.each(results, function(object) {
+				initiateTableRow(object.get('avgRating'), object.get('Title'), object.get('imdbID'));
+			});
+		}, function(error) {
+			alert("Error: " + error.code + " " + error.message);
 		});
 	} else {
 		// lade Daten, als angemeldeter User mit eigener Bewertung und gesehen/nicht gesehen
-
+		var movie = new Parse.Query(Movie);
+		movie.find().then(function(results) {
+			_.each(results, function(object) {
+				var edit = new Parse.Query(Edit);
+				// nur die Filme waehlen
+				edit.equalTo("movieID", object);
+				edit.find().then(function(editResults) {
+					_.each(editResults, function(editResult) {
+						if(editResult.get('userID') == Parse.User.current()) {
+							initiateTableRow(editResult.get('rating'), object.get('Title'), object.get('imdbID'));
+						} else {
+							initiateTableRow("0", object.get('Title'), object.get('imdbID'));
+						}
+					});
+				});
+				
+			});
+		}, function(error) {
+			alert("Error: " + error.code + " " + error.message);
+		});
 	}
 }
 
@@ -93,12 +107,9 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
 
 	movie.save(null, {
 		success : function(movie) {
-			// Execute any logic that should take place after the object is saved.
 			parse_saveRating(numberOfStars, seen, movie);
 		},
 		error : function(movie, error) {
-			// Execute any logic that should take place if the save fails.
-			// error is a Parse.Error with an error code and description.
 			// TODO schoenere Fehlermeldung
 			alert('Failed to create new object, with error code: ' + error.description);
 		}
@@ -114,7 +125,7 @@ function calculateAverageRating(numberOfStars, movieID) {
 			for (var i = 0; i < results.length; i++) {
 				sum += results[i].get('rating');
 			}
-			return sum/result.length;
+			return sum / result.length;
 		},
 		error : function(error) {
 			// Er kann nicht nichts finden, weil wir ihm ja eine MovieID uebergeben
@@ -128,18 +139,15 @@ function parse_saveRating(numberOfStars, seen, movie) {
 
 	edit.set("rating", numberOfStars);
 	edit.set("movieSeen", seen);
-	// Object of Movie
+	// Object von Movie
 	edit.set("movieID", movie);
-	// Object of User
+	// Object von User
 	edit.set("userID", Parse.User.current());
 
 	edit.save(null, {
 		success : function(edit) {
-			// Execute any logic that should take place after the object is saved.
 		},
 		error : function(edit, error) {
-			// Execute any logic that should take place if the save fails.
-			// error is a Parse.Error with an error code and description.
 			// TODO schoenere Fehlermeldung
 			alert('Failed to create new object, with error code: ' + error.description);
 		}
