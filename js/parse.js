@@ -73,6 +73,7 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
 		error : function(movie, error) {
 			// Execute any logic that should take place if the save fails.
 			// error is a Parse.Error with an error code and description.
+			// TODO schoenere Fehlermeldung
 			alert('Failed to create new object, with error code: ' + error.description);
 		}
 	});
@@ -96,6 +97,7 @@ function parse_saveRating(numberOfStars, seen, movie) {
 		error : function(edit, error) {
 			// Execute any logic that should take place if the save fails.
 			// error is a Parse.Error with an error code and description.
+			// TODO schoenere Fehlermeldung
 			alert('Failed to create new object, with error code: ' + error.description);
 		}
 	});
