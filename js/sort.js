@@ -15,13 +15,12 @@ $(document).ready(function() {
 			$('#sortTitleASC').removeClass('sortInactive');
 			$('#sortTitleDESC').addClass('sortInactive');
 
-			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);
-		} else if (filter.movieTitleSorted == 'true' && filter.movieRatingSorted != null) {//alphabetische Sortierung von A zu Z und Ratingfilter aktiv
-			removeSort();
-			sortRating(filter.movieRatingSorted);
-			filter.movieTitleSorted = null;
-			$('#sortTitleASC').addClass('sortInactive');
-		}
+			//Löscht die Rating-Sortierung
+			filter.movieRatingSorted = null;
+			$('#sortRatingASC').addClass('sortInactive');
+			$('#sortRatingDESC').addClass('sortInactive');			
+
+		} 
 	});
 
 	$('#sortTitleDESC').on("click", function() {
@@ -39,12 +38,10 @@ $(document).ready(function() {
 			$('#sortTitleDESC').removeClass('sortInactive');
 			$('#sortTitleASC').addClass('sortInactive');
 
-			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);
-		} else if (filter.movieTitleSorted == 'false' && filter.movieRatingSorted != null) {//alphabetische Sortierung von Z zu A und Ratingfilter aktiv
-			removeSort();
-			sortRating(filter.movieRatingSorted);
-			filter.movieTitleSorted = null;
-			$('#sortTitleDESC').addClass('sortInactive');
+			//Löscht die Rating-Sortierung
+			filter.movieRatingSorted = null;
+			$('#sortRatingASC').addClass('sortInactive');
+			$('#sortRatingDESC').addClass('sortInactive');
 		}
 	});
 
@@ -64,13 +61,11 @@ $(document).ready(function() {
 			$('#sortRatingASC').removeClass('sortInactive');
 			$('#sortRatingDESC').addClass('sortInactive');
 
-			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);
-		} else if (filter.movieRatingSorted == 'true' && filter.movieTitleSorted != null) {//Rating aufsteigen sortiert und Titelfilter aktiv
-			removeSort();
-			sortTitleAlphabet(filter.movieTitleSorted);
-			filter.movieRatingSorted = null;
-			$('#sortRatingASC').addClass('sortInactive');
-		}
+			//Löscht die Titel-Sortierung
+			filter.movieTitleSorted = null;
+			$('#sortTitleASC').addClass('sortInactive');
+			$('#sortTitleDESC').addClass('sortInactive');
+		} 
 	});
 
 	$('#sortRatingDESC').on("click", function() {
@@ -88,12 +83,10 @@ $(document).ready(function() {
 			$('#sortRatingDESC').removeClass('sortInactive');
 			$('#sortRatingASC').addClass('sortInactive');
 
-			groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);
-		} else if (filter.movieRatingSorted == 'false' && filter.movieTitleSorted != null) {//Rating absteigen sortiert und Titelfilter aktiv
-			removeSort();
-			sortTitleAlphabet(filter.movieTitleSorted);
-			filter.movieRatingSorted = null;
-			$('#sortRatingDESC').addClass('sortInactive');
+			//Löscht die Titel-Sortierung
+			filter.movieTitleSorted = null;
+			$('#sortTitleASC').addClass('sortInactive');
+			$('#sortTitleDESC').addClass('sortInactive');
 		}
 	});
 }); 
