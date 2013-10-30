@@ -166,7 +166,9 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		//ID fuer die neue Zeile zusammensetzen
 	}
 	/*Tabelleneintrag hinzufuegen*/
+	var seen =  true;
 	if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text().toUpperCase()) {
+		seen = false;
 		numberOfStars = 0;
 	} else if (mouseoverForRatingOn) {
 		/* 'mouseover' Event ist noch an Bewertung gebunden, daher darf eine Bewertung nicht erfolgen.
@@ -229,6 +231,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		$('#filterBox #movieTitle').val(filter.movieTitle);
 	}
 	filterTable();
+	parse_saveRating(numberOfStars, seen);
 }
 
 /* Das 'editFilmModul' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */

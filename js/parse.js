@@ -35,10 +35,10 @@ function loginUser(username, password) {
 				setTimeout('$("#usernameInput").focus()', 100);
 				//Login Button Listener
 				$('#loginButton').on('click', function() {
-					if(!$(this).parent().parent().hasClass("open")){
+					if (!$(this).parent().parent().hasClass("open")) {
 						$('#loginDropdown').show();
 						setTimeout('$("#usernameInput").focus()', 100);
-					}else{
+					} else {
 						//Bei klick auf Login ausblenden vom Inputfeld
 						$('#loginDropdown').hide();
 					}
@@ -46,13 +46,37 @@ function loginUser(username, password) {
 				$('#passwordInput').val("");
 				$('#usernameInput').val("");
 				isLoggedInOrNot();
-			}); 
+			});
 			isLoggedInOrNot();
 			$('#submitLoginButton').button('reset');
 		},
 		error : function(user, error) {
 			alert("Wrong Logindata");
 			$('#submitLoginButton').button('reset');
+		}
+	});
+}
+
+function parse_saveRating(numberOfStars, seen) {
+	var Edit = Parse.Object.extend("Edit");
+	var edit = new Edit();
+
+	edit.set("rating", numberOfStars);
+	edit.set("movieSeen", seen);
+	// Object of Movie
+	edit.set("movie", Parse.User.current());
+	// Object of User
+	edit.set("owner", Parse.User.current());
+
+	edit.save(null, {
+		success : function(gameScore) {
+			// Execute any logic that should take place after the object is saved.
+			alert('New object created with objectId: ' + edit.id);
+		},
+		error : function(gameScore, error) {
+			// Execute any logic that should take place if the save fails.
+			// error is a Parse.Error with an error code and description.
+			alert('Failed to create new object, with error code: ' + error.description);
 		}
 	});
 }
