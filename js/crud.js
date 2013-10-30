@@ -210,10 +210,8 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		sortTitleAlphabet(filter.movieTitleSorted);
 	} else if (filter.movieTitleSorted == null && filter.movieRatingSorted != null) {
 		sortRating(filter.movieRatingSorted);
-	} else {
-		groupRatingSortTitle(filter.movieRatingSorted, filter.movieTitleSorted);
-	}
-
+	} 
+	
 	if (filter.movieSeen != null) {
 		if (filter.movieSeen == 'gesehen') {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary active');
