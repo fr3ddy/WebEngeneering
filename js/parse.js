@@ -77,10 +77,10 @@ function parse_initialLoadMovieTable() {
 		movie.find().then(function(results) {
 			_.each(results, function(object) {
 				var edit = new Parse.Query(Edit);
-				// nur die Filme waehlen
 				edit.equalTo("movieID", object);
 				edit.find().then(function(editResults) {
 					_.each(editResults, function(editResult) {
+						// wenn der Film vom aktuellen User bewertet wurde, dessen Bewertung setzen. Ansonsten 0 als Bewertung setzen
 						if(editResult.get('userID') == Parse.User.current()) {
 							initiateTableRow(editResult.get('rating'), object.get('Title'), object.get('imdbID'));
 						} else {
