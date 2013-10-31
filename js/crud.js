@@ -183,7 +183,9 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		rowID : newID,
 		movieTitle : movieTitle,
 		movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
-		rating : setRating(numberOfStars, true)
+		rating : setRating(numberOfStars, true),
+		editButton: editButtonActive,
+		deleteButton: deleteButtonActive
 	}));
 
 	/*Initialisiere PopOver fuer Delete-Button*/
@@ -237,7 +239,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 }
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
-function initiateTableRow(numberOfStars, movieTitle, imdbID, seen) {
+function initiateTableRow(numberOfStars, movieTitle, imdbID, seen, editButton, deleteButton) {
 
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
@@ -269,7 +271,9 @@ function initiateTableRow(numberOfStars, movieTitle, imdbID, seen) {
 		rowID : newID,
 		movieTitle : movieTitle,
 		movieSeen : seenText,
-		rating : setRating(numberOfStars, true)
+		rating : setRating(numberOfStars, true),
+		editButton: editButton,
+		deleteButton: deleteButton
 	}));
 
 	/*Initialisiere PopOver fuer Delete-Button*/

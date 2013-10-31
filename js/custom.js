@@ -20,20 +20,37 @@ var filter = {
 };
 
 //@formatter:off
+
+var deleteButtonNone = '<button class="btn btn-sm delete loggedOut" title="Delete">'
+							+'<span class="glyphicon glyphicon-trash"></span>'
+						+'</button>';
+						
+var deleteButtonInactive = '<button class="btn btn-sm delete loggedIn" title="Delete" disabled>'
+							+'<span class="glyphicon glyphicon-trash"></span>'
+						+'</button>';
+						
+var deleteButtonActive = '<button class="btn btn-sm delete loggedIn" title="Delete">'
+							+'<span class="glyphicon glyphicon-trash"></span>'
+						+'</button>';
+						
+var editButtonNone = '<button class="btn btn-sm edit loggedOut"title="Edit">'
+							+'<span class="glyphicon glyphicon-pencil"></span>'
+						+'</button>';
+
+var editButtonActive = '<button class="btn btn-sm edit loggedIn"title="Edit">'
+							+'<span class="glyphicon glyphicon-pencil"></span>'
+						+'</button>';
+						
 var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %>">'
 									+'<td class="magnifierTable"><span class="glyphicon glyphicon-search detailMagnifier"/></td>'
 									+'<td class="tableFilmTitle"><%- movieTitle %></td>' 
 									+'<td class="tableMovieSeen"><%- movieSeen %></td>' 
 									+'<td class="tableRating"><%= rating %></td>' 
 									+'<td>'
-										+'<button class="btn btn-sm edit loggedIn"title="Edit">'
-											+'<span class="glyphicon glyphicon-pencil"></span>'
-										+'</button>'
+										+'<%= editButton %>'
 									+'</td>' 
 									+ '<td>'
-										+'<button class="btn btn-sm delete loggedIn" title="Delete">'
-											+'<span class="glyphicon glyphicon-trash"></span>'
-										+'</button>'
+										+'<%= deleteButton %>'
 									+'</td>'
 								+'</tr>');
 

@@ -61,49 +61,87 @@ function loginUser(username, password) {
 }
 
 function parse_initialLoadMovieTable() {
-	if (Parse.User.current() == null) {
-		// lade Daten, als unangemeldeter User mit Durchschnittsbewertung und ohne dass gesehen/nicht gesehen angezeigt wird
-		var movie = new Parse.Query(Movie);
-		movie.find().then(function(results) {
-			_.each(results, function(object) {
-				initiateTableRow(object.get('avgRating'), object.get('Title'), object.get('imdbID'), true);
-			});
-		}, function(error) {
-			alert("Error: " + error.code + " " + error.message);
-		});
-	} else {
-		// lade Daten, als angemeldeter User mit eigener Bewertung und gesehen/nicht gesehen
-		var movie = new Parse.Query(Movie);
-		movie.find().then(function(results) {
-			_.each(results, function(object) {
-				var edit = new Parse.Query(Edit);
-				edit.equalTo("movieID", object);
-				edit.find().then( function(editResults) {
-					_.each(editResults, function(editResult) {
-						// wenn der Film vom aktuellen User bewertet wurde, dessen Bewertung setzen. Ansonsten 0 als Bewertung setzen
-						if(editResult.get('userID') == Parse.User.current()) {
-							initiateTableRow(editResult.get('rating'), object.get('Title'), object.get('imdbID'), editResult.get('movieSeen'));
-						} else {
-							initiateTableRow("0", object.get('Title'), object.get('imdbID'), editResult.get('movieSeen'));
-						}
-					});
+	var movie = new Parse.Query(Movie);
+	movie.find().then(function(movieResults) {
+		_.each(movieResults, function(movie) {
+			var editButton;
+			var deleteButton;
+			var numberOfStars;
+			var movieTitle = movie.get('Title');
+			var imdbID = movie.get('imdbID');
+			var seen;
+
+			var edit = new Parse.Query(Edit);
+			edit.equalTo("movieID", movie);
+			edit.find().then(function(editResults) {
+				_.each(editResults, function(edit) {
+					if (edit.get('userID').id == Parse.User.current().id) {
+						// nimm die eigene Bewertung
+						numberOfStars = edit.get('rating');
+						seen = edit.get('seen');
+						return false;
+					} else {
+						// nimm die Durchschnittsbewertung
+						numberOfStars = movie.get('avgRating');
+						seen = "";
+					}
+
 				});
-				
+
+				if (Parse.User.current() != null) {
+					// angemeldet
+					if (movie.get('Owner').id == Parse.User.current().id) {
+						// angemeldeter User, der den Film "besitzt"
+						editButton = editButtonActive;
+						deleteButton = deleteButtonActive;
+
+					} else {
+						// angemeldeter User, der den Film nicht "besitzt"
+						editButton = editButtonActive;
+						deleteButton = deleteButtonInactive;
+					}
+				} else {
+					// nicht angemeldet, daher nur Berechtigung zum Anschauen
+					editButton = editButtonNone;
+					deleteButton = deleteButtonNone;
+				}
+
+				initiateTableRow(numberOfStars, movieTitle, imdbID, seen, editButton, deleteButton);
 			});
-		}, function(error) {
-			alert("Error: " + error.code + " " + error.message);
 		});
-	}
+	});
 }
 
 function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
 	var movie = new Movie();
 
 	movie.set("imdbID", imdbID);
-	// TODO berechne durchscnittliches Rating
 	movie.set("avgRating", numberOfStars);
 	movie.set("Title", movieTitle);
 	movie.set("Owner", Parse.User.current());
+
+	var numberOfUserSeen;
+	if (seen) {
+		numberOfUserSeen = 1;
+	} else {
+		numberOfUserSeen = 0;
+	}
+
+	movie.set("numberOfUsersSeen", numberOfUserSeen);
+	// var user = new Parse.Query(Parse.User);
+	// user.count({
+	// success : function(count) {
+	// // The count request succeeded. Show the count
+	// movie.set("avgSeen", numberOfUserSeen + " von " + count);
+	// },
+	// error : function(error) {
+	// // The request failed
+	// }
+	// });
+
+	// var postACL = new Parse.ACL();
+	// postACL.setRoleWriteAccess("Owner", true);
+	// movie.setACL(postACL);
 
 	movie.save(null, {
 		success : function(movie) {
@@ -112,24 +150,6 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
 		error : function(movie, error) {
 			// TODO schoenere Fehlermeldung
 			alert('Failed to create new object, with error code: ' + error.description);
-		}
-	});
-}
-
-function calculateAverageRating(numberOfStars, movieID) {
-	var edit = new Edit();
-	edit.equalTo("movieID", movieID);
-	edit.find({
-		success : function(results) {
-			var sum = 0;
-			for (var i = 0; i < results.length; i++) {
-				sum += results[i].get('rating');
-			}
-			return sum / result.length;
-		},
-		error : function(error) {
-			// Er kann nicht nichts finden, weil wir ihm ja eine MovieID uebergeben
-			//alert("Error: " + error.code + " " + error.message);
 		}
 	});
 }
@@ -150,6 +170,24 @@ function parse_saveRating(numberOfStars, seen, movie) {
 		error : function(edit, error) {
 			// TODO schoenere Fehlermeldung
 			alert('Failed to create new object, with error code: ' + error.description);
+		}
+	});
+}
+
+function calculateAverageRating(numberOfStars, movieID) {
+	var edit = new Edit();
+	edit.equalTo("movieID", movieID);
+	edit.find({
+		success : function(results) {
+			var sum = 0;
+			for (var i = 0; i < results.length; i++) {
+				sum += results[i].get('rating');
+			}
+			return sum / result.length;
+		},
+		error : function(error) {
+			// Er kann nicht nichts finden, weil wir ihm ja eine MovieID uebergeben
+			//alert("Error: " + error.code + " " + error.message);
 		}
 	});
 }
