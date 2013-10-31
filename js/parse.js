@@ -197,19 +197,18 @@ function calculateAverageRating(numberOfStars, movieID) {
 	});
 }
 
-function parse_getOwnerOfMovie(imdbID) {S
+function parse_getOwnerOfMovie(imdbID, cb) {
 	var movie = new Parse.Query(Movie);
 	movie.equalTo('imdbID', imdbID);
 	movie.find().then(function(results) {
+
 		return results[0].get('Owner').id;
 	}).then(function(userID) {
 		var user = new Parse.Query(Parse.User);
-		var username;
 		user.get(userID, {
 			success : function(user) {
-				alert("fertig");
-				console.log(user.get('username'));
-				return user.get('username');
+				//alert("fertig");
+				cb(user.get('username'));
 			},
 			error : function(error) {
 				// TODO Fehlermeldung

@@ -21,118 +21,24 @@ var filter = {
 
 //@formatter:off
 
-var deleteButtonNone = '<button class="btn btn-sm delete loggedOut" title="Delete">'
-							+'<span class="glyphicon glyphicon-trash"></span>'
-						+'</button>';
-						
-var deleteButtonInactive = '<button class="btn btn-sm delete loggedIn" title="Delete" disabled>'
-							+'<span class="glyphicon glyphicon-trash"></span>'
-						+'</button>';
-						
-var deleteButtonActive = '<button class="btn btn-sm delete loggedIn" title="Delete">'
-							+'<span class="glyphicon glyphicon-trash"></span>'
-						+'</button>';
-						
-var editButtonNone = '<button class="btn btn-sm edit loggedOut"title="Edit">'
-							+'<span class="glyphicon glyphicon-pencil"></span>'
-						+'</button>';
+var deleteButtonNone = '<button class="btn btn-sm delete loggedOut" title="Delete">' + '<span class="glyphicon glyphicon-trash"></span>' + '</button>';
 
-var editButtonActive = '<button class="btn btn-sm edit loggedIn"title="Edit">'
-							+'<span class="glyphicon glyphicon-pencil"></span>'
-						+'</button>';
-						
-var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %>">'
-									+'<td class="magnifierTable"><span class="glyphicon glyphicon-search detailMagnifier"/></td>'
-									+'<td class="tableFilmTitle"><%- movieTitle %></td>' 
-									+'<td class="tableMovieSeen"><%- movieSeen %></td>' 
-									+'<td class="tableRating"><%= rating %></td>' 
-									+'<td>'
-										+'<%= editButton %>'
-									+'</td>' 
-									+ '<td>'
-										+'<%= deleteButton %>'
-									+'</td>'
-								+'</tr>');
+var deleteButtonInactive = '<button class="btn btn-sm delete loggedIn" title="Delete" disabled>' + '<span class="glyphicon glyphicon-trash"></span>' + '</button>';
 
-var detailedMovieView = _.template('<div class="container">'
-										+'<h3 id="detailViewMovieTitle"><%- movieTitle %>'+
-											'<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>'
-										+'</h3>'
-										+'<h6><span class="glyphicon glyphicon-user"/><%= username %></h6>'
-										+'<div class="row">'
-										+'<div class="col-xs-7">'
-											+'<label>Gesehen: </label><span><%- movieSeen %></span><br>'
-											+'<label>Bewertung: </label><span><%= rating %></span><br>'
-											+'<label>Release: </label><span><%- release %></span><br>'
-											+'<label>Dauer: </label><span><%- runtime %></span><br>'
-											+'<label>Genre: </label><span><%- genre %></span><br>'
-											+'<label>Director: </label><span><%- director %></span><br>'
-											+'<label>Schauspieler: </label><span><%- actors %></span>'
-										+'</div>'
-										+'<div class="col-xs-5">'
-											+'<img src="<%- picture %>" class="img-thumbnail"/>'
-										+'</div>'
-									+'</div>');
+var deleteButtonActive = '<button class="btn btn-sm delete loggedIn" title="Delete">' + '<span class="glyphicon glyphicon-trash"></span>' + '</button>';
+
+var editButtonNone = '<button class="btn btn-sm edit loggedOut"title="Edit">' + '<span class="glyphicon glyphicon-pencil"></span>' + '</button>';
+
+var editButtonActive = '<button class="btn btn-sm edit loggedIn"title="Edit">' + '<span class="glyphicon glyphicon-pencil"></span>' + '</button>';
+
+var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %>">' + '<td class="magnifierTable"><span class="glyphicon glyphicon-search detailMagnifier"/></td>' + '<td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' + '<td class="tableRating"><%= rating %></td>' + '<td>' + '<%= editButton %>' + '</td>' + '<td>' + '<%= deleteButton %>' + '</td>' + '</tr>');
+
+var detailedMovieView = _.template('<div class="container">' + '<h3 id="detailViewMovieTitle"><%- movieTitle %>' + '<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>' + '</h3>' + '<h6><span class="glyphicon glyphicon-user"/><%= username %></h6>' + '<div class="row">' + '<div class="col-xs-7">' + '<label>Gesehen: </label><span><%- movieSeen %></span><br>' + '<label>Bewertung: </label><span><%= rating %></span><br>' + '<label>Release: </label><span><%- release %></span><br>' + '<label>Dauer: </label><span><%- runtime %></span><br>' + '<label>Genre: </label><span><%- genre %></span><br>' + '<label>Director: </label><span><%- director %></span><br>' + '<label>Schauspieler: </label><span><%- actors %></span>' + '</div>' + '<div class="col-xs-5">' + '<img src="<%- picture %>" class="img-thumbnail"/>' + '</div>' + '</div>');
 
 //Initialisierung von FilmModal Content
-var insertCreateFilmModal = '<div class="form-group">'+
-										'<input type="text" class="form-control" id="filmTitle" placeholder="Film eingeben">'+
-											'<div class="switch-wrapper">'+
-												'<span class="switch-button-label off">GESEHEN</span>'+
-											'<div class="switch-button-background">'+
-											'<div class="switch-button-button"></div>'+
-										'</div><span class="switch-button-label on">NICHT GESEHEN</span><div style="clear: left;"></div>'+
-										'</div>'+
-										'<div class="rating">'+
-											'<label>Bewertung:</label>'+
-										'</div>'+
-										'</div>';	
+var insertCreateFilmModal = '<div class="form-group">' + '<input type="text" class="form-control" id="filmTitle" placeholder="Film eingeben">' + '<div class="switch-wrapper">' + '<span class="switch-button-label off">GESEHEN</span>' + '<div class="switch-button-background">' + '<div class="switch-button-button"></div>' + '</div><span class="switch-button-label on">NICHT GESEHEN</span><div style="clear: left;"></div>' + '</div>' + '<div class="rating">' + '<label>Bewertung:</label>' + '</div>' + '</div>';
 //Initialisierung des Popovers
-var popoverFilterContent = '<fieldset id="filterBox">'
-									+'<div class="form-group row">'
-										+'<div class="input-group col-sm-10" style="width: 252px;">'
-											+'<span class="input-group-addon"><span class="glyphicon glyphicon-film"></span></span>'
-											+'<input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Film Titel" onkeyup="movieTitleFilterKeyUp()">'
-										+'</div>'
-										+'<div class="col-sm-2" style="margin-left: -25px;">'
-											+'<button type="button" class="close" aria-hidden="true" onclick="removeTitleFilter()">'
-												+'×'
-											+'</button>'
-										+'</div>'
-									+'</div>'
-									+'<div class="row">'
-										+'<div class="col-sm-10">'
-											+'<div class="btn-group" data-toggle="buttons" style="width: 223px;">'
-												+'<label class="btn btn-primary"  onclick="filterWatchStatusSet(true)">'
-													+'<input type="radio" name="options" id="movieWatched">'
-													+'Gesehen</label><label class="btn btn-primary" onclick="filterWatchStatusSet(false)">'
-													+'<input type="radio" name="options" id="movieNotWatched">'
-													+'Nicht Gesehen</label>'
-											+'</div>'
-										+'</div>'
-										+'<div class="col-sm-2">'
-											+'<button type="button" class="close" aria-hidden="true" onclick="removeWatchFilter()">'
-												+'×'
-											+'</button>'
-										+'</div>'
-										+'</div>'
-									+'<div class="row">'
-										+'<div class="col-sm-10">'
-										+'<div id="filterStars">'+
-											'<span id="filterStar-1" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>'+
-											'<span id="filterStar-2" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>'+
-											'<span id="filterStar-3" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>'+
-											'<span id="filterStar-4" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>'+
-											'<span id="filterStar-5" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>'+
-										'</div>'
-										+'</div>'
-										+'<div class="col-sm-2">'
-											+'<button type="button" class="close" aria-hidden="true" onclick="removeRatingFilter()">'
-												+'×'
-											+'</button>'
-										+'</div>'
-									+'</div>'
-								+'</fieldset>'; 
+var popoverFilterContent = '<fieldset id="filterBox">' + '<div class="form-group row">' + '<div class="input-group col-sm-10" style="width: 252px;">' + '<span class="input-group-addon"><span class="glyphicon glyphicon-film"></span></span>' + '<input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Film Titel" onkeyup="movieTitleFilterKeyUp()">' + '</div>' + '<div class="col-sm-2" style="margin-left: -25px;">' + '<button type="button" class="close" aria-hidden="true" onclick="removeTitleFilter()">' + '×' + '</button>' + '</div>' + '</div>' + '<div class="row">' + '<div class="col-sm-10">' + '<div class="btn-group" data-toggle="buttons" style="width: 223px;">' + '<label class="btn btn-primary"  onclick="filterWatchStatusSet(true)">' + '<input type="radio" name="options" id="movieWatched">' + 'Gesehen</label><label class="btn btn-primary" onclick="filterWatchStatusSet(false)">' + '<input type="radio" name="options" id="movieNotWatched">' + 'Nicht Gesehen</label>' + '</div>' + '</div>' + '<div class="col-sm-2">' + '<button type="button" class="close" aria-hidden="true" onclick="removeWatchFilter()">' + '×' + '</button>' + '</div>' + '</div>' + '<div class="row">' + '<div class="col-sm-10">' + '<div id="filterStars">' + '<span id="filterStar-1" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>' + '<span id="filterStar-2" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>' + '<span id="filterStar-3" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>' + '<span id="filterStar-4" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>' + '<span id="filterStar-5" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)"></span>' + '</div>' + '</div>' + '<div class="col-sm-2">' + '<button type="button" class="close" aria-hidden="true" onclick="removeRatingFilter()">' + '×' + '</button>' + '</div>' + '</div>' + '</fieldset>';
 //@formatter:on
 
 $(document).ready(function() {
@@ -172,23 +78,21 @@ $(document).ready(function() {
 	} else {
 		//@formatter:off
 		isLoggedInOrNot();
-		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">'
-											+'<span class="glyphicon glyphicon-remove-circle"></span> Logout'
-										+'</button>');
+		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
 		$('#logoutButton').on('click', function() {
-				$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
+			$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
 
-				Parse.User.logOut();
+			Parse.User.logOut();
 
-				$('#loginDropdown').show();
+			$('#loginDropdown').show();
+			setTimeout('$("#usernameInput").focus()', 100);
+			//Login Button Listener
+			$('#loginButton').on('click', function() {
 				setTimeout('$("#usernameInput").focus()', 100);
-				//Login Button Listener
-				$('#loginButton').on('click', function() {
-					setTimeout('$("#usernameInput").focus()', 100);
-				});
-				$('#passwordInput').val("");
-				$('#usernameInput').val("");
-				isLoggedInOrNot();
+			});
+			$('#passwordInput').val("");
+			$('#usernameInput').val("");
+			isLoggedInOrNot();
 		});
 		//@formatter:on
 	}
@@ -276,30 +180,32 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 			} else {
 				poster = data.Poster;
 			}
-
-			var username = parse_getOwnerOfMovie(imdbID);
 			
-			$('#detailedView').html(detailedMovieView({
-				movieTitle : data.Title,
-				username : username,
-				movieSeen : movieSeen,
-				rating : setRating(numberOfStars, true),
-				picture : poster,
-				release : data.Released,
-				runtime : data.Runtime,
-				genre : data.Genre,
-				director : data.Director,
-				actors : data.Actors
-			}));
+			parse_getOwnerOfMovie(imdbID, function(username) {
+				$('#detailedView').html(detailedMovieView({
+					movieTitle : data.Title,
+					username : username,
+					movieSeen : movieSeen,
+					rating : setRating(numberOfStars, true),
+					picture : poster,
+					release : data.Released,
+					runtime : data.Runtime,
+					genre : data.Genre,
+					director : data.Director,
+					actors : data.Actors
+				}));
+	
+				$('#detailedView').stop().show().animate({
+					right : "0px"
+				});
+				$('#home').stop().animate({
+					left : "-100%"
+				}, function() {
+					$('#home').hide();
+				});
+			});
 
-			$('#detailedView').stop().show().animate({
-				right : "0px"
-			});
-			$('#home').stop().animate({
-				left : "-100%"
-			}, function() {
-				$('#home').hide();
-			});
+			
 		}
 		$(that).css({
 			cursor : "default"
