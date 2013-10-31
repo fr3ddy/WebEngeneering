@@ -165,7 +165,7 @@ $(document).ready(function() {
 
 	/*-----LOGIN--------*/
 	// prüft ob angemeldet oder nicht!
-	if (Parse.User.current() == null){
+	if (Parse.User.current() == null) {
 		// do stuff with the user
 	} else {
 		//@formatter:off
@@ -192,10 +192,10 @@ $(document).ready(function() {
 	}
 	//Login Button Listener
 	$('#loginButton').on('click', function() {
-		if(!$(this).parent().parent().hasClass("open")){
+		if (!$(this).parent().parent().hasClass("open")) {
 			$('#loginDropdown').show();
 			setTimeout('$("#usernameInput").focus()', 100);
-		}else{
+		} else {
 			//Bei klick auf Login ausblenden vom Inputfeld
 			$('#loginDropdown').hide();
 		}
@@ -207,19 +207,19 @@ $(document).ready(function() {
 		var password = $('#passwordInput').val();
 		var parent = $('#loginButton').parent();
 		$('#submitLoginButton').button('loading');
-		loginUser(userName , password);
+		loginUser(userName, password);
 	});
-	
+
 	/* Registrieren */
-	$('#register').on("click" , function(){
+	$('#register').on("click", function() {
 		event.preventDefault();
 		$('#registerModal').modal('show');
 	});
-	
-	$('#submitRegistration').on("click" , function(){
+
+	$('#submitRegistration').on("click", function() {
 		var username = $('#registerModal .modal-body #regUsernameInput').val();
 		var password = $('#registerModal .modal-body #regPasswordInput').val();
-		registerUser(username , password);
+		registerUser(username, password);
 	});
 });
 
@@ -233,24 +233,25 @@ function isLoggedInOrNot() {
 /*Setzt die Klasse fuer Parameter 'element' auf 'loggedOut' und entfernt Klasse 'loggedIn', falls der User nicht eingeloggt ist. Ansonsten umgekehrt. */
 function toggleClassOnAllElements(element) {
 	$(element).each(function() {
-		if(element === '.delete') {
+		if (element === '.delete') {
 			// ueberpruefe ob User eingeloggt ist und Owner oder nur User und mach was
-			var that = $(this);
-			if(Parse.User.current() != null){
-				var movie = new Parse.Query(Movie);
-				movie.equalTo(that.parent().parent().attr('data-imdbid'));
-				movie.find(function(movieResults){
-					_.each(movieResults , function(movieResult){
-						if(movieResult.get("Owner").id == Parse.User.current().id){
+			if (Parse.User.current() != null) {
+				$('#filmtable').find('.delete').each(function() {
+					var that = $(this);
+					var movie = new Parse.Query(Movie);
+					movie.equalTo('imdbID', that.parent().parent().attr('data-imdbid'));
+					movie.find(function(movieResults) {
+						// da die imdbID als eindeutige Schluessel gesehen werden kann wird nur ein Element bei der Suche zurueckgegeben
+						if (movieResults[0].get("Owner").id == Parse.User.current().id) {
 							that.removeAttr("disabled");
-						}else{
-							that.attr("disabled" , "disabled");
+						} else {
+							that.attr("disabled", "disabled");
 						}
 					});
 				});
-			}	
+			}
 		}
-		
+
 		$(this).fadeToggle('1000', function() {
 			$(this).toggleClass('loggedOut loggedIn');
 		});
@@ -294,7 +295,9 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 				$('#home').hide();
 			});
 		}
-		$(that).css({cursor: "default"});
+		$(that).css({
+			cursor : "default"
+		});
 	});
 }
 

@@ -148,10 +148,6 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
 
 	movie.set("numberOfUsersSeen", numberOfUserSeen);
 
-	// var postACL = new Parse.ACL();
-	// postACL.setRoleWriteAccess("Owner", true);
-	// movie.setACL(postACL);
-
 	movie.save(null, {
 		success : function(movie) {
 			parse_saveRating(numberOfStars, seen, movie);
@@ -184,7 +180,7 @@ function parse_saveRating(numberOfStars, seen, movie) {
 }
 
 function calculateAverageRating(numberOfStars, movieID) {
-	var edit = new Edit();
+	var edit = new Parse.Query(Edit);
 	edit.equalTo("movieID", movieID);
 	edit.find({
 		success : function(results) {
