@@ -79,11 +79,11 @@ function parse_initialLoadMovieTable() {
 				var row = {
 					editButton : null,
 					deleteButton : null,
-					seen : "gesehen ("+ movieResult.get('numberOfUsersSeen') + " von " + count + ")",
+					seen : "gesehen (" + movieResult.get('numberOfUsersSeen') + " von " + count + ")",
 					numberOfStars : movieResult.get('avgRating'),
 					movieTitle : movieResult.get('Title'),
 					imdbID : movieResult.get('imdbID'),
-					owner: movieResult.get('Owner').id
+					owner : movieResult.get('Owner').id
 				};
 				var edit = new Parse.Query(Edit);
 				edit.equalTo("movieID", movieResult);
@@ -194,5 +194,26 @@ function calculateAverageRating(numberOfStars, movieID) {
 			// Er kann nicht nichts finden, weil wir ihm ja eine MovieID uebergeben
 			//alert("Error: " + error.code + " " + error.message);
 		}
+	});
+}
+
+function parse_getOwnerOfMovie(imdbID) {S
+	var movie = new Parse.Query(Movie);
+	movie.equalTo('imdbID', imdbID);
+	movie.find().then(function(results) {
+		return results[0].get('Owner').id;
+	}).then(function(userID) {
+		var user = new Parse.Query(Parse.User);
+		var username;
+		user.get(userID, {
+			success : function(user) {
+				alert("fertig");
+				console.log(user.get('username'));
+				return user.get('username');
+			},
+			error : function(error) {
+				// TODO Fehlermeldung
+			}
+		});
 	});
 }

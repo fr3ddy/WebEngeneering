@@ -57,7 +57,9 @@ var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %
 var detailedMovieView = _.template('<div class="container">'
 										+'<h3 id="detailViewMovieTitle"><%- movieTitle %>'+
 											'<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>'
-										+'</h3><div class="row">'
+										+'</h3>'
+										+'<h6><span class="glyphicon glyphicon-user"/><%= username %></h6>'
+										+'<div class="row">'
 										+'<div class="col-xs-7">'
 											+'<label>Gesehen: </label><span><%- movieSeen %></span><br>'
 											+'<label>Bewertung: </label><span><%= rating %></span><br>'
@@ -274,8 +276,12 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 			} else {
 				poster = data.Poster;
 			}
+
+			var username = parse_getOwnerOfMovie(imdbID);
+			
 			$('#detailedView').html(detailedMovieView({
 				movieTitle : data.Title,
+				username : username,
 				movieSeen : movieSeen,
 				rating : setRating(numberOfStars, true),
 				picture : poster,

@@ -1,6 +1,18 @@
 $(document).ready(function() {
 	parse_initialLoadMovieTable();
 
+		/* Action Listener für Detail View Lupe */
+	$('table').on('click', '.detailMagnifier', function() {
+		$(this).css({
+			cursor : "progress"
+		});
+		var clickedTr = $(this).parent().parent();
+		buildDetailView.call(this, 
+							clickedTr.find('.stars').find('.' + ratingIconOn).length, 
+							clickedTr.find('.tableMovieSeen').text().toLowerCase(), 
+							clickedTr.attr('data-imdbID'));
+	});
+	
 	/* Setze Focus auf Film Titel Input, wenn Modal geoeffnet wird */
 	$("#createFilmModal").on('focus', function() {
 		$('#filmTitle').focus();
@@ -199,13 +211,16 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 
 	$('#createFilmModal').modal('hide');
 	/* Action Listener für Detail View Lupe */
-	$('.detailMagnifier').click('click', function() {
-		$(this).css({
-			cursor : "progress"
-		});
-		var clickedTr = $(this).parent().parent();
-		buildDetailView.call(this, clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
-	});
+	// $('.detailMagnifier').click('click', function() {
+		// $(this).css({
+			// cursor : "progress"
+		// });
+		// var clickedTr = $(this).parent().parent();
+		// buildDetailView.call(this, 
+							// clickedTr.find('.stars').find('.' + ratingIconOn).length, 
+							// clickedTr.find('.tableMovieSeen').text().toLowerCase(), 
+							// clickedTr.attr('data-imdbID'));
+	// });
 
 	//----------------------Filter wieder setzten und neue Tabelle filtern!
 	filter.movieSeen = filterSetting.movieSeen;
@@ -274,15 +289,6 @@ function initiateTableRow(numberOfStars, movieTitle, imdbID, seenText, editButto
 		title : 'Löschen',
 		content : popoverContent,
 		html : 'true'
-	});
-
-	/* Action Listener für Detail View Lupe */
-	$('.detailMagnifier').click('click', function() {
-		$(this).css({
-			cursor : "progress"
-		});
-		var clickedTr = $(this).parent().parent();
-		buildDetailView.call(this, clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
 	});
 }
 
