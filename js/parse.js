@@ -75,7 +75,7 @@ function parse_initialLoadMovieTable() {
 			edit.equalTo("movieID", movie);
 			edit.find().then(function(editResults) {
 				_.each(editResults, function(edit) {
-					if (edit.get('userID').id == Parse.User.current().id) {
+					if (null != Parse.User.current() && edit.get('userID').id == Parse.User.current().id) {
 						// nimm die eigene Bewertung
 						numberOfStars = edit.get('rating');
 						seen = edit.get('seen');
