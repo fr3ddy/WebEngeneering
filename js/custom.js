@@ -233,6 +233,24 @@ function isLoggedInOrNot() {
 /*Setzt die Klasse fuer Parameter 'element' auf 'loggedOut' und entfernt Klasse 'loggedIn', falls der User nicht eingeloggt ist. Ansonsten umgekehrt. */
 function toggleClassOnAllElements(element) {
 	$(element).each(function() {
+		if(element === '.delete') {
+			// ueberpruefe ob User eingeloggt ist und Owner oder nur User und mach was
+			var that = $(this);
+			if(Parse.User.current() != null){
+				var movie = new Parse.Query(Movie);
+				movie.equalTo(that.parent().parent().attr('data-imdbid'));
+				movie.find(function(movieResults){
+					_.each(movieResults , function(movieResult){
+						if(movieResult.get("Owner").id == Parse.User.current().id){
+							that.removeAttr("disabled");
+						}else{
+							that.attr("disabled" , "disabled");
+						}
+					});
+				});
+			}	
+		}
+		
 		$(this).fadeToggle('1000', function() {
 			$(this).toggleClass('loggedOut loggedIn');
 		});

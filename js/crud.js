@@ -239,7 +239,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 }
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
-function initiateTableRow(numberOfStars, movieTitle, imdbID, seen, editButton, deleteButton) {
+function initiateTableRow(numberOfStars, movieTitle, imdbID, seenText, editButton, deleteButton) {
 
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
@@ -255,15 +255,6 @@ function initiateTableRow(numberOfStars, movieTitle, imdbID, seen, editButton, d
 		//Anzahl der Zeilen steht im 2. Feld, muss von String in Integer geparst werden
 		newID = 'tr-' + tmpId[1];
 		//ID fuer die neue Zeile zusammensetzen
-	}
-	
-	var seenText;
-	if(seen) {
-		// Film wurde gesehen
-		seenText = "gesehen";	
-	} else {
-		// Film wurde nicht gesehen
-		seenText = "nicht gesehen";
 	}
 	
 	$('#filmtable').append(addMovieToList({

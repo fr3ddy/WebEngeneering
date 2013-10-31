@@ -62,51 +62,70 @@ function loginUser(username, password) {
 
 function parse_initialLoadMovieTable() {
 	var movie = new Parse.Query(Movie);
-	movie.find().then(function(movieResults) {
-		_.each(movieResults, function(movie) {
-			var editButton;
-			var deleteButton;
-			var numberOfStars;
-			var movieTitle = movie.get('Title');
-			var imdbID = movie.get('imdbID');
-			var seen;
+	var userCount;
 
-			var edit = new Parse.Query(Edit);
-			edit.equalTo("movieID", movie);
-			edit.find().then(function(editResults) {
-				_.each(editResults, function(edit) {
-					if (null != Parse.User.current() && edit.get('userID').id == Parse.User.current().id) {
-						// nimm die eigene Bewertung
-						numberOfStars = edit.get('rating');
-						seen = edit.get('seen');
-						return false;
+	var user = new Parse.Query(Parse.User);
+	user.count({
+		success : function(count) {
+			return count;
+		},
+		error : function(error) {
+			// TODO Fehler
+			alert("Ohoh");
+		}
+	}).then(function(count) {
+		movie.find().then(function(movieResults) {
+			_.each(movieResults, function(movieResult) {
+				var row = {
+					editButton : null,
+					deleteButton : null,
+					seen : "gesehen ("+ movieResult.get('numberOfUsersSeen') + " von " + count + ")",
+					numberOfStars : movieResult.get('avgRating'),
+					movieTitle : movieResult.get('Title'),
+					imdbID : movieResult.get('imdbID'),
+					owner: movieResult.get('Owner').id
+				};
+				var edit = new Parse.Query(Edit);
+				edit.equalTo("movieID", movieResult);
+				edit.find().then(function(editResults) {
+					_.each(editResults, function(editResult) {
+						if (Parse.User.current() != null && editResult.get('userID').id == Parse.User.current().id) {
+							// nimm die eigene Bewertung
+							row.numberOfStars = editResult.get('rating');
+							if (editResult.get('movieSeen')) {
+								// Film wurde gesehen
+								row.seen = "gesehen";
+							} else {
+								// Film wurde nicht gesehen
+								row.seen = "nicht gesehen";
+							}
+							return false;
+						} else {
+							//nimm die Durchschnittsbewertung
+							row.numberOfStars = movie.get('avgRating');
+						}
+					});
+					return row;
+				}).then(function(row) {
+					if (Parse.User.current() != null) {
+						// angemeldet
+						if (row.owner == Parse.User.current().id && row.owner != null) {
+							// angemeldeter User, der den Film "besitzt"
+							row.editButton = editButtonActive;
+							row.deleteButton = deleteButtonActive;
+
+						} else {
+							// angemeldeter User, der den Film nicht "besitzt"
+							row.editButton = editButtonActive;
+							row.deleteButton = deleteButtonInactive;
+						}
 					} else {
-						// nimm die Durchschnittsbewertung
-						numberOfStars = movie.get('avgRating');
-						seen = "";
+						//nicht angemeldet, daher nur Berechtigung zum Anschauen
+						row.editButton = editButtonNone;
+						row.deleteButton = deleteButtonNone;
 					}
-
+					initiateTableRow(row.numberOfStars, row.movieTitle, row.imdbID, row.seen, row.editButton, row.deleteButton);
 				});
-
-				if (Parse.User.current() != null) {
-					// angemeldet
-					if (movie.get('Owner').id == Parse.User.current().id) {
-						// angemeldeter User, der den Film "besitzt"
-						editButton = editButtonActive;
-						deleteButton = deleteButtonActive;
-
-					} else {
-						// angemeldeter User, der den Film nicht "besitzt"
-						editButton = editButtonActive;
-						deleteButton = deleteButtonInactive;
-					}
-				} else {
-					// nicht angemeldet, daher nur Berechtigung zum Anschauen
-					editButton = editButtonNone;
-					deleteButton = deleteButtonNone;
-				}
-
-				initiateTableRow(numberOfStars, movieTitle, imdbID, seen, editButton, deleteButton);
 			});
 		});
 	});
@@ -128,16 +147,6 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
 	}
 
 	movie.set("numberOfUsersSeen", numberOfUserSeen);
-	// var user = new Parse.Query(Parse.User);
-	// user.count({
-	// success : function(count) {
-	// // The count request succeeded. Show the count
-	// movie.set("avgSeen", numberOfUserSeen + " von " + count);
-	// },
-	// error : function(error) {
-	// // The request failed
-	// }
-	// });
 
 	// var postACL = new Parse.ACL();
 	// postACL.setRoleWriteAccess("Owner", true);
