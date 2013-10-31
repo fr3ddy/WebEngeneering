@@ -183,3 +183,14 @@ table {
 	padding-bottom: 0px;
 	padding-top: 0px;
 }
+
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.3;
+  filter: alpha(opacity=30);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}

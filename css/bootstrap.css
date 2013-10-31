@@ -2026,17 +2026,6 @@ textarea.input-lg {
           box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 
-.btn.disabled,
-.btn[disabled],
-fieldset[disabled] .btn {
-  pointer-events: none;
-  cursor: not-allowed;
-  opacity: 0.65;
-  filter: alpha(opacity=65);
-  -webkit-box-shadow: none;
-          box-shadow: none;
-}
-
 .btn-default {
   color: #333333;
   background-color: #ffffff;
