@@ -197,7 +197,7 @@ function calculateAverageRating(numberOfStars, movieID) {
 	});
 }
 
-function parse_getOwnerOfMovie(imdbID, cb) {
+function parse_getOwnerOfMovie(imdbID, callback) {
 	var movie = new Parse.Query(Movie);
 	movie.equalTo('imdbID', imdbID);
 	movie.find().then(function(results) {
@@ -208,7 +208,7 @@ function parse_getOwnerOfMovie(imdbID, cb) {
 		user.get(userID, {
 			success : function(user) {
 				//alert("fertig");
-				cb(user.get('username'));
+				callback(user.get('username'));
 			},
 			error : function(error) {
 				// TODO Fehlermeldung

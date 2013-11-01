@@ -1,18 +1,15 @@
 $(document).ready(function() {
 	parse_initialLoadMovieTable();
 
-		/* Action Listener für Detail View Lupe */
+	/* Action Listener für Detail View Lupe */
 	$('table').on('click', '.detailMagnifier', function() {
 		$(this).css({
 			cursor : "progress"
 		});
 		var clickedTr = $(this).parent().parent();
-		buildDetailView.call(this, 
-							clickedTr.find('.stars').find('.' + ratingIconOn).length, 
-							clickedTr.find('.tableMovieSeen').text().toLowerCase(), 
-							clickedTr.attr('data-imdbID'));
+		buildDetailView.call(this, clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
 	});
-	
+
 	/* Setze Focus auf Film Titel Input, wenn Modal geoeffnet wird */
 	$("#createFilmModal").on('focus', function() {
 		$('#filmTitle').focus();
@@ -196,8 +193,8 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		movieTitle : movieTitle,
 		movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
 		rating : setRating(numberOfStars, true),
-		editButton: editButtonActive,
-		deleteButton: deleteButtonActive
+		editButton : editButtonActive,
+		deleteButton : deleteButtonActive
 	}));
 
 	/*Initialisiere PopOver fuer Delete-Button*/
@@ -210,17 +207,6 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 	});
 
 	$('#createFilmModal').modal('hide');
-	/* Action Listener für Detail View Lupe */
-	// $('.detailMagnifier').click('click', function() {
-		// $(this).css({
-			// cursor : "progress"
-		// });
-		// var clickedTr = $(this).parent().parent();
-		// buildDetailView.call(this, 
-							// clickedTr.find('.stars').find('.' + ratingIconOn).length, 
-							// clickedTr.find('.tableMovieSeen').text().toLowerCase(), 
-							// clickedTr.attr('data-imdbID'));
-	// });
 
 	//----------------------Filter wieder setzten und neue Tabelle filtern!
 	filter.movieSeen = filterSetting.movieSeen;
@@ -271,15 +257,15 @@ function initiateTableRow(numberOfStars, movieTitle, imdbID, seenText, editButto
 		newID = 'tr-' + tmpId[1];
 		//ID fuer die neue Zeile zusammensetzen
 	}
-	
+
 	$('#filmtable').append(addMovieToList({
 		imdbID : imdbID,
 		rowID : newID,
 		movieTitle : movieTitle,
 		movieSeen : seenText,
 		rating : setRating(numberOfStars, true),
-		editButton: editButton,
-		deleteButton: deleteButton
+		editButton : editButton,
+		deleteButton : deleteButton
 	}));
 
 	/*Initialisiere PopOver fuer Delete-Button*/

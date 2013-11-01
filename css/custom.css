@@ -23,8 +23,11 @@ table {
 	cursor: default;
 }
 
-#chooseTable{
-	display: none;
+.btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.35;
+    pointer-events: none;
 }
 
 .detailMagnifier {
@@ -59,6 +62,18 @@ table {
 
 .navbar-static-top {
 	margin-bottom: 19px;
+}
+
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+  color: #fff;
+  background-color: #0088CC;
+}
+
+.plot {
+	text-align: justify;
+	margin-left: 5.2em;
+	margin-top: -25px;	
 }
 
 .rating .stars, #filterStars {
@@ -119,10 +134,6 @@ table {
 	color: #adadad;
 }
 
-/*.tableFilmTitle {
-	text-transform: capitalize;
-}*/
-
 #closeDetailedView {
 	left: -20px;
 	font-size: inherit;
@@ -130,6 +141,10 @@ table {
 	cursor: pointer;
 	background: transparent;
 	border: 0;
+}
+
+#chooseTable{
+	display: none;
 }
 
 #detailedView {
@@ -140,12 +155,7 @@ table {
 	right: -100%;
 	background-color: #fff;
 	cursor: default;
-	/*z-index: 1060;*/
 }
-
-/*#filmTitle, #filmTitleEdit, #detailViewMovieTitle {
-	text-transform: capitalize;	
-}*/
 
 #home {
 	width: 100%;
