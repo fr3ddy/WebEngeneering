@@ -47,9 +47,6 @@ $(document).ready(function() {
 	/*Aendere-Button auf Modal 'editFilmModal'*/
 	$('#changeMovie').on('click', changeMovieValues);
 
-	/* aendere bestehenden Film bei 'Enter' 'editFilmModal' */
-	$('#filmTitleEdit').bind('keypress', changeMovieValues);
-
 	/*Aufbau Modal um den Film zu editieren*/
 	$('#list').on('click', '.edit', function() {
 		var title = $(this).parent().parent().find('.tableFilmTitle').text();
@@ -315,6 +312,11 @@ function changeTableRowValues(numberOfStars) {
 	}
 
 	$('#editFilmModal').modal('hide');
+	
+	// aktualisiere die Edit Tabelle bei parse oder fuege einen neuen Eintrag hinzu
+	var getRating = $('#filmtable').find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
+	var seen = $(this).find('.on').text().toLowerCase() === "gesehen" ? true : false;
+	parse_updateEntry($('#filmtable').find('#' + selectedRowId).data('imdbid'), getRating, seen);
 }
 
 /* Loescht ausgewaehlte Zeile aus Tabelle*/

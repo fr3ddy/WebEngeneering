@@ -164,22 +164,29 @@ function parse_saveRating(numberOfStars, seen, movie) {
 
 	edit.set("rating", numberOfStars);
 	edit.set("movieSeen", seen);
-	// Object von Movie
+	// Objekt von Movie
 	edit.set("movieID", movie);
-	// Object von User
+	// Objekt von User
 	edit.set("userID", Parse.User.current());
 
-	edit.save(null, {
-		success : function(edit) {
-		},
-		error : function(edit, error) {
-			// TODO schoenere Fehlermeldung
-			alert('Failed to create new object, with error code: ' + error.description);
-		}
+	var promise = Parse.Promise.as();
+	promise = promise.then(function() {
+		// Return a promise that will be resolved when the delete is finished.
+		return edit.save(null, {
+			success : function(edit) {
+				console.log("editEintragSpeichern");
+			},
+			error : function(edit, error) {
+				// TODO schoenere Fehlermeldung
+				alert('Failed to create new object, with error code: ' + error.message);
+			}
+		});
 	});
+
+	return promise;
 }
 
-function calculateAverageRating(numberOfStars, movieID) {
+function parse_calculateAverageRating(movieID, callback) {
 	var edit = new Parse.Query(Edit);
 	edit.equalTo("movieID", movieID);
 	edit.find({
@@ -188,12 +195,54 @@ function calculateAverageRating(numberOfStars, movieID) {
 			for (var i = 0; i < results.length; i++) {
 				sum += results[i].get('rating');
 			}
-			return sum / result.length;
+			callback(sum / results.length);
 		},
 		error : function(error) {
 			// Er kann nicht nichts finden, weil wir ihm ja eine MovieID uebergeben
 			//alert("Error: " + error.code + " " + error.message);
 		}
+	});
+}
+
+function parse_updateEntry(imdbID, numberOfStars, seen) {
+	var movie = new Parse.Query(Movie);
+	movie.equalTo('imdbID', imdbID);
+	movie.first().then(function(movieResult) {
+		return movieResult;
+	}).then(function(movieResult) {
+		edit = new Parse.Query(Edit);
+		edit.equalTo('userID', Parse.User.current());
+		edit.equalTo('movieID', movieResult);
+
+		edit.first().then(function(editResult) {
+			var promise = Parse.Promise.as();
+			if ( typeof (editResult) != 'undefined') {
+				// es gibt schon einen Eintrag zu dem Film und User in der Edit Tabelle
+				editResult.set('rating', numberOfStars);
+				editResult.set('movieSeen', seen);
+				editResult.save();
+			} else {
+				// es gibt noch keinen Eintrag zu dem Film und User in der Edit Tabelle, somit wird einer hinzugefuegt
+				promise = promise.then(function() {
+					return parse_saveRating(numberOfStars, seen, movieResult);
+				});
+			}
+			return promise;
+		}).then(function() {
+			console.log("movieSpeichern");
+			var numberOfUserSeen;
+			if (seen) {
+				numberOfUserSeen = movieResult.get("numberOfUsersSeen") + 1;
+			} else {
+				numberOfUserSeen = movieResult.get("numberOfUsersSeen");
+			}
+
+			movieResult.set("numberOfUsersSeen", numberOfUserSeen);
+			parse_calculateAverageRating(movieResult, function(average) {
+				movieResult.set('avgRating', average);
+				movieResult.save();
+			});
+		});
 	});
 }
 
