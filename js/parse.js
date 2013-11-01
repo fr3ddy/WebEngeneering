@@ -216,17 +216,26 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 
 		edit.first().then(function(editResult) {
 			var promise = Parse.Promise.as();
-			if ( typeof (editResult) != 'undefined') {
-				// es gibt schon einen Eintrag zu dem Film und User in der Edit Tabelle
-				editResult.set('rating', numberOfStars);
-				editResult.set('movieSeen', seen);
-				editResult.save();
-			} else {
-				// es gibt noch keinen Eintrag zu dem Film und User in der Edit Tabelle, somit wird einer hinzugefuegt
-				promise = promise.then(function() {
+			promise = promise.then(function() {
+				if ( typeof (editResult) != 'undefined') {
+					// es gibt schon einen Eintrag zu dem Film und User in der Edit Tabelle
+					editResult.set('rating', numberOfStars);
+					editResult.set('movieSeen', seen);
+					return editResult.save({
+						success : function() {
+							console.log("edit erfolgreich aktualisiert");
+						},
+						error: function() {
+							console.log("edit konnte nicht aktualisiert werden");
+						}
+					});
+				} else {
+					// es gibt noch keinen Eintrag zu dem Film und User in der Edit Tabelle, somit wird einer hinzugefuegt
+
 					return parse_saveRating(numberOfStars, seen, movieResult);
-				});
-			}
+
+				}
+			});
 			return promise;
 		}).then(function() {
 			console.log("movieSpeichern");
