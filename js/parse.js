@@ -87,10 +87,11 @@ function parse_initialLoadMovieTable() {
 				};
 				var edit = new Parse.Query(Edit);
 				edit.equalTo("movieID", movieResult);
+				edit.equalTo("userID", Parse.User.current());
 				edit.find().then(function(editResults) {
 					_.each(editResults, function(editResult) {
-						if (Parse.User.current() != null && editResult.get('userID').id == Parse.User.current().id) {
-							// nimm die eigene Bewertung
+						if ( typeof (editResult) !== "undefined") {
+							// es wurde ein Eintrag in ENDIT zu der Selektion gefunden
 							row.numberOfStars = editResult.get('rating');
 							if (editResult.get('movieSeen')) {
 								// Film wurde gesehen
@@ -99,10 +100,14 @@ function parse_initialLoadMovieTable() {
 								// Film wurde nicht gesehen
 								row.seen = "nicht gesehen";
 							}
-							return false;
 						} else {
-							//nimm die Durchschnittsbewertung
-							row.numberOfStars = movie.get('avgRating');
+							/* es wurde kein Eintrag in EDIT zur Selektion gefunden.
+							 * Daher wird gesehen / nicht gesehen auf nicht gesehen gesetzt,
+							 * als Default-Wert und die Bewertung auf 0 Sterne
+							 */
+
+							row.numberOfStars = 0;
+							row.seen = "nicht gesehen";
 						}
 					});
 					return row;
@@ -225,7 +230,7 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 						success : function() {
 							console.log("edit erfolgreich aktualisiert");
 						},
-						error: function() {
+						error : function() {
 							console.log("edit konnte nicht aktualisiert werden");
 						}
 					});

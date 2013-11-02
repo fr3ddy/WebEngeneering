@@ -7,6 +7,7 @@ var mouseoverForRatingOn = true;
 
 var ratingIconOn = 'glyphicon-star';
 var ratingIconOff = 'glyphicon-star-empty';
+var ratingIconHalf = 'glyphicon-star-half';
 var switchButtonSeen = "-11px";
 var switchButtonUnseen = "15px";
 

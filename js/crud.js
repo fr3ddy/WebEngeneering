@@ -238,7 +238,6 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
 function initiateTableRow(numberOfStars, movieTitle, imdbID, seenText, editButton, deleteButton) {
-
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
 	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
@@ -464,12 +463,27 @@ function toggleRatingClasses(elem, prev) {
 
 /* stellt ein, wie viele Sterne beim Rating in der Tabelle oder Bearbeitungsansicht ausgefuellt sind */
 function setRating(selectedStars, forTableOrDetailedView) {
-	var starFull = _.template('<span class="glyphicon ' + ratingIconOn + '" title="<%- title %>"></span>');
-	var starEmpty = _.template('<span class="glyphicon ' + ratingIconOff + '" title="<%- title %>"></span>');
+	var starFull = _.template('<span class="glyphicon ' + ratingIconOn + '" title="<%- title %>">&#xe007;</span>');
+	var starEmpty = _.template('<span class="glyphicon ' + ratingIconOff + '" title="<%- title %>">&#xe007;</span>');
+	var starHalf = _.template('<span class="glyphicon ' + ratingIconHalf + '" title="<%- title %>">&#xe007;</span>');
 	var result = "";
+	var avg = "";
 	var tooltip = "";
 	var tableTooltip = "";
-
+	var setHalfStarFlag = false;
+	
+	var commaSeperated = selectedStars.toFixed(2).toString().split('.')[1];
+	if(commaSeperated <= 25) {
+		selectedStars = Math.round(selectedStars);
+		console.log("Abrunden: "+selectedStars + "\t Originalwert: " + commaSeperated);
+	} else if (commaSeperated >= 75){
+		selectedStars = Math.round(selectedStars);
+		console.log("Aufrunden: "+selectedStars+"\t Originalwert: " + commaSeperated);
+	} else {
+		setHalfStarFlag = true;
+		console.log("Halber Stern: "+selectedStars.toFixed(2).toString().split('.')[0] + ".5"+"\t Originalwert: " + commaSeperated);
+	} 
+		
 	for (var i = 1; i <= 5; i++) {
 		switch(i) {
 			case 1:
@@ -496,6 +510,7 @@ function setRating(selectedStars, forTableOrDetailedView) {
 		 * daher sind keine Tooltips auf die einzelnen Sterne, sondern nur auf die Gesamtbewertung, also das DIV zu setzen.
 		 * Ist keine Bewertung gesetzt, dann setze "nicht bewertet" als Tooltip */
 		if (forTableOrDetailedView) {
+			avg = selectedStars.toFixed(2);
 			if (i <= selectedStars) {
 				tableTooltip = tooltip;
 			} else if (selectedStars === 0) {
@@ -508,6 +523,12 @@ function setRating(selectedStars, forTableOrDetailedView) {
 			result += starFull({
 				title : tooltip
 			});
+		} else if (setHalfStarFlag) {
+			setHalfStarFlag = false;
+			console.log("Setze halben Stern");
+			result += starHalf({
+				title : tooltip
+			});
 		} else {
 			result += starEmpty({
 				title : tooltip
@@ -515,7 +536,7 @@ function setRating(selectedStars, forTableOrDetailedView) {
 		}
 	}
 
-	return '<div class="stars" title="' + tableTooltip + '" data-rated="' + selectedStars + '">' + result + '</div>';
+	return '<div class="stars" title="' + tableTooltip + '" data-rated="' + selectedStars + '">' + result + '</div><span>    ('+ avg +')</span>';
 }
 
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/

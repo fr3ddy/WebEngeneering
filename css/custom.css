@@ -48,6 +48,23 @@ table {
 	margin: 0px 0 5px 0;
 }
 
+.glyphicon-star:before {
+  content: "\e006";
+  position: absolute;
+}
+
+.glyphicon-star-empty:before {
+  content: "\e007";
+  position: absolute;
+}
+
+.glyphicon-star-half:before {
+  content: "\e006";
+  width: 46%;
+  overflow: hidden;
+  position: absolute;
+}
+
 .loggedIn {
 	display: block;
 }
