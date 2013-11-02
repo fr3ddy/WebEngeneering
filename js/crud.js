@@ -311,7 +311,7 @@ function changeTableRowValues(numberOfStars) {
 	}
 
 	$('#editFilmModal').modal('hide');
-	
+
 	// aktualisiere die Edit Tabelle bei parse oder fuege einen neuen Eintrag hinzu
 	var getRating = $('#filmtable').find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
 	var seen = $(this).find('.on').text().toLowerCase() === "gesehen" ? true : false;
@@ -463,6 +463,7 @@ function toggleRatingClasses(elem, prev) {
 
 /* stellt ein, wie viele Sterne beim Rating in der Tabelle oder Bearbeitungsansicht ausgefuellt sind */
 function setRating(selectedStars, forTableOrDetailedView) {
+	var numberOfStars = selectedStars;
 	var starFull = _.template('<span class="glyphicon ' + ratingIconOn + '" title="<%- title %>">&#xe007;</span>');
 	var starEmpty = _.template('<span class="glyphicon ' + ratingIconOff + '" title="<%- title %>">&#xe007;</span>');
 	var starHalf = _.template('<span class="glyphicon ' + ratingIconHalf + '" title="<%- title %>">&#xe007;</span>');
@@ -471,19 +472,19 @@ function setRating(selectedStars, forTableOrDetailedView) {
 	var tooltip = "";
 	var tableTooltip = "";
 	var setHalfStarFlag = false;
-	
+
 	var commaSeperated = selectedStars.toFixed(2).toString().split('.')[1];
-	if(commaSeperated <= 25) {
+	if (commaSeperated <= 25) {
 		selectedStars = Math.round(selectedStars);
-		console.log("Abrunden: "+selectedStars + "\t Originalwert: " + commaSeperated);
-	} else if (commaSeperated >= 75){
+		console.log("Abrunden: " + selectedStars + "\t Originalwert: " + commaSeperated);
+	} else if (commaSeperated >= 75) {
 		selectedStars = Math.round(selectedStars);
-		console.log("Aufrunden: "+selectedStars+"\t Originalwert: " + commaSeperated);
+		console.log("Aufrunden: " + selectedStars + "\t Originalwert: " + commaSeperated);
 	} else {
 		setHalfStarFlag = true;
-		console.log("Halber Stern: "+selectedStars.toFixed(2).toString().split('.')[0] + ".5"+"\t Originalwert: " + commaSeperated);
-	} 
-		
+		console.log("Halber Stern: " + selectedStars.toFixed(2).toString().split('.')[0] + ".5" + "\t Originalwert: " + commaSeperated);
+	}
+
 	for (var i = 1; i <= 5; i++) {
 		switch(i) {
 			case 1:
@@ -510,7 +511,10 @@ function setRating(selectedStars, forTableOrDetailedView) {
 		 * daher sind keine Tooltips auf die einzelnen Sterne, sondern nur auf die Gesamtbewertung, also das DIV zu setzen.
 		 * Ist keine Bewertung gesetzt, dann setze "nicht bewertet" als Tooltip */
 		if (forTableOrDetailedView) {
-			avg = selectedStars.toFixed(2);
+			if (Parse.User.current() == null) {
+				avg = '<span>    (' + numberOfStars.toFixed(2) + ')</span>';
+			}
+
 			if (i <= selectedStars) {
 				tableTooltip = tooltip;
 			} else if (selectedStars === 0) {
@@ -536,7 +540,7 @@ function setRating(selectedStars, forTableOrDetailedView) {
 		}
 	}
 
-	return '<div class="stars" title="' + tableTooltip + '" data-rated="' + selectedStars + '">' + result + '</div><span>    ('+ avg +')</span>';
+	return '<div class="stars" title="' + tableTooltip + '" data-rated="' + selectedStars + '">' + result + '</div>' + avg;
 }
 
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/
