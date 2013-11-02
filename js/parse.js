@@ -194,6 +194,7 @@ function parse_saveRating(numberOfStars, seen, movie) {
 function parse_calculateAverageRating(movieID, callback) {
 	var edit = new Parse.Query(Edit);
 	edit.equalTo("movieID", movieID);
+	edit.equalTo("movieSeen", true);
 	edit.find({
 		success : function(results) {
 			var sum = 0;
@@ -236,9 +237,7 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 					});
 				} else {
 					// es gibt noch keinen Eintrag zu dem Film und User in der Edit Tabelle, somit wird einer hinzugefuegt
-
 					return parse_saveRating(numberOfStars, seen, movieResult);
-
 				}
 			});
 			return promise;
