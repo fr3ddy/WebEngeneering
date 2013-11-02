@@ -2,16 +2,16 @@ html, body {
 	height: 100%;
 }
 
-form{
-	margin:		0px;
+form {
+	margin: 0px;
 }
 
-form input{
-	margin-top:	0px;
+form input {
+	margin-top: 0px;
 }
 
-form fieldset{
-	padding:	10px;
+form fieldset {
+	padding: 10px;
 }
 
 label {
@@ -24,10 +24,10 @@ table {
 }
 
 .btn.disabled, .btn[disabled], fieldset[disabled] .btn {
-    box-shadow: none;
-    cursor: not-allowed;
-    opacity: 0.35;
-    pointer-events: none;
+	box-shadow: none;
+	cursor: not-allowed;
+	opacity: 0.35;
+	pointer-events: none;
 }
 
 .detailMagnifier {
@@ -49,20 +49,20 @@ table {
 }
 
 .glyphicon-star:before {
-  content: "\e006";
-  position: absolute;
+	content: "\e006";
+	position: absolute;
 }
 
 .glyphicon-star-empty:before {
-  content: "\e007";
-  position: absolute;
+	content: "\e007";
+	position: absolute;
 }
 
 .glyphicon-star-half:before {
-  content: "\e006";
-  width: 46%;
-  overflow: hidden;
-  position: absolute;
+	content: "\e006";
+	width: 46%;
+	overflow: hidden;
+	position: absolute;
 }
 
 .loggedIn {
@@ -73,7 +73,7 @@ table {
 	display: none;
 }
 
-.magnifierTable{
+.magnifierTable {
 	width: 30px;
 }
 
@@ -81,27 +81,26 @@ table {
 	margin-bottom: 19px;
 }
 
-.navbar-default .navbar-brand:hover,
-.navbar-default .navbar-brand:focus {
-  color: #fff;
-  background-color: #0088CC;
+.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
+	color: #fff;
+	background-color: #0088CC;
 }
 
 .plot {
 	text-align: justify;
 	margin-left: 5.2em;
-	margin-top: -25px;	
+	margin-top: -25px;
 }
 
 .rating .stars, #filterStars {
-	color: #ffd700 ;
+	color: #ffd700;
 	vertical-align: middle;
 	display: inline-block;
 	cursor: pointer;
 }
 
 .stars, #filterStars {
-	color: #ffd700 ;
+	color: #ffd700;
 	font-size: 140%;
 	display: inline-block;
 }
@@ -113,7 +112,7 @@ table {
 
 .switch-button-background {
 	position: relative;
-	width: 50px; 
+	width: 50px;
 	height: 20px;
 	float: left;
 	background-color: #ccc;
@@ -126,8 +125,8 @@ table {
 .switch-button-button {
 	position: absolute;
 	top: -2px;
-	width: 25px; 
-	height: 20px; 
+	width: 25px;
+	height: 20px;
 	left: 14px;
 	background-color: #fafafa;
 	border: 1px solid #aaa;
@@ -151,6 +150,11 @@ table {
 	color: #adadad;
 }
 
+.table thead > tr > th {
+	vertical-align: bottom;
+	border-bottom: 2px solid #0088CC;
+}
+
 #closeDetailedView {
 	left: -20px;
 	font-size: inherit;
@@ -160,7 +164,7 @@ table {
 	border: 0;
 }
 
-#chooseTable{
+#chooseTable {
 	display: none;
 }
 
@@ -185,27 +189,27 @@ table {
 	margin-top: 2px;
 }
 
-#sortButtonTitle{
+#sortButtonTitle {
 	margin-left: 40px;
 	margin-top: -20px;
 }
 
-#sortButtonRating{
+#sortButtonRating {
 	margin-left: 90px;
 	margin-top: -20px;
 }
 
-#filterResetButton{
+#filterResetButton {
 	float: right;
 	margin-top: 0px;
 	margin-bottom: 0px;
 }
 
-#loginDropdown{
+#loginDropdown {
 	width: 250px;
 }
 
-#register{
+#register {
 	padding-left: 75px;
 	padding-bottom: 0px;
 	padding-top: 0px;

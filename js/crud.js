@@ -540,7 +540,7 @@ function setRating(selectedStars, forTableOrDetailedView) {
 		}
 	}
 
-	return '<div class="stars" title="' + tableTooltip + '" data-rated="' + selectedStars + '">' + result + '</div>' + avg;
+	return '<div class="stars" title="' + tableTooltip + '" data-rated="' + numberOfStars.toFixed(2) + '">' + result + '</div>' + avg;
 }
 
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/
