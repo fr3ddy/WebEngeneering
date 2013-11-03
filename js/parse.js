@@ -60,58 +60,79 @@ function parse_loginUser(username, password) {
 	});
 }
 
+/* Zaehle User in User Tabelle */
+function parse_countUsers(callback) {
+	var user = new Parse.Query(Parse.User);
+	var promise = Parse.Promise.as();
+	promise = promise.then(function() {
+		return user.count({
+			success : function(count) {
+			},
+			error : function(error) {
+				// TODO Fehler
+				parse_getErrorMessage(error);
+			}
+		})
+	});
+	return promise;
+}
+
+/* Initialisiere die Liste und fuelle sie mit allen Filmen der Datenbank */
 function parse_initialLoadMovieTable() {
 	var movie = new Parse.Query(Movie);
-	var userCount;
+	parse_countUsers().then(function(userCount) {
 
-	var user = new Parse.Query(Parse.User);
-	user.count({
-		success : function(count) {
-			return count;
-		},
-		error : function(error) {
-			// TODO Fehler
-			alert("Ohoh");
-		}
-	}).then(function(count) {
 		movie.find().then(function(movieResults) {
+
 			_.each(movieResults, function(movieResult) {
 				var row = {
 					editButton : null,
 					deleteButton : null,
-					seen : "gesehen (" + movieResult.get('numberOfUsersSeen') + " von " + count + ")",
+					seen : "gesehen (" + movieResult.get('numberOfUsersSeen') + " von " + userCount + ")",
 					numberOfStars : movieResult.get('avgRating'),
 					movieTitle : movieResult.get('Title'),
 					imdbID : movieResult.get('imdbID'),
 					owner : movieResult.get('Owner').id
 				};
-				var edit = new Parse.Query(Edit);
-				edit.equalTo("movieID", movieResult);
-				edit.equalTo("userID", Parse.User.current());
-				edit.find().then(function(editResults) {
-					_.each(editResults, function(editResult) {
-						if ( typeof (editResult) !== "undefined") {
-							// es wurde ein Eintrag in ENDIT zu der Selektion gefunden
-							row.numberOfStars = editResult.get('rating');
-							if (editResult.get('movieSeen')) {
-								// Film wurde gesehen
-								row.seen = "gesehen";
-							} else {
-								// Film wurde nicht gesehen
-								row.seen = "nicht gesehen";
-							}
-						} else {
-							/* es wurde kein Eintrag in EDIT zur Selektion gefunden.
-							 * Daher wird gesehen / nicht gesehen auf nicht gesehen gesetzt,
-							 * als Default-Wert und die Bewertung auf 0 Sterne
-							 */
 
-							row.numberOfStars = 0;
-							row.seen = "nicht gesehen";
-						}
-					});
-					return row;
-				}).then(function(row) {
+				// wird nur vollstaendig ausgefuehrt, wenn ein User angemeldet ist
+				var checkEdit = function() {
+					var promise = Parse.Promise.as();
+					if (Parse.User.current() !== null) {
+						var edit = new Parse.Query(Edit);
+						edit.equalTo("movieID", movieResult);
+						edit.equalTo("userID", Parse.User.current());
+
+						promise = promise.then(function() {
+							return edit.find().then(function(editResults) {
+								_.each(editResults, function(editResult) {
+									if ( typeof (editResult) !== "undefined") {
+										// es wurde ein Eintrag in EDIT zu der Selektion gefunden
+										row.numberOfStars = editResult.get('rating');
+										if (editResult.get('movieSeen')) {
+											// Film wurde gesehen
+											row.seen = "gesehen";
+										} else {
+											// Film wurde nicht gesehen
+											row.seen = "nicht gesehen";
+										}
+									} else {
+										/* es wurde kein Eintrag in EDIT zur Selektion gefunden.
+										 * Daher wird gesehen / nicht gesehen auf nicht gesehen gesetzt,
+										 * als Default-Wert und die Bewertung auf 0 Sterne
+										 */
+
+										row.numberOfStars = 0;
+										row.seen = "nicht gesehen";
+									}
+								});
+							});
+						});
+					}
+					return promise;
+				};
+
+				checkEdit().then(function(object, result, error, test) {
 					if (Parse.User.current() != null) {
 						// angemeldet
 						if (row.owner == Parse.User.current().id && row.owner != null) {
@@ -301,7 +322,7 @@ function parse_getErrorMessage(error) {
 		default:
 			break;
 	}
-	
+
 	//@formatter:off
 	$('.customAlert').html('<div class="alert alert-danger alert-dismissable">'
 							+'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' 
