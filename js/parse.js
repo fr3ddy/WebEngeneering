@@ -296,7 +296,7 @@ function parse_getErrorMessage(error) {
 			errorMessage = error.message;
 			break;
 		case Parse.Error.OTHER_CAUSE:
-			errorMessage = "This is it the apocalypse ;) ";
+			errorMessage = "This is it the apocalypse ;) - Thanks to Imagine Dragons ";
 			break;
 		default:
 			break;
