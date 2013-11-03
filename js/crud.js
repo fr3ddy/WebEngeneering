@@ -198,7 +198,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
 	$('#' + newID).find('.delete').popover({
 		trigger : 'focus',
-		title : 'Löschen',
+		title : 'Delete',
 		content : popoverContent,
 		html : 'true'
 	});

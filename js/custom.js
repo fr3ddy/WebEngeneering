@@ -21,23 +21,23 @@ var filter = {
 
 //@formatter:off
 
-var deleteButtonNone = '<button class="btn btn-sm delete loggedOut" title="Löschen">' 
+var deleteButtonNone = '<button class="btn btn-sm delete loggedOut" title="Delete">' 
 							+ '<span class="glyphicon glyphicon-trash"></span>' 
 						+ '</button>';
 
-var deleteButtonInactive = '<button class="btn btn-sm delete loggedIn" title="Löschen" disabled>' 
+var deleteButtonInactive = '<button class="btn btn-sm delete loggedIn" title="Delete" disabled>' 
 								+ '<span class="glyphicon glyphicon-trash"></span>' 
 							+ '</button>';
 
-var deleteButtonActive = '<button class="btn btn-sm delete loggedIn" title="Löschen">' 
+var deleteButtonActive = '<button class="btn btn-sm delete loggedIn" title="Delete">' 
 								+ '<span class="glyphicon glyphicon-trash"></span>' 
 							+ '</button>';
 
-var editButtonNone = '<button class="btn btn-sm edit loggedOut"title="Bearbeiten">' 
+var editButtonNone = '<button class="btn btn-sm edit loggedOut"title="Edit">' 
 							+ '<span class="glyphicon glyphicon-pencil"></span>' 
 						+ '</button>';
 
-var editButtonActive = '<button class="btn btn-sm edit loggedIn"title="Bearbeiten">' 
+var editButtonActive = '<button class="btn btn-sm edit loggedIn"title="Edit">' 
 							+ '<span class="glyphicon glyphicon-pencil"></span>' 
 						+ '</button>';
 
@@ -165,6 +165,7 @@ $(document).ready(function() {
 	/*-----LOGIN--------*/
 	// prüft ob angemeldet oder nicht!
 	if (Parse.User.current() == null) {
+		// TODO bedeutet das nicht, dass hier kein User angemeldet ist?
 		// do stuff with the user
 	} else {
 		//@formatter:off
@@ -204,7 +205,7 @@ $(document).ready(function() {
 		var password = $('#passwordInput').val();
 		var parent = $('#loginButton').parent();
 		$('#submitLoginButton').button('loading');
-		loginUser(userName, password);
+		parse_loginUser(userName, password);
 	});
 
 	/* Registrieren */
@@ -216,7 +217,7 @@ $(document).ready(function() {
 	$('#submitRegistration').on("click", function() {
 		var username = $('#registerModal .modal-body #regUsernameInput').val();
 		var password = $('#registerModal .modal-body #regPasswordInput').val();
-		registerUser(username, password);
+		parse_registerUser(username, password);
 	});
 });
 

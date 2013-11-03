@@ -4,7 +4,7 @@ Parse.initialize("L6o5RS5o7y3L2qq0MdbUUx1rTm8dIzLVJR6etJ5K", "QyEYNDiJAI3ctZ9pZC
 var Movie = Parse.Object.extend("Movie");
 var Edit = Parse.Object.extend("Edit");
 
-function registerUser(username, password) {
+function parse_registerUser(username, password) {
 	var user = new Parse.User();
 	user.set("username", username);
 	user.set("password", password);
@@ -24,7 +24,7 @@ function registerUser(username, password) {
 	});
 }
 
-function loginUser(username, password) {
+function parse_loginUser(username, password) {
 	Parse.User.logIn(username, password, {
 		success : function(user) {
 			$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
@@ -54,7 +54,7 @@ function loginUser(username, password) {
 			$('#submitLoginButton').button('reset');
 		},
 		error : function(user, error) {
-			alert("Wrong Logindata");
+			parse_getErrorMessage(error);
 			$('#submitLoginButton').button('reset');
 		}
 	});
@@ -176,13 +176,13 @@ function parse_saveRating(numberOfStars, seen, movie) {
 
 	var promise = Parse.Promise.as();
 	promise = promise.then(function() {
-		// Return a promise that will be resolved when the delete is finished.
 		return edit.save(null, {
 			success : function(edit) {
 				console.log("editEintragSpeichern");
 			},
 			error : function(edit, error) {
 				// TODO schoenere Fehlermeldung
+				parse_getErrorMessage(error);
 				alert('Failed to create new object, with error code: ' + error.message);
 			}
 		});
@@ -191,6 +191,7 @@ function parse_saveRating(numberOfStars, seen, movie) {
 	return promise;
 }
 
+/* berechnet die durschnittliche Filmbewertung und nutzt diesen Wert im "callback"-Parameter*/
 function parse_calculateAverageRating(movieID, callback) {
 	var edit = new Parse.Query(Edit);
 	edit.equalTo("movieID", movieID);
@@ -205,7 +206,6 @@ function parse_calculateAverageRating(movieID, callback) {
 		},
 		error : function(error) {
 			// Er kann nicht nichts finden, weil wir ihm ja eine MovieID uebergeben
-			//alert("Error: " + error.code + " " + error.message);
 		}
 	});
 }
@@ -237,20 +237,22 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 					});
 				} else {
 					// es gibt noch keinen Eintrag zu dem Film und User in der Edit Tabelle, somit wird einer hinzugefuegt
+					var numberOfUserSeen;
+					if (seen) {
+						numberOfUserSeen = movieResult.get("numberOfUsersSeen") + 1;
+					} else {
+						numberOfUserSeen = movieResult.get("numberOfUsersSeen");
+					}
+
+					movieResult.set("numberOfUsersSeen", numberOfUserSeen);
+
 					return parse_saveRating(numberOfStars, seen, movieResult);
 				}
 			});
 			return promise;
 		}).then(function() {
 			console.log("movieSpeichern");
-			var numberOfUserSeen;
-			if (seen) {
-				numberOfUserSeen = movieResult.get("numberOfUsersSeen") + 1;
-			} else {
-				numberOfUserSeen = movieResult.get("numberOfUsersSeen");
-			}
 
-			movieResult.set("numberOfUsersSeen", numberOfUserSeen);
 			parse_calculateAverageRating(movieResult, function(average) {
 				movieResult.set('avgRating', average);
 				movieResult.save();
@@ -259,6 +261,7 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 	});
 }
 
+/* ermittle zu einer imdbID den Owner in der Movie Tabelle */
 function parse_getOwnerOfMovie(imdbID, callback) {
 	var movie = new Parse.Query(Movie);
 	movie.equalTo('imdbID', imdbID);
@@ -277,4 +280,32 @@ function parse_getOwnerOfMovie(imdbID, callback) {
 			}
 		});
 	});
+}
+
+// TODO Versuch eine Methode zu entwickeln, die die verschiedenen Fehler kontextspezifisch verarbeitet
+function parse_getErrorMessage(error) {
+	var errorMessage;
+	switch(error.code) {
+		case Parse.Error.OBJECT_NOT_FOUND:
+			errorMessage = error.message;
+			break;
+		case Parse.Error.CONNECTION_FAILED:
+			errorMessage = error.message;
+			break;
+		case Parse.Error.INTERNAL_SERVER_ERROR:
+			errorMessage = error.message;
+			break;
+		case Parse.Error.OTHER_CAUSE:
+			errorMessage = "This is it the apocalypse ;) ";
+			break;
+		default:
+			break;
+	}
+	
+	//@formatter:off
+	$('.customAlert').html('<div class="alert alert-danger alert-dismissable">'
+							+'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' 
+							+ errorMessage + 
+						'</div>');
+	//@formatter:on
 }

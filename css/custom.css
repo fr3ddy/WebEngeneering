@@ -23,6 +23,20 @@ table {
 	cursor: default;
 }
 
+.alert {
+	position: fixed;
+	z-index: 10000;
+	width: 100%;
+	color: #ffffff;
+	font-weight: bold;
+	background-color: #d9534f;
+}
+
+.alert .close {
+	opacity: 0.9;
+	filter: alpha(opacity=90);	
+}
+
 .btn.disabled, .btn[disabled], fieldset[disabled] .btn {
 	box-shadow: none;
 	cursor: not-allowed;
