@@ -250,6 +250,24 @@ function isLoggedInOrNot() {
 /*Setzt die Klasse fuer Parameter 'element' auf 'loggedOut' und entfernt Klasse 'loggedIn', falls der User nicht eingeloggt ist. Ansonsten umgekehrt. */
 function toggleClassOnAllElements(element) {
 	$(element).each(function() {
+		if (element === '.delete') {
+			// ueberpruefe ob User eingeloggt ist und Owner oder nur User und mach was
+			if (Parse.User.current() != null) {
+				$('#filmtable').find('.delete').each(function() {
+					var that = $(this);
+					var movie = new Parse.Query(Movie);
+					movie.equalTo('imdbID', that.parent().parent().attr('data-imdbid'));
+					movie.find(function(movieResults) {
+						// da die imdbID als eindeutige Schluessel gesehen werden kann wird nur ein Element bei der Suche zurueckgegeben
+						if (Parse.User.current() != null && movieResults[0].get("Owner").id == Parse.User.current().id) {
+							that.removeAttr("disabled");
+						} else {
+							that.attr("disabled", "disabled");
+						}
+					});
+				});
+			}
+		}
 		// if (element === '.delete') {
 			// // ueberpruefe ob User eingeloggt ist und Owner oder nur User und mach was
 			// if (Parse.User.current() != null) {
@@ -268,7 +286,6 @@ function toggleClassOnAllElements(element) {
 				// });
 			// }
 		// }
-
 		$(this).fadeToggle('1000', function() {
 			$(this).toggleClass('loggedOut loggedIn');
 		});

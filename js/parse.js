@@ -333,13 +333,26 @@ function parse_getErrorMessage(error) {
 }
 
 function parse_facebookLoginSignUp() {
-	Parse.FacebookUtils.logIn(null, {
+	Parse.FacebookUtils.logIn("email", {
 		success : function(user) {
 			if (!user.existed()) {
 				changeLoginButtonOnFacebookLoginSignIn();
 			} else {
 				changeLoginButtonOnFacebookLoginSignIn();
 			}
+			// Ich versuche noch den Usernamen und die Email zu bekommen
+			FB.api('/me?fields=first_name,email', function(response) {
+				Parse.User.current().setUsername(response.first_name);
+				Parse.User.current().setEmail(response.email);
+				Parse.User.saveAll(Parse.User.current(), {
+					success : function() {
+						
+					},
+					error : function(error) {
+						console.error(error);
+					}
+				});
+			});
 		},
 		error : function(user, error) {
 			alert("User cancelled the Facebook login or did not fully authorize.");
