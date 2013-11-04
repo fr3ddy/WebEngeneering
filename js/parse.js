@@ -351,15 +351,22 @@ function parse_facebookLoginSignUp() {
 		success : function(user) {
 			if (!user.existed()) {
 				changeLoginButtonOnFacebookLoginSignIn();
-				// Ich versuche noch den Usernamen und die Email zu bekommen
-				FB.api('/me?fields=name,email', function(response) {
-					Parse.User.setUsername(response.name);
-					Parse.User.setEmail(response.email);
-				}); 
-
 			} else {
 				changeLoginButtonOnFacebookLoginSignIn();
 			}
+			// Ich versuche noch den Usernamen und die Email zu bekommen
+			FB.api('/me?fields=first_name,email', function(response) {
+				Parse.User.current().setUsername(response.first_name);
+				Parse.User.current().setEmail(response.email);
+				Parse.User.saveAll(Parse.User.current(), {
+					success : function() {
+						
+					},
+					error : function(error) {
+						console.error(error);
+					}
+				});
+			});
 		},
 		error : function(user, error) {
 			alert("User cancelled the Facebook login or did not fully authorize.");
