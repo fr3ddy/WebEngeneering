@@ -3,9 +3,6 @@ $(document).ready(function() {
 
 	/* Action Listener für Detail View Lupe */
 	$('table').on('click', '.detailMagnifier', function() {
-		$(this).css({
-			cursor : "progress"
-		});
 		var clickedTr = $(this).parent().parent();
 		buildDetailView.call(this, clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
 	});

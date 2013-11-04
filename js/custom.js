@@ -278,7 +278,6 @@ function toggleClassOnAllElements(element) {
 /*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
 /* Detailansicht wird aufgebaut. Dafuer werden Daten von der OMDB Database als JSON geholt */
 function buildDetailView(numberOfStars, movieSeen, imdbID) {
-	var that = this;
 	// alternative Quelle könnte "http://mymovieapi.com/?title=" sein
 	$.getJSON("http://www.omdbapi.com/?i=" + imdbID + "&plot=full").done(function(data) {
 		if (data.Response == "False") {
@@ -318,9 +317,6 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 			});
 
 		}
-		$(that).css({
-			cursor : "default"
-		});
 	});
 }
 
