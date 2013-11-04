@@ -268,7 +268,6 @@ function toggleClassOnAllElements(element) {
 				});
 			}
 		}
-	}
 		// if (element === '.delete') {
 			// // ueberpruefe ob User eingeloggt ist und Owner oder nur User und mach was
 			// if (Parse.User.current() != null) {
@@ -287,8 +286,6 @@ function toggleClassOnAllElements(element) {
 				// });
 			// }
 		// }
->>>>>>> f08d173e1fa341a6e02399de5b47025346f97129
-
 		$(this).fadeToggle('1000', function() {
 			$(this).toggleClass('loggedOut loggedIn');
 		});
