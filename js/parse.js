@@ -4,6 +4,16 @@ Parse.initialize("L6o5RS5o7y3L2qq0MdbUUx1rTm8dIzLVJR6etJ5K", "QyEYNDiJAI3ctZ9pZC
 var Movie = Parse.Object.extend("Movie");
 var Edit = Parse.Object.extend("Edit");
 
+function parse_initializeFacebook() {
+	Parse.FacebookUtils.init({
+		appId : '685337254818732', // Facebook App ID
+		channelUrl : 'https://apps.facebook.com/moviedatabasedhbwloe/', // Channel File
+		status : true, // check login status
+		cookie : true, // enable cookies to allow Parse to access the session
+		xfbml : true // parse XFBML
+	});
+}
+
 function parse_registerUser(username, password) {
 	var user = new Parse.User();
 	user.set("username", username);
@@ -329,4 +339,19 @@ function parse_getErrorMessage(error) {
 							+ errorMessage + 
 						'</div>');
 	//@formatter:on
+}
+
+function parse_facebookLoginSignUp() {
+	Parse.FacebookUtils.logIn(null, {
+		success : function(user) {
+			if (!user.existed()) {
+				changeLoginButtonOnFacebookLoginSignIn();
+			} else {
+				changeLoginButtonOnFacebookLoginSignIn();
+			}
+		},
+		error : function(user, error) {
+			alert("User cancelled the Facebook login or did not fully authorize.");
+		}
+	});
 }
