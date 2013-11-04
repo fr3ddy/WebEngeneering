@@ -346,7 +346,7 @@ function parse_facebookLoginSignUp() {
 				Parse.User.current().setEmail(response.email);
 				Parse.User.saveAll(Parse.User.current(), {
 					success : function() {
-						
+
 					},
 					error : function(error) {
 						console.error(error);
