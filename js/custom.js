@@ -259,7 +259,7 @@ function toggleClassOnAllElements(element) {
 					movie.equalTo('imdbID', that.parent().parent().attr('data-imdbid'));
 					movie.find(function(movieResults) {
 						// da die imdbID als eindeutige Schluessel gesehen werden kann wird nur ein Element bei der Suche zurueckgegeben
-						if (movieResults[0].get("Owner").id == Parse.User.current().id) {
+						if (Parse.User.current() != null && movieResults[0].get("Owner").id == Parse.User.current().id) {
 							that.removeAttr("disabled");
 						} else {
 							that.attr("disabled", "disabled");

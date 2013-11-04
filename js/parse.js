@@ -342,10 +342,16 @@ function parse_getErrorMessage(error) {
 }
 
 function parse_facebookLoginSignUp() {
-	Parse.FacebookUtils.logIn(null, {
+	Parse.FacebookUtils.logIn("email", {
 		success : function(user) {
 			if (!user.existed()) {
 				changeLoginButtonOnFacebookLoginSignIn();
+				// Ich versuche noch den Usernamen und die Email zu bekommen
+				// FB.api('/me?fields=name,email', function(response) {
+					// user.setUsername(response.name);
+					// user.setEmail(response.email);
+				// }); 
+
 			} else {
 				changeLoginButtonOnFacebookLoginSignIn();
 			}
