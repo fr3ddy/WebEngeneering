@@ -164,10 +164,7 @@ $(document).ready(function() {
 
 	/*-----LOGIN--------*/
 	// prüft ob angemeldet oder nicht!
-	if (Parse.User.current() == null) {
-		// TODO bedeutet das nicht, dass hier kein User angemeldet ist?
-		// do stuff with the user
-	} else {
+	if (Parse.User.current() != null) {
 		//@formatter:off
 		isLoggedInOrNot();
 		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
@@ -194,7 +191,6 @@ $(document).ready(function() {
 		}
 	});
 	$('#submitLoginButton').on('click', function(event) {
-		// TODO Issue 35
 		event.preventDefault();
 		var userName = $('#usernameInput').val();
 		var password = $('#passwordInput').val();
