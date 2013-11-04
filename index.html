@@ -7,20 +7,20 @@
 		<meta name="author" content="">
 
 		<title>Filmverwaltung</title>
+
 		<!-- jQuery -->
 		<script src="http://code.jquery.com/jquery-2.0.3.js"></script>
-
 		<!-- Bootstrap -->
 		<link href="css/bootstrap.css" rel="stylesheet">
 		<script src="js/bootstrap.js"></script>
 
 		<!-- Underscore -->
 		<script src="js/underscore-min.js"></script>
-		
+
 		<!-- Parse -->
 		<script src="http://www.parsecdn.com/js/parse-1.2.12.min.js"></script>
 		<script src="js/parse.js"></script>
-		
+
 		<!-- Custom -->
 		<link href="css/custom.css" rel="stylesheet">
 		<script src="js/custom.js"></script>
@@ -36,7 +36,25 @@
 	</head>
 
 	<body>
-		<div class="customAlert"></div>
+		<script>
+			// If we've already installed the SDK, we're done
+			if (!document.getElementById('facebook-jssdk')) {
+
+				// Get the first script element, which we'll use to find the parent node
+				var firstScriptElement = document.getElementsByTagName('script')[0];
+
+				// Create a new script element and set its id
+				var facebookJS = document.createElement('script');
+				facebookJS.id = 'facebook-jssdk';
+
+				// Set the new script's source to the source of the Facebook JS SDK
+				facebookJS.src = 'http://connect.facebook.net/en_US/all.js';
+
+				// Insert the Facebook JS SDK into the DOM
+				firstScriptElement.insertBefore(facebookJS);
+			}
+		</script>
+		<div id="fb-root"></div>
 		<!-- Fixed navbar -->
 		<div class="navbar navbar-default navbar-static-top">
 
@@ -68,10 +86,21 @@
 											<input type="password" class="form-control" id="passwordInput" name="password" placeholder="Passwort">
 										</div>
 
-										<button class="btn btn-primary form-control" id="submitLoginButton" data-loading-text="Loggin In...">
-											Log In
+										<div class="row">
+											<div class="col-xs-2">
+											<button class="btn btn-primary" id="loginFacebook">
+												<img src="img/facebook-icon.gif" width="15px"/>
+											</button>
+											</div>
+											<div class="col-xs-10">
+											<button class="btn btn-primary form-control" id="submitLoginButton" data-loading-text="Loggin In..." style="width: 100%;">
+												Log In
+											</button>
+											</div>
+										</div>
+										<button class="btn btn-link" id="register">
+											Registrieren
 										</button>
-										<button class="btn btn-link" id="register">Registrieren</button>
 									</fieldset>
 								</form>
 							</div>

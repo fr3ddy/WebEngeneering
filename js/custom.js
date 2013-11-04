@@ -164,10 +164,7 @@ $(document).ready(function() {
 
 	/*-----LOGIN--------*/
 	// prüft ob angemeldet oder nicht!
-	if (Parse.User.current() == null) {
-		// TODO bedeutet das nicht, dass hier kein User angemeldet ist?
-		// do stuff with the user
-	} else {
+	if (Parse.User.current() != null) {
 		//@formatter:off
 		isLoggedInOrNot();
 		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
@@ -176,7 +173,6 @@ $(document).ready(function() {
 
 			Parse.User.logOut();
 
-			$('#loginDropdown').show();
 			setTimeout('$("#usernameInput").focus()', 100);
 			//Login Button Listener
 			$('#loginButton').on('click', function() {
@@ -191,15 +187,10 @@ $(document).ready(function() {
 	//Login Button Listener
 	$('#loginButton').on('click', function() {
 		if (!$(this).parent().parent().hasClass("open")) {
-			$('#loginDropdown').show();
 			setTimeout('$("#usernameInput").focus()', 100);
-		} else {
-			//Bei klick auf Login ausblenden vom Inputfeld
-			$('#loginDropdown').hide();
 		}
 	});
 	$('#submitLoginButton').on('click', function(event) {
-		// TODO Issue 35
 		event.preventDefault();
 		var userName = $('#usernameInput').val();
 		var password = $('#passwordInput').val();
@@ -209,9 +200,10 @@ $(document).ready(function() {
 	});
 
 	/* Registrieren */
-	$('#register').on("click", function() {
+	$('#register').on("click", function(event) {
 		event.preventDefault();
 		$('#registerModal').modal('show');
+		return false;
 	});
 
 	$('#submitRegistration').on("click", function() {
@@ -219,7 +211,34 @@ $(document).ready(function() {
 		var password = $('#registerModal .modal-body #regPasswordInput').val();
 		parse_registerUser(username, password);
 	});
+	//Facebook Login and SignUp
+	$('#loginFacebook').on("click", function(event) {
+		event.preventDefault();
+		parse_initializeFacebook();
+		parse_facebookLoginSignUp();
+	});
 });
+
+//Call for Facebook Login and Signup
+function changeLoginButtonOnFacebookLoginSignIn() {
+	//@formatter:off
+	$('#menu1').removeClass("open");
+	isLoggedInOrNot();
+	$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
+	$('#logoutButton').on('click', function() {
+		$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
+			Parse.User.logOut();
+			setTimeout('$("#usernameInput").focus()', 100);
+		//Login Button Listener
+		$('#loginButton').on('click', function() {
+			setTimeout('$("#usernameInput").focus()', 100);
+		});
+		$('#passwordInput').val("");
+		$('#usernameInput').val("");
+		isLoggedInOrNot();
+	});
+	//@formatter:on
+}
 
 // Toggle Klassen fuer Edit-, Delete- und Hinzufuege-Buttons
 function isLoggedInOrNot() {
