@@ -34,7 +34,7 @@ table {
 
 .alert .close {
 	opacity: 0.9;
-	filter: alpha(opacity=90);	
+	filter: alpha(opacity=90);
 }
 
 .btn.disabled, .btn[disabled], fieldset[disabled] .btn {
@@ -42,6 +42,8 @@ table {
 	cursor: not-allowed;
 	opacity: 0.35;
 	pointer-events: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
 }
 
 .detailMagnifier {
@@ -227,15 +229,4 @@ table {
 	padding-left: 75px;
 	padding-bottom: 0px;
 	padding-top: 0px;
-}
-
-.btn.disabled,
-.btn[disabled],
-fieldset[disabled] .btn {
-  pointer-events: none;
-  cursor: not-allowed;
-  opacity: 0.3;
-  filter: alpha(opacity=30);
-  -webkit-box-shadow: none;
-          box-shadow: none;
 }
