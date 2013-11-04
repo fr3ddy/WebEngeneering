@@ -242,8 +242,8 @@ function changeLoginButtonOnFacebookLoginSignIn() {
 
 // Toggle Klassen fuer Edit-, Delete- und Hinzufuege-Buttons
 function isLoggedInOrNot() {
-	toggleClassOnAllElements('.edit');
-	toggleClassOnAllElements('.delete');
+	// toggleClassOnAllElements('.edit');
+	// toggleClassOnAllElements('.delete');
 	toggleClassOnAllElements('#add');
 }
 
@@ -268,6 +268,26 @@ function toggleClassOnAllElements(element) {
 				});
 			}
 		}
+	}
+		// if (element === '.delete') {
+			// // ueberpruefe ob User eingeloggt ist und Owner oder nur User und mach was
+			// if (Parse.User.current() != null) {
+				// $('#filmtable').find('.delete').each(function() {
+					// var that = $(this);
+					// var movie = new Parse.Query(Movie);
+					// movie.equalTo('imdbID', that.parent().parent().attr('data-imdbid'));
+					// movie.find(function(movieResults) {
+						// // da die imdbID als eindeutige Schluessel gesehen werden kann wird nur ein Element bei der Suche zurueckgegeben
+						// if (movieResults[0].get("Owner").id == Parse.User.current().id) {
+							// that.removeAttr("disabled");
+						// } else {
+							// that.attr("disabled", "disabled");
+						// }
+					// });
+				// });
+			// }
+		// }
+>>>>>>> f08d173e1fa341a6e02399de5b47025346f97129
 
 		$(this).fadeToggle('1000', function() {
 			$(this).toggleClass('loggedOut loggedIn');

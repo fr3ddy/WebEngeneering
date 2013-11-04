@@ -237,40 +237,25 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 }
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
-function initiateTableRow(numberOfStars, movieTitle, imdbID, seenText, editButton, deleteButton) {
-	/*ID Ermitteln*/
-	var newID = $('#filmtable').find('tr').last().attr('id');
-	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
-
-	if ( typeof newID == 'undefined') {
-		var newID = 'tr-1';
-		//falls noch keine Zeile existiert
-	} else {
-		var tmpId = newID.split('-');
-		//ID der letzten Zeile splitten (ID = "tr-ZAHL")
-		tmpId[1] = parseInt(tmpId[1]) + 1;
-		//Anzahl der Zeilen steht im 2. Feld, muss von String in Integer geparst werden
-		newID = 'tr-' + tmpId[1];
-		//ID fuer die neue Zeile zusammensetzen
-	}
-
-	$('#filmtable').append(addMovieToList({
+function initiateTableRow(trID, numberOfStars, movieTitle, imdbID, seenText, editButton, deleteButton) {
+	/*Initialisiere PopOver fuer Delete-Button*/
+	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
+	$('#' + trID).find('.delete').popover({
+		trigger : 'focus',
+		title : 'Löschen',
+		content : popoverContent,
+		html : 'true'
+	});
+	
+	// gib die neue Zeile fuer die Liste zurueck
+	return addMovieToList({
 		imdbID : imdbID,
-		rowID : newID,
+		rowID : trID,
 		movieTitle : movieTitle,
 		movieSeen : seenText,
 		rating : setRating(numberOfStars, true),
 		editButton : editButton,
 		deleteButton : deleteButton
-	}));
-
-	/*Initialisiere PopOver fuer Delete-Button*/
-	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
-	$('#' + newID).find('.delete').popover({
-		trigger : 'focus',
-		title : 'Löschen',
-		content : popoverContent,
-		html : 'true'
 	});
 }
 

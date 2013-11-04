@@ -35,38 +35,38 @@ function parse_registerUser(username, password) {
 }
 
 function parse_loginUser(username, password) {
-	Parse.User.logIn(username, password, {
-		success : function(user) {
-			$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
-			$('#loginDropdown').hide();
-			$('#logoutButton').on('click', function() {
-				$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
+	Parse.User.logIn(username, password).then(function(user) {
+		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
+		$('#loginDropdown').hide();
+		$('#logoutButton').on('click', function() {
+			$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
 
-				Parse.User.logOut();
+			Parse.User.logOut();
+			parse_initialLoadMovieTable();
 
-				$('#loginDropdown').show();
-				setTimeout('$("#usernameInput").focus()', 100);
-				//Login Button Listener
-				$('#loginButton').on('click', function() {
-					if (!$(this).parent().parent().hasClass("open")) {
-						$('#loginDropdown').show();
-						setTimeout('$("#usernameInput").focus()', 100);
-					} else {
-						//Bei klick auf Login ausblenden vom Inputfeld
-						$('#loginDropdown').hide();
-					}
-				});
-				$('#passwordInput').val("");
-				$('#usernameInput').val("");
-				isLoggedInOrNot();
+			$('#loginDropdown').show();
+			setTimeout('$("#usernameInput").focus()', 100);
+			//Login Button Listener
+			$('#loginButton').on('click', function() {
+				if (!$(this).parent().parent().hasClass("open")) {
+					$('#loginDropdown').show();
+					setTimeout('$("#usernameInput").focus()', 100);
+				} else {
+					//Bei klick auf Login ausblenden vom Inputfeld
+					$('#loginDropdown').hide();
+				}
 			});
+			$('#passwordInput').val("");
+			$('#usernameInput').val("");
 			isLoggedInOrNot();
-			$('#submitLoginButton').button('reset');
-		},
-		error : function(user, error) {
-			parse_getErrorMessage(error);
-			$('#submitLoginButton').button('reset');
-		}
+		});
+		isLoggedInOrNot();
+		$('#submitLoginButton').button('reset');
+	}).then(function() {
+		parse_initialLoadMovieTable();
+	}, function(error) {
+		$('#submitLoginButton').button('reset');
+		parse_getErrorMessage(error);
 	});
 }
 
@@ -75,14 +75,7 @@ function parse_countUsers(callback) {
 	var user = new Parse.Query(Parse.User);
 	var promise = Parse.Promise.as();
 	promise = promise.then(function() {
-		return user.count({
-			success : function(count) {
-			},
-			error : function(error) {
-				// TODO Fehler
-				parse_getErrorMessage(error);
-			}
-		})
+		return user.count();
 	});
 	return promise;
 }
@@ -90,79 +83,91 @@ function parse_countUsers(callback) {
 /* Initialisiere die Liste und fuelle sie mit allen Filmen der Datenbank */
 function parse_initialLoadMovieTable() {
 	var movie = new Parse.Query(Movie);
+	var rows = [];
 	parse_countUsers().then(function(userCount) {
-
 		movie.find().then(function(movieResults) {
+			var promiseMovieFind = Parse.Promise.as();
+			_.each(movieResults, function(movieResult, index) {
+				promiseMovieFind = promiseMovieFind.then(function() {
+					var row = {
+						trID : 'tr-' + ++index,
+						editButton : null,
+						deleteButton : null,
+						seen : "gesehen (" + movieResult.get('numberOfUsersSeen') + " von " + userCount + ")",
+						numberOfStars : movieResult.get('avgRating'),
+						movieTitle : movieResult.get('Title'),
+						imdbID : movieResult.get('imdbID'),
+						owner : movieResult.get('Owner').id
+					};
 
-			_.each(movieResults, function(movieResult) {
-				var row = {
-					editButton : null,
-					deleteButton : null,
-					seen : "gesehen (" + movieResult.get('numberOfUsersSeen') + " von " + userCount + ")",
-					numberOfStars : movieResult.get('avgRating'),
-					movieTitle : movieResult.get('Title'),
-					imdbID : movieResult.get('imdbID'),
-					owner : movieResult.get('Owner').id
-				};
+					// wird nur vollstaendig ausgefuehrt, wenn ein User angemeldet ist
+					var checkEdit = function() {
+						var promise = Parse.Promise.as();
+						if (Parse.User.current() !== null) {
+							var edit = new Parse.Query(Edit);
+							edit.equalTo("movieID", movieResult);
+							edit.equalTo("userID", Parse.User.current());
 
-				// wird nur vollstaendig ausgefuehrt, wenn ein User angemeldet ist
-				var checkEdit = function() {
-					var promise = Parse.Promise.as();
-					if (Parse.User.current() !== null) {
-						var edit = new Parse.Query(Edit);
-						edit.equalTo("movieID", movieResult);
-						edit.equalTo("userID", Parse.User.current());
-
-						promise = promise.then(function() {
-							return edit.find().then(function(editResults) {
-								_.each(editResults, function(editResult) {
-									if ( typeof (editResult) !== "undefined") {
-										// es wurde ein Eintrag in EDIT zu der Selektion gefunden
-										row.numberOfStars = editResult.get('rating');
-										if (editResult.get('movieSeen')) {
-											// Film wurde gesehen
-											row.seen = "gesehen";
+							promise = promise.then(function() {
+								return edit.find().then(function(editResults) {
+									_.each(editResults, function(editResult) {
+										if ( typeof (editResult) !== "undefined") {
+											// es wurde ein Eintrag in EDIT zu der Selektion gefunden
+											row.numberOfStars = editResult.get('rating');
+											if (editResult.get('movieSeen')) {
+												// Film wurde gesehen
+												row.seen = "gesehen";
+											} else {
+												// Film wurde nicht gesehen
+												row.seen = "nicht gesehen";
+											}
 										} else {
-											// Film wurde nicht gesehen
+											/* es wurde kein Eintrag in EDIT zur Selektion gefunden.
+											 * Daher wird gesehen / nicht gesehen auf nicht gesehen gesetzt,
+											 * als Default-Wert und die Bewertung auf 0 Sterne
+											 */
+
+											row.numberOfStars = 0;
 											row.seen = "nicht gesehen";
 										}
-									} else {
-										/* es wurde kein Eintrag in EDIT zur Selektion gefunden.
-										 * Daher wird gesehen / nicht gesehen auf nicht gesehen gesetzt,
-										 * als Default-Wert und die Bewertung auf 0 Sterne
-										 */
-
-										row.numberOfStars = 0;
-										row.seen = "nicht gesehen";
-									}
+									}, function(error) {
+										alert(error.message);
+									});
+								}, function(error) {
+									alert(error.message);
 								});
 							});
-						});
-					}
-					return promise;
-				};
-
-				checkEdit().then(function(object, result, error, test) {
-					if (Parse.User.current() != null) {
-						// angemeldet
-						if (row.owner == Parse.User.current().id && row.owner != null) {
-							// angemeldeter User, der den Film "besitzt"
-							row.editButton = editButtonActive;
-							row.deleteButton = deleteButtonActive;
-
-						} else {
-							// angemeldeter User, der den Film nicht "besitzt"
-							row.editButton = editButtonActive;
-							row.deleteButton = deleteButtonInactive;
 						}
-					} else {
-						//nicht angemeldet, daher nur Berechtigung zum Anschauen
-						row.editButton = editButtonNone;
-						row.deleteButton = deleteButtonNone;
-					}
-					initiateTableRow(row.numberOfStars, row.movieTitle, row.imdbID, row.seen, row.editButton, row.deleteButton);
+						return promise;
+					};
+
+					return checkEdit().then(function() {
+						if (Parse.User.current() != null) {
+							// angemeldet
+							if (row.owner == Parse.User.current().id && row.owner != null) {
+								// angemeldeter User, der den Film "besitzt"
+								row.editButton = editButtonActive;
+								row.deleteButton = deleteButtonActive;
+
+							} else {
+								// angemeldeter User, der den Film nicht "besitzt"
+								row.editButton = editButtonActive;
+								row.deleteButton = deleteButtonInactive;
+							}
+						} else {
+							//nicht angemeldet, daher nur Berechtigung zum Anschauen
+							row.editButton = editButtonNone;
+							row.deleteButton = deleteButtonNone;
+						}
+						rows.push(initiateTableRow(row.trID, row.numberOfStars, row.movieTitle, row.imdbID, row.seen, row.editButton, row.deleteButton));
+					});
 				});
 			});
+			return promiseMovieFind;
+		}).then(function() {
+			$('#filmtable').html(rows);
+		}, function(error) {
+			console.log(error.message);
 		});
 	});
 }
