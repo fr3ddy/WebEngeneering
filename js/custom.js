@@ -176,7 +176,6 @@ $(document).ready(function() {
 
 			Parse.User.logOut();
 
-			$('#loginDropdown').show();
 			setTimeout('$("#usernameInput").focus()', 100);
 			//Login Button Listener
 			$('#loginButton').on('click', function() {
@@ -191,11 +190,7 @@ $(document).ready(function() {
 	//Login Button Listener
 	$('#loginButton').on('click', function() {
 		if (!$(this).parent().parent().hasClass("open")) {
-			$('#loginDropdown').show();
 			setTimeout('$("#usernameInput").focus()', 100);
-		} else {
-			//Bei klick auf Login ausblenden vom Inputfeld
-			$('#loginDropdown').hide();
 		}
 	});
 	$('#submitLoginButton').on('click', function(event) {
