@@ -204,9 +204,10 @@ $(document).ready(function() {
 	});
 
 	/* Registrieren */
-	$('#register').on("click", function() {
+	$('#register').on("click", function(event) {
 		event.preventDefault();
 		$('#registerModal').modal('show');
+		return false;
 	});
 
 	$('#submitRegistration').on("click", function() {
