@@ -59,7 +59,7 @@ function parse_loginUser(username, password) {
 			$('#passwordInput').val("");
 			$('#usernameInput').val("");
 			isLoggedInOrNot();
-			parse_initialLoadMovieTable();
+			// parse_initialLoadMovieTable();
 		});
 		isLoggedInOrNot();
 		$('#submitLoginButton').button('reset');
@@ -115,6 +115,9 @@ function checkEdit(movieResult, callback) {
 function parse_initialLoadMovieTable() {
 	var movie = new Parse.Query(Movie);
 	var rows = [];
+
+	// erstelle Ladebildschirm
+	$('body').prepend('<div class="loading-Indicator"></div>');
 	parse_countUsers().then(function(userCount) {
 		movie.find().then(function(movieResults) {
 			var promises = [];
@@ -148,7 +151,7 @@ function parse_initialLoadMovieTable() {
 					row.deleteButton = deleteButtonNone;
 				}
 
-				// TODO parse wartet nicht, bis die Methode fertig ist!!!! wird nur vollstaendig ausgefuehrt, wenn ein User angemeldet ist
+				// wird nur vollstaendig ausgefuehrt, wenn ein User angemeldet ist
 				promises.push(checkEdit(movieResult, function(seen, stars) {
 					row.seen = seen;
 					row.numberOfStars = stars;
@@ -158,7 +161,10 @@ function parse_initialLoadMovieTable() {
 			});
 			return Parse.Promise.when(promises);
 		}).then(function() {
-			$('#filmtable').html(rows);
+			$('#filmtable').html(rows).fadeIn(1000);
+			$('body').find('.loading-Indicator').fadeOut(1000, function() {
+				$(this).remove();
+			});
 		}, function(error) {
 			console.log("Error:" + error.message);
 		});
