@@ -1,6 +1,15 @@
 $(document).ready(function() {
 	parse_initialLoadMovieTable();
 
+	/* Action Listener für Detail View Lupe */
+	$('table').on('click', '.detailMagnifier', function() {
+		$(this).css({
+			cursor : "progress"
+		});
+		var clickedTr = $(this).parent().parent();
+		buildDetailView.call(this, clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
+	});
+
 	/* Setze Focus auf Film Titel Input, wenn Modal geoeffnet wird */
 	$("#createFilmModal").on('focus', function() {
 		$('#filmTitle').focus();
@@ -37,9 +46,6 @@ $(document).ready(function() {
 
 	/*Aendere-Button auf Modal 'editFilmModal'*/
 	$('#changeMovie').on('click', changeMovieValues);
-
-	/* aendere bestehenden Film bei 'Enter' 'editFilmModal' */
-	$('#filmTitleEdit').bind('keypress', changeMovieValues);
 
 	/*Aufbau Modal um den Film zu editieren*/
 	$('#list').on('click', '.edit', function() {
@@ -184,28 +190,20 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		movieTitle : movieTitle,
 		movieSeen : $('#createFilmModal').find('.on').text().toLowerCase(),
 		rating : setRating(numberOfStars, true),
-		editButton: editButtonActive,
-		deleteButton: deleteButtonActive
+		editButton : editButtonActive,
+		deleteButton : deleteButtonActive
 	}));
 
 	/*Initialisiere PopOver fuer Delete-Button*/
 	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
 	$('#' + newID).find('.delete').popover({
 		trigger : 'focus',
-		title : 'Löschen',
+		title : 'Delete',
 		content : popoverContent,
 		html : 'true'
 	});
 
 	$('#createFilmModal').modal('hide');
-	/* Action Listener für Detail View Lupe */
-	$('.detailMagnifier').click('click', function() {
-		$(this).css({
-			cursor : "progress"
-		});
-		var clickedTr = $(this).parent().parent();
-		buildDetailView.call(this, clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
-	});
 
 	//----------------------Filter wieder setzten und neue Tabelle filtern!
 	filter.movieSeen = filterSetting.movieSeen;
@@ -239,8 +237,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 }
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
-function initiateTableRow(numberOfStars, movieTitle, imdbID, seen, editButton, deleteButton) {
-
+function initiateTableRow(numberOfStars, movieTitle, imdbID, seenText, editButton, deleteButton) {
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
 	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln
@@ -256,24 +253,15 @@ function initiateTableRow(numberOfStars, movieTitle, imdbID, seen, editButton, d
 		newID = 'tr-' + tmpId[1];
 		//ID fuer die neue Zeile zusammensetzen
 	}
-	
-	var seenText;
-	if(seen) {
-		// Film wurde gesehen
-		seenText = "gesehen";	
-	} else {
-		// Film wurde nicht gesehen
-		seenText = "nicht gesehen";
-	}
-	
+
 	$('#filmtable').append(addMovieToList({
 		imdbID : imdbID,
 		rowID : newID,
 		movieTitle : movieTitle,
 		movieSeen : seenText,
 		rating : setRating(numberOfStars, true),
-		editButton: editButton,
-		deleteButton: deleteButton
+		editButton : editButton,
+		deleteButton : deleteButton
 	}));
 
 	/*Initialisiere PopOver fuer Delete-Button*/
@@ -283,15 +271,6 @@ function initiateTableRow(numberOfStars, movieTitle, imdbID, seen, editButton, d
 		title : 'Löschen',
 		content : popoverContent,
 		html : 'true'
-	});
-
-	/* Action Listener für Detail View Lupe */
-	$('.detailMagnifier').click('click', function() {
-		$(this).css({
-			cursor : "progress"
-		});
-		var clickedTr = $(this).parent().parent();
-		buildDetailView.call(this, clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
 	});
 }
 
@@ -332,6 +311,11 @@ function changeTableRowValues(numberOfStars) {
 	}
 
 	$('#editFilmModal').modal('hide');
+
+	// aktualisiere die Edit Tabelle bei parse oder fuege einen neuen Eintrag hinzu
+	var getRating = $('#filmtable').find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
+	var seen = $(this).find('.on').text().toLowerCase() === "gesehen" ? true : false;
+	parse_updateEntry($('#filmtable').find('#' + selectedRowId).data('imdbid'), getRating, seen);
 }
 
 /* Loescht ausgewaehlte Zeile aus Tabelle*/
@@ -479,11 +463,27 @@ function toggleRatingClasses(elem, prev) {
 
 /* stellt ein, wie viele Sterne beim Rating in der Tabelle oder Bearbeitungsansicht ausgefuellt sind */
 function setRating(selectedStars, forTableOrDetailedView) {
-	var starFull = _.template('<span class="glyphicon ' + ratingIconOn + '" title="<%- title %>"></span>');
-	var starEmpty = _.template('<span class="glyphicon ' + ratingIconOff + '" title="<%- title %>"></span>');
+	var numberOfStars = selectedStars;
+	var starFull = _.template('<span class="glyphicon ' + ratingIconOn + '" title="<%- title %>">&#xe007;</span>');
+	var starEmpty = _.template('<span class="glyphicon ' + ratingIconOff + '" title="<%- title %>">&#xe007;</span>');
+	var starHalf = _.template('<span class="glyphicon ' + ratingIconHalf + '" title="<%- title %>">&#xe007;</span>');
 	var result = "";
+	var avg = "";
 	var tooltip = "";
 	var tableTooltip = "";
+	var setHalfStarFlag = false;
+
+	var commaSeperated = selectedStars.toFixed(2).toString().split('.')[1];
+	if (commaSeperated <= 25) {
+		selectedStars = Math.round(selectedStars);
+		console.log("Abrunden: " + selectedStars + "\t Originalwert: " + commaSeperated);
+	} else if (commaSeperated >= 75) {
+		selectedStars = Math.round(selectedStars);
+		console.log("Aufrunden: " + selectedStars + "\t Originalwert: " + commaSeperated);
+	} else {
+		setHalfStarFlag = true;
+		console.log("Halber Stern: " + selectedStars.toFixed(2).toString().split('.')[0] + ".5" + "\t Originalwert: " + commaSeperated);
+	}
 
 	for (var i = 1; i <= 5; i++) {
 		switch(i) {
@@ -511,6 +511,10 @@ function setRating(selectedStars, forTableOrDetailedView) {
 		 * daher sind keine Tooltips auf die einzelnen Sterne, sondern nur auf die Gesamtbewertung, also das DIV zu setzen.
 		 * Ist keine Bewertung gesetzt, dann setze "nicht bewertet" als Tooltip */
 		if (forTableOrDetailedView) {
+			if (Parse.User.current() == null) {
+				avg = '<span>    (' + numberOfStars.toFixed(2) + ')</span>';
+			}
+
 			if (i <= selectedStars) {
 				tableTooltip = tooltip;
 			} else if (selectedStars === 0) {
@@ -523,6 +527,12 @@ function setRating(selectedStars, forTableOrDetailedView) {
 			result += starFull({
 				title : tooltip
 			});
+		} else if (setHalfStarFlag) {
+			setHalfStarFlag = false;
+			console.log("Setze halben Stern");
+			result += starHalf({
+				title : tooltip
+			});
 		} else {
 			result += starEmpty({
 				title : tooltip
@@ -530,7 +540,7 @@ function setRating(selectedStars, forTableOrDetailedView) {
 		}
 	}
 
-	return '<div class="stars" title="' + tableTooltip + '" data-rated="' + selectedStars + '">' + result + '</div>';
+	return '<div class="stars" title="' + tableTooltip + '" data-rated="' + numberOfStars.toFixed(2) + '">' + result + '</div>' + avg;
 }
 
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/

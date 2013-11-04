@@ -4,7 +4,7 @@ Parse.initialize("L6o5RS5o7y3L2qq0MdbUUx1rTm8dIzLVJR6etJ5K", "QyEYNDiJAI3ctZ9pZC
 var Movie = Parse.Object.extend("Movie");
 var Edit = Parse.Object.extend("Edit");
 
-function registerUser(username, password) {
+function parse_registerUser(username, password) {
 	var user = new Parse.User();
 	user.set("username", username);
 	user.set("password", password);
@@ -24,7 +24,7 @@ function registerUser(username, password) {
 	});
 }
 
-function loginUser(username, password) {
+function parse_loginUser(username, password) {
 	Parse.User.logIn(username, password, {
 		success : function(user) {
 			$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
@@ -54,59 +54,104 @@ function loginUser(username, password) {
 			$('#submitLoginButton').button('reset');
 		},
 		error : function(user, error) {
-			alert("Wrong Logindata");
+			parse_getErrorMessage(error);
 			$('#submitLoginButton').button('reset');
 		}
 	});
 }
 
+/* Zaehle User in User Tabelle */
+function parse_countUsers(callback) {
+	var user = new Parse.Query(Parse.User);
+	var promise = Parse.Promise.as();
+	promise = promise.then(function() {
+		return user.count({
+			success : function(count) {
+			},
+			error : function(error) {
+				// TODO Fehler
+				parse_getErrorMessage(error);
+			}
+		})
+	});
+	return promise;
+}
+
+/* Initialisiere die Liste und fuelle sie mit allen Filmen der Datenbank */
 function parse_initialLoadMovieTable() {
 	var movie = new Parse.Query(Movie);
-	movie.find().then(function(movieResults) {
-		_.each(movieResults, function(movie) {
-			var editButton;
-			var deleteButton;
-			var numberOfStars;
-			var movieTitle = movie.get('Title');
-			var imdbID = movie.get('imdbID');
-			var seen;
+	parse_countUsers().then(function(userCount) {
 
-			var edit = new Parse.Query(Edit);
-			edit.equalTo("movieID", movie);
-			edit.find().then(function(editResults) {
-				_.each(editResults, function(edit) {
-					if (edit.get('userID').id == Parse.User.current().id) {
-						// nimm die eigene Bewertung
-						numberOfStars = edit.get('rating');
-						seen = edit.get('seen');
-						return false;
-					} else {
-						// nimm die Durchschnittsbewertung
-						numberOfStars = movie.get('avgRating');
-						seen = "";
+		movie.find().then(function(movieResults) {
+
+			_.each(movieResults, function(movieResult) {
+				var row = {
+					editButton : null,
+					deleteButton : null,
+					seen : "gesehen (" + movieResult.get('numberOfUsersSeen') + " von " + userCount + ")",
+					numberOfStars : movieResult.get('avgRating'),
+					movieTitle : movieResult.get('Title'),
+					imdbID : movieResult.get('imdbID'),
+					owner : movieResult.get('Owner').id
+				};
+
+				// wird nur vollstaendig ausgefuehrt, wenn ein User angemeldet ist
+				var checkEdit = function() {
+					var promise = Parse.Promise.as();
+					if (Parse.User.current() !== null) {
+						var edit = new Parse.Query(Edit);
+						edit.equalTo("movieID", movieResult);
+						edit.equalTo("userID", Parse.User.current());
+
+						promise = promise.then(function() {
+							return edit.find().then(function(editResults) {
+								_.each(editResults, function(editResult) {
+									if ( typeof (editResult) !== "undefined") {
+										// es wurde ein Eintrag in EDIT zu der Selektion gefunden
+										row.numberOfStars = editResult.get('rating');
+										if (editResult.get('movieSeen')) {
+											// Film wurde gesehen
+											row.seen = "gesehen";
+										} else {
+											// Film wurde nicht gesehen
+											row.seen = "nicht gesehen";
+										}
+									} else {
+										/* es wurde kein Eintrag in EDIT zur Selektion gefunden.
+										 * Daher wird gesehen / nicht gesehen auf nicht gesehen gesetzt,
+										 * als Default-Wert und die Bewertung auf 0 Sterne
+										 */
+
+										row.numberOfStars = 0;
+										row.seen = "nicht gesehen";
+									}
+								});
+							});
+						});
 					}
+					return promise;
+				};
 
+				checkEdit().then(function(object, result, error, test) {
+					if (Parse.User.current() != null) {
+						// angemeldet
+						if (row.owner == Parse.User.current().id && row.owner != null) {
+							// angemeldeter User, der den Film "besitzt"
+							row.editButton = editButtonActive;
+							row.deleteButton = deleteButtonActive;
+
+						} else {
+							// angemeldeter User, der den Film nicht "besitzt"
+							row.editButton = editButtonActive;
+							row.deleteButton = deleteButtonInactive;
+						}
+					} else {
+						//nicht angemeldet, daher nur Berechtigung zum Anschauen
+						row.editButton = editButtonNone;
+						row.deleteButton = deleteButtonNone;
+					}
+					initiateTableRow(row.numberOfStars, row.movieTitle, row.imdbID, row.seen, row.editButton, row.deleteButton);
 				});
-
-				if (Parse.User.current() != null) {
-					// angemeldet
-					if (movie.get('Owner').id == Parse.User.current().id) {
-						// angemeldeter User, der den Film "besitzt"
-						editButton = editButtonActive;
-						deleteButton = deleteButtonActive;
-
-					} else {
-						// angemeldeter User, der den Film nicht "besitzt"
-						editButton = editButtonActive;
-						deleteButton = deleteButtonInactive;
-					}
-				} else {
-					// nicht angemeldet, daher nur Berechtigung zum Anschauen
-					editButton = editButtonNone;
-					deleteButton = deleteButtonNone;
-				}
-
-				initiateTableRow(numberOfStars, movieTitle, imdbID, seen, editButton, deleteButton);
 			});
 		});
 	});
@@ -128,20 +173,6 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
 	}
 
 	movie.set("numberOfUsersSeen", numberOfUserSeen);
-	// var user = new Parse.Query(Parse.User);
-	// user.count({
-	// success : function(count) {
-	// // The count request succeeded. Show the count
-	// movie.set("avgSeen", numberOfUserSeen + " von " + count);
-	// },
-	// error : function(error) {
-	// // The request failed
-	// }
-	// });
-
-	// var postACL = new Parse.ACL();
-	// postACL.setRoleWriteAccess("Owner", true);
-	// movie.setACL(postACL);
 
 	movie.save(null, {
 		success : function(movie) {
@@ -159,35 +190,143 @@ function parse_saveRating(numberOfStars, seen, movie) {
 
 	edit.set("rating", numberOfStars);
 	edit.set("movieSeen", seen);
-	// Object von Movie
+	// Objekt von Movie
 	edit.set("movieID", movie);
-	// Object von User
+	// Objekt von User
 	edit.set("userID", Parse.User.current());
 
-	edit.save(null, {
-		success : function(edit) {
-		},
-		error : function(edit, error) {
-			// TODO schoenere Fehlermeldung
-			alert('Failed to create new object, with error code: ' + error.description);
-		}
+	var promise = Parse.Promise.as();
+	promise = promise.then(function() {
+		return edit.save(null, {
+			success : function(edit) {
+				console.log("editEintragSpeichern");
+			},
+			error : function(edit, error) {
+				// TODO schoenere Fehlermeldung
+				parse_getErrorMessage(error);
+				alert('Failed to create new object, with error code: ' + error.message);
+			}
+		});
 	});
+
+	return promise;
 }
 
-function calculateAverageRating(numberOfStars, movieID) {
-	var edit = new Edit();
+/* berechnet die durschnittliche Filmbewertung und nutzt diesen Wert im "callback"-Parameter*/
+function parse_calculateAverageRating(movieID, callback) {
+	var edit = new Parse.Query(Edit);
 	edit.equalTo("movieID", movieID);
+	edit.equalTo("movieSeen", true);
 	edit.find({
 		success : function(results) {
 			var sum = 0;
 			for (var i = 0; i < results.length; i++) {
 				sum += results[i].get('rating');
 			}
-			return sum / result.length;
+			callback(sum / results.length);
 		},
 		error : function(error) {
 			// Er kann nicht nichts finden, weil wir ihm ja eine MovieID uebergeben
-			//alert("Error: " + error.code + " " + error.message);
 		}
 	});
+}
+
+function parse_updateEntry(imdbID, numberOfStars, seen) {
+	var movie = new Parse.Query(Movie);
+	movie.equalTo('imdbID', imdbID);
+	movie.first().then(function(movieResult) {
+		return movieResult;
+	}).then(function(movieResult) {
+		edit = new Parse.Query(Edit);
+		edit.equalTo('userID', Parse.User.current());
+		edit.equalTo('movieID', movieResult);
+
+		edit.first().then(function(editResult) {
+			var promise = Parse.Promise.as();
+			promise = promise.then(function() {
+				if ( typeof (editResult) != 'undefined') {
+					// es gibt schon einen Eintrag zu dem Film und User in der Edit Tabelle
+					editResult.set('rating', numberOfStars);
+					editResult.set('movieSeen', seen);
+					return editResult.save({
+						success : function() {
+							console.log("edit erfolgreich aktualisiert");
+						},
+						error : function() {
+							console.log("edit konnte nicht aktualisiert werden");
+						}
+					});
+				} else {
+					// es gibt noch keinen Eintrag zu dem Film und User in der Edit Tabelle, somit wird einer hinzugefuegt
+					var numberOfUserSeen;
+					if (seen) {
+						numberOfUserSeen = movieResult.get("numberOfUsersSeen") + 1;
+					} else {
+						numberOfUserSeen = movieResult.get("numberOfUsersSeen");
+					}
+
+					movieResult.set("numberOfUsersSeen", numberOfUserSeen);
+
+					return parse_saveRating(numberOfStars, seen, movieResult);
+				}
+			});
+			return promise;
+		}).then(function() {
+			console.log("movieSpeichern");
+
+			parse_calculateAverageRating(movieResult, function(average) {
+				movieResult.set('avgRating', average);
+				movieResult.save();
+			});
+		});
+	});
+}
+
+/* ermittle zu einer imdbID den Owner in der Movie Tabelle */
+function parse_getOwnerOfMovie(imdbID, callback) {
+	var movie = new Parse.Query(Movie);
+	movie.equalTo('imdbID', imdbID);
+	movie.find().then(function(results) {
+
+		return results[0].get('Owner').id;
+	}).then(function(userID) {
+		var user = new Parse.Query(Parse.User);
+		user.get(userID, {
+			success : function(user) {
+				//alert("fertig");
+				callback(user.get('username'));
+			},
+			error : function(error) {
+				// TODO Fehlermeldung
+			}
+		});
+	});
+}
+
+// TODO Versuch eine Methode zu entwickeln, die die verschiedenen Fehler kontextspezifisch verarbeitet
+function parse_getErrorMessage(error) {
+	var errorMessage;
+	switch(error.code) {
+		case Parse.Error.OBJECT_NOT_FOUND:
+			errorMessage = error.message;
+			break;
+		case Parse.Error.CONNECTION_FAILED:
+			errorMessage = error.message;
+			break;
+		case Parse.Error.INTERNAL_SERVER_ERROR:
+			errorMessage = error.message;
+			break;
+		case Parse.Error.OTHER_CAUSE:
+			errorMessage = "This is it the apocalypse ;) - Thanks to Imagine Dragons ";
+			break;
+		default:
+			break;
+	}
+
+	//@formatter:off
+	$('.customAlert').html('<div class="alert alert-danger alert-dismissable">'
+							+'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' 
+							+ errorMessage + 
+						'</div>');
+	//@formatter:on
 }
