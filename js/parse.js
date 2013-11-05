@@ -37,7 +37,6 @@ function parse_registerUser(username, password) {
 function parse_loginUser(username, password) {
 	Parse.User.logIn(username, password).then(function(user) {
 		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
-		$('#loginDropdown').hide();
 		$('#logoutButton').on('click', function() {
 			$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
 			$('#menu1').removeClass("open");
@@ -369,8 +368,8 @@ function parse_facebookLoginSignUp() {
 				changeLoginButtonOnFacebookLoginSignIn();
 			}
 			// Ich versuche noch den Usernamen und die Email zu bekommen
-			FB.api('/me?fields=first_name,email', function(response) {
-				Parse.User.current().setUsername(response.first_name);
+			FB.api('/me?fields=username,email', function(response) {
+				Parse.User.current().setUsername(response.username);
 				Parse.User.current().setEmail(response.email);
 				Parse.User.saveAll(Parse.User.current(), {
 					success : function() {
