@@ -291,9 +291,9 @@ function changeMovieValues(event) {
 function changeTableRowValues(numberOfStars) {
 
 	$('#filmtable').find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text().toLowerCase());
-
+	debugger;
 	// wurde ein Film als 'GESEHEN' markiert, erhält er die Anzahl an Sternen, mit denen er bewertet wurde. Ansonsten sind alle Sterne leer
-	if (seenText.toUpperCase === $(this).find('.on').text()) {
+	if (seenText.toUpperCase() === $(this).find('.on').text()) {
 		if (mouseoverForRatingOn) {
 			/* an die Bewertung ist noch ein 'mouseover' Event gebunden, daher darf die Bewertung nicht geaendert werden und die bestehende Bewertung bleibt bestehen.
 			 * Ist die bestehende Bewertung aber 0, dann muss min. 1 Stern gesetzt werden.

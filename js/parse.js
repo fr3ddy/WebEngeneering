@@ -162,7 +162,7 @@ function parse_initialLoadMovieTable() {
 
 			//Loeche-Popover koennen erst an dieser Stelle den Zeilen hinzugefügt werden,
 			//da diese nur existierenden Elementen zugeteilt werden können.
-			
+
 			for (var i = 0; i < rows.length; i++) {
 				/*Initialisiere PopOver fuer Delete-Button*/
 				$('#tr-' + i).find('.delete').popover({
@@ -282,16 +282,20 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 					// es gibt schon einen Eintrag zu dem Film und User in der Edit Tabelle
 					if (editResult.get('movieSeen')) {
 						/* der letzte aktuelle Wert in der EDIT ist "gesehen" ("true")
-						ziehe 1 von numberOfUsersSeen in MOVIE ab wenn zu nicht gesehen geaendert, ansonsten mach nichts */
-						setNumberOfUsersSeen(false, function(numUserSeen) {
-							numberOfUserSeen = numUserSeen;
-						});
+						 ziehe 1 von numberOfUsersSeen in MOVIE ab wenn zu nicht gesehen geaendert, ansonsten mach nichts */
+						if (seen) {
+							numberOfUserSeen = movieResult.get("numberOfUsersSeen");
+						} else {
+							numberOfUserSeen = movieResult.get("numberOfUsersSeen") - 1;
+						}
 					} else {
 						/* der letzte aktuelle Wert in der EDIT ist "nicht gesehen" ("false")
-						/ fuege 1 von numberOfUsersSeen in MOVIE hinzu wenn zu gesehen geaendert, ansonsten mach nichts */
-						setNumberOfUsersSeen(true, function(numUserSeen) {
-							numberOfUserSeen = numUserSeen;
-						});
+						 / fuege 1 von numberOfUsersSeen in MOVIE hinzu wenn zu gesehen geaendert, ansonsten mach nichts */
+						if (seen) {
+							numberOfUserSeen = movieResult.get("numberOfUsersSeen") + 1;
+						} else {
+							numberOfUserSeen = movieResult.get("numberOfUsersSeen");
+						}
 					}
 					editResult.set('rating', numberOfStars);
 					editResult.set('movieSeen', seen);
@@ -300,9 +304,11 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 					return editResult.save();
 				} else {
 					// es gibt noch keinen Eintrag zu dem Film und User in der Edit Tabelle, somit wird einer hinzugefuegt
-					setNumberOfUsersSeen(true, function(numUserSeen) {
-						numberOfUserSeen = numUserSeen;
-					});
+					if (seen) {
+						numberOfUserSeen = movieResult.get("numberOfUsersSeen") + 1;
+					} else {
+						numberOfUserSeen = movieResult.get("numberOfUsersSeen");
+					}
 
 					movieResult.set("numberOfUsersSeen", numberOfUserSeen);
 
@@ -317,21 +323,6 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 			});
 		});
 	});
-	var setNumberOfUsersSeen = function(addUser, callback) {
-		if (addUser) {
-			if (seen) {
-				callback(movieResult.get("numberOfUsersSeen") + 1);
-			} else {
-				callback(movieResult.get("numberOfUsersSeen"));
-			}
-		} else {
-			if (seen) {
-				callback(movieResult.get("numberOfUsersSeen"));
-			} else {
-				callback(movieResult.get("numberOfUsersSeen") - 1);
-			}
-		}
-	};
 }
 
 /* ermittle zu einer imdbID den Owner in der Movie Tabelle */
