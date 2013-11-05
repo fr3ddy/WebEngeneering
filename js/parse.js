@@ -179,6 +179,8 @@ function parse_initialLoadMovieTable() {
 		}, function(error) {
 			console.log("Error:" + error.message);
 		});
+		
+		removeSort();
 	});
 }
 
