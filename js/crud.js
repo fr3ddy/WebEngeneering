@@ -209,7 +209,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 	}));
 
 	/*Initialisiere PopOver fuer Delete-Button*/
-	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
+	var popoverContent = 'Wollen Sie den Film  wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
 	$('#' + newID).find('.delete').popover({
 		trigger : 'focus',
 		title : 'Delete',
@@ -252,15 +252,6 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
 function initiateTableRow(trID, numberOfStars, movieTitle, imdbID, seenText, editButton, deleteButton) {
-	/*Initialisiere PopOver fuer Delete-Button*/
-	var popoverContent = 'Wollen Sie den Film ' + $('#filmTitle').val() + ' wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
-	$('#' + trID).find('.delete').popover({
-		trigger : 'focus',
-		title : 'Löschen',
-		content : popoverContent,
-		html : 'true'
-	});
-
 	// gib die neue Zeile fuer die Liste zurueck
 	return addMovieToList({
 		imdbID : imdbID,
