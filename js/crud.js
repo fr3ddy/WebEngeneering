@@ -71,13 +71,24 @@ $(document).ready(function() {
 });
 /* unterscheiden zwischen Enter-Event und Speichern-Button-Event. Zusätzlich Anzahl selektierter Sterne fuer Rating herausfinden*/
 function createMovie(event) {
+	/*Tabelleneintrag hinzufuegen*/
+	var seen = true;
+	if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text().toUpperCase()) {
+		seen = false;
+		numberOfStars = 0;
+	} else if (mouseoverForRatingOn) {
+		/* 'mouseover' Event ist noch an Bewertung gebunden, daher darf eine Bewertung nicht erfolgen.
+		 * Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
+		numberOfStars = 1;
+	}
+
 	switch(event.type) {
 		case ('click'):
-			searchMovie($(this).parent().parent().find('.stars').find('.' + ratingIconOn).length, $('#filmTitle').val());
+			searchMovie($(this).parent().parent().find('.stars').find('.' + ratingIconOn).length, $('#filmTitle').val(), seen);
 			break;
 		case ('keypress'):
 			if (event.keyCode === 13) {
-				searchMovie($(this).parent().find('.stars').find('.' + ratingIconOn).length, $('#filmTitle').val());
+				searchMovie($(this).parent().find('.stars').find('.' + ratingIconOn).length, $('#filmTitle').val(), seen);
 			}
 			break;
 		default:
@@ -85,7 +96,7 @@ function createMovie(event) {
 	}
 }
 
-function searchMovie(numberOfStars, movieTitle) {
+function searchMovie(numberOfStars, movieTitle, seen) {
 	$.ajax({
 		url : "http://www.omdbapi.com/?s=" + movieTitle.replace(" ", "+"),
 		dataType : 'json',
@@ -98,9 +109,16 @@ function searchMovie(numberOfStars, movieTitle) {
 			});
 
 			if (elementsFound.length > 1) {
-				buildChooseTable(elementsFound, numberOfStars);
+				buildChooseTable(elementsFound, numberOfStars, seen);
 			} else if (elementsFound == 1) {
-				addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
+				parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, function(success) {
+					if (success) {
+						addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
+					} else {
+						//TODO Fehlermeldung für Eintragung in DB nicht erfolgreich
+						alert("Film konnte nicht in DB eingetragen werden");
+					}
+				});
 			} else {
 				$('#createFilmModal').modal('hide');
 				//TODO Fehlermeldung weil Film nicht gefunden
@@ -113,7 +131,7 @@ function searchMovie(numberOfStars, movieTitle) {
 }
 
 // Wenn mehre Filme gefunden erscheint Modal mit Liste der gefunden Filme
-function buildChooseTable(foundMovies, numberOfStars) {
+function buildChooseTable(foundMovies, numberOfStars, seen) {
 	$('#createFilmModal').find('.modal-body .form-group').hide();
 	$('#createFilmModal').find('#saveFilm').hide();
 	$('#createFilmModal').find('#chooseTable').show();
@@ -126,11 +144,20 @@ function buildChooseTable(foundMovies, numberOfStars) {
 	$('tbody .select').on('click', function() {
 		var imdbID = $(this).parent().parent().attr('data-imdbID');
 		if (checkForDuplicate(imdbID)) {
-			addNewTableLine(numberOfStars, $(this).parent().parent().find('td:first-child').text(), imdbID);
+			var movieTitle = $(this).parent().parent().find('td:first-child').text();
+			parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, function(success) {
+				if (success) {
+					addNewTableLine(numberOfStars, movieTitle, imdbID);
 
-			$('#createFilmModal').find('#saveFilm').show();
-			$('#createFilmModal').find('.modal-body .form-group').show();
-			$('#createFilmModal').find('#chooseTable').hide();
+					$('#createFilmModal').find('#saveFilm').show();
+					$('#createFilmModal').find('.modal-body .form-group').show();
+					$('#createFilmModal').find('#chooseTable').hide();
+
+				} else {
+					//TODO Fehlermeldung für Eintragung in DB nicht erfolgreich
+					alert("Film konnte nicht in DB eingetragen werden");
+				}
+			});
 		} else {
 			alert("Film schon vorhanden");
 		}
@@ -169,16 +196,6 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		//Anzahl der Zeilen steht im 2. Feld, muss von String in Integer geparst werden
 		newID = 'tr-' + tmpId[1];
 		//ID fuer die neue Zeile zusammensetzen
-	}
-	/*Tabelleneintrag hinzufuegen*/
-	var seen = true;
-	if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text().toUpperCase()) {
-		seen = false;
-		numberOfStars = 0;
-	} else if (mouseoverForRatingOn) {
-		/* 'mouseover' Event ist noch an Bewertung gebunden, daher darf eine Bewertung nicht erfolgen.
-		 * Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
-		numberOfStars = 1;
 	}
 
 	$('#filmtable').append(addMovieToList({
@@ -230,7 +247,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		$('#filterBox #movieTitle').val(filter.movieTitle);
 	}
 	filterTable();
-	parse_saveMovie(movieTitle, imdbID, numberOfStars, seen);
+
 }
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
@@ -243,7 +260,7 @@ function initiateTableRow(trID, numberOfStars, movieTitle, imdbID, seenText, edi
 		content : popoverContent,
 		html : 'true'
 	});
-	
+
 	// gib die neue Zeile fuer die Liste zurueck
 	return addMovieToList({
 		imdbID : imdbID,

@@ -169,7 +169,10 @@ function parse_initialLoadMovieTable() {
 	});
 }
 
-function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
+function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, cb) {
+	
+	var savingSuccessful;
+	
 	var movie = new Movie();
 	movie.set("imdbID", imdbID);
 	movie.set("avgRating", numberOfStars);
@@ -188,10 +191,14 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen) {
 	movie.save(null, {
 		success : function(movie) {
 			parse_saveRating(numberOfStars, seen, movie);
+			
+			cb(true);
 		},
 		error : function(movie, error) {
 			// TODO schoenere Fehlermeldung
 			alert('Failed to create new object, with error code: ' + error.description);
+			
+			cb(false);
 		}
 	});
 }
