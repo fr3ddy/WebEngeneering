@@ -160,19 +160,34 @@ function parse_initialLoadMovieTable() {
 			return Parse.Promise.when(promises);
 		}).then(function() {
 			$('#filmtable').html(rows).fadeIn(1000);
+
+			//Lösche-Popover können erst an dieser Stelle den Zeilen hinzugefügt werden,
+			//da diese nur existierenden Elementen zugeteilt werden können.
+			var popoverContent = 'Wollen Sie den Film wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
+			for (var i = 0; i < rows.length; i++) {
+				/*Initialisiere PopOver fuer Delete-Button*/
+				$('#tr-' + i).find('.delete').popover({
+					trigger : 'focus',
+					title : 'Löschen',
+					content : popoverContent,
+					html : 'true'
+				});
+			};
 			$('body').find('.loading-Indicator').fadeOut(1000, function() {
 				$(this).remove();
 			});
 		}, function(error) {
 			console.log("Error:" + error.message);
 		});
+		
+		removeSort();
 	});
 }
 
 function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, cb) {
-	
+
 	var savingSuccessful;
-	
+
 	var movie = new Movie();
 	movie.set("imdbID", imdbID);
 	movie.set("avgRating", numberOfStars);
@@ -191,13 +206,13 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, cb) {
 	movie.save(null, {
 		success : function(movie) {
 			parse_saveRating(numberOfStars, seen, movie);
-			
+
 			cb(true);
 		},
 		error : function(movie, error) {
 			// TODO schoenere Fehlermeldung
 			alert('Failed to create new object, with error code: ' + error.description);
-			
+
 			cb(false);
 		}
 	});
@@ -342,10 +357,7 @@ function parse_getErrorMessage(error) {
 	}
 
 	//@formatter:off
-	$('.customAlert').html('<div class="alert alert-danger alert-dismissable">'
-							+'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' 
-							+ errorMessage + 
-						'</div>');
+	$('.customAlert').html('<div class="alert alert-danger alert-dismissable">' + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' + errorMessage + '</div>');
 	//@formatter:on
 }
 
