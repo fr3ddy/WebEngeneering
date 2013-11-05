@@ -11,10 +11,10 @@ $(document).ready(function() {
 		$(this).popover();
 		$('#filterBox').find('#movieTitle').val(filter.movieTitle);
 
-		if (filter.movieSeen == 'gesehen') {
+		if (filter.movieSeen == seenText) {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary active');
 			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');
-		} else if (filter.movieSeen == 'nicht gesehen') {
+		} else if (filter.movieSeen == notSeenText) {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary');
 			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary active');
 		} else if (filter.movieSeen == null) {
@@ -81,7 +81,7 @@ function setFilterRating(starid) {
 	var id = starid.split('-');
 	filter.movieRating = id[1];
 
-	if (filter.movieSeen == 'nicht gesehen') {
+	if (filter.movieSeen == notSeenText) {
 		removeWatchFilter();
 	}
 
@@ -90,9 +90,9 @@ function setFilterRating(starid) {
 
 function filterWatchStatusSet(seen) {
 	if (seen == true) {
-		filter.movieSeen = "gesehen";
+		filter.movieSeen = seenText;
 	} else if (seen == false) {
-		filter.movieSeen = "nicht gesehen";
+		filter.movieSeen = notSeenText;
 		removeRatingFilter();
 	} else {
 		filter.movieSeen = null;

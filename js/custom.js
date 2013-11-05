@@ -1,15 +1,21 @@
 var selectedRowId;
 
-/* Flag: Ist das 'mouseopver' Event noch an die Bewertung gebunden?
+/* Flag: Ist das 'mouseover' Event noch an die Bewertung gebunden?
  * Falls ja, darf die Bewertung nicht in die Tabelle übernommen werden, da sie durch 'mouseover' zu Stande gemkommen sein koennte.
  * Sie darf aber nur uebernommen werden, wenn der User die Bewertung durch 'click' gesetzt hat */
 var mouseoverForRatingOn = true;
 
+var ratingIconHTML = '&#xe007;';
 var ratingIconOn = 'glyphicon-star';
 var ratingIconOff = 'glyphicon-star-empty';
 var ratingIconHalf = 'glyphicon-star-half';
 var switchButtonSeen = "-11px";
 var switchButtonUnseen = "15px";
+
+var notSeenText = "not seen";
+var seenText = "seen";
+
+var rotation = 0;
 
 var filter = {
 	movieTitle : null,
@@ -59,42 +65,44 @@ var detailedMovieView = _.template('<div class="container">'
 										+ '</h3>' 
 										+ '<h6><span class="glyphicon glyphicon-user"/>  <%= username %></h6>' 
 										+ '<div class="row">' + '<div class="col-xs-7">' 
-											+ '<label>Gesehen: </label><span><%- movieSeen %></span><br>' 
-											+ '<label>Bewertung: </label><span><%= rating %></span><br>' 
-											+ '<label>Veröffentlicht: </label><span><%- release %></span><br>' 
-											+ '<label>Dauer: </label><span><%- runtime %></span><br>' 
+											+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
+											+ '<label>Rating: </label><span><%= rating %></span><br>' 
+											+ '<label>Released: </label><span><%- release %></span><br>' 
+											+ '<label>Runtime: </label><span><%- runtime %></span><br>' 
 											+ '<label>Genre: </label><span><%- genre %></span><br>' 
-											+ '<label>Regisseur: </label><span><%- director %></span><br>' 
-											+ '<label>Schauspieler: </label><span><%- actors %></span><br>'
-											+ '<label>Handlung: </label><ul class="plot"><%- plot %></ul>' 
+											+ '<label>Director: </label><span><%- director %></span><br>' 
+											+ '<label>Actors: </label><span><%- actors %></span><br>'
+											+ '<label>Plot: </label><ul class="plot"><%- plot %></ul>' 
 										+ '</div>' 
 											+ '<div class="col-xs-5">' + '<img src="<%- picture %>" class="img-thumbnail"/>' 
 										+ '</div>' 
 									+ '</div>');
 
 //Initialisierung von FilmModal Content
-var insertCreateFilmModal = '<div class="form-group">' 
-								+ '<input type="text" class="form-control" id="filmTitle" placeholder="Film eingeben">' 
-								+ '<div class="switch-wrapper">' 
-									+ '<span class="switch-button-label off">GESEHEN</span>' 
-									+ '<div class="switch-button-background">' 
-										+ '<div class="switch-button-button"></div>' 
-									+ '</div><span class="switch-button-label on">NICHT GESEHEN</span><div style="clear: left;"></div>' 
-								+ '</div>' 
-								+ '<div class="rating">' 
-									+ '<label>Bewertung:</label>' 
-								+ '</div>' 
-							+ '</div>';
+// Auskommentiert, da es nirgendwo genutzt wurde
+// var insertCreateFilmModal = '<div class="form-group">' 
+								// + '<input type="text" class="form-control" id="filmTitle" placeholder="Movie Title">' 
+								// + '<div class="switch-wrapper">' 
+									// + '<span class="switch-button-label off">'+ seenText.toUpperCase() +'</span>' 
+									// + '<div class="switch-button-background">' 
+										// + '<div class="switch-button-button"></div>' 
+									// + '</div><span class="switch-button-label on">'+ notSeenText.toUpperCase() +'</span><div style="clear: left;"></div>' 
+								// + '</div>' 
+								// + '<div class="rating">' 
+									// + '<label>Rating:</label>' 
+								// + '</div>' 
+							// + '</div>';
 
 //Initialisierung des Popovers
 var popoverFilterContent = '<fieldset id="filterBox">' 
 								+ '<div class="form-group row">' 
 									+ '<div class="input-group col-sm-10" style="width: 252px;">' 
 										+ '<span class="input-group-addon"><span class="glyphicon glyphicon-film"></span></span>' 
-										+ '<input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Filmtitel" onkeyup="movieTitleFilterKeyUp()">' + '</div>' + '<div class="col-sm-2" style="margin-left: -25px;">' 
-										+ '<button type="button" class="close" aria-hidden="true" onclick="removeTitleFilter()">' 
-											+ '×' 
-										+ '</button>' 
+										+ '<input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Movie Title" onkeyup="movieTitleFilterKeyUp()">' 
+									+ '</div>' + '<div class="col-sm-2" style="margin-left: -25px;">' 
+									+ '<button type="button" class="close" aria-hidden="true" onclick="removeTitleFilter()">' 
+										+ '×' 
+									+ '</button>' 
 									+ '</div>' 
 								+ '</div>' 
 								+ '<div class="row">' 
@@ -102,9 +110,9 @@ var popoverFilterContent = '<fieldset id="filterBox">'
 										+ '<div class="btn-group" data-toggle="buttons" style="width: 223px;">' 
 											+ '<label class="btn btn-primary"  onclick="filterWatchStatusSet(true)">' 
 											+ '<input type="radio" name="options" id="movieWatched">' 
-												+ 'Gesehen</label><label class="btn btn-primary" onclick="filterWatchStatusSet(false)">' 
+												+ seenText.toUpperCase() +'</label><label class="btn btn-primary" onclick="filterWatchStatusSet(false)">' 
 											+ '<input type="radio" name="options" id="movieNotWatched">' 
-												+ 'Nicht Gesehen</label>' 
+												+ notSeenText.toUpperCase() +'</label>' 
 										+ '</div>' 
 									+ '</div>' 
 									+ '<div class="col-sm-2">' 
@@ -116,11 +124,11 @@ var popoverFilterContent = '<fieldset id="filterBox">'
 								+ '<div class="row">' 
 									+ '<div class="col-sm-10">' 
 										+ '<div id="filterStars">' 
-											+ '<span id="filterStar-1" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)">&#xe007;</span>' 
-											+ '<span id="filterStar-2" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)">&#xe007;</span>' 
-											+ '<span id="filterStar-3" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)">&#xe007;</span>' 
-											+ '<span id="filterStar-4" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)">&#xe007;</span>' 
-											+ '<span id="filterStar-5" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)">&#xe007;</span>' 
+											+ '<span id="filterStar-1" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)">'+ ratingIconHTML +'</span>' 
+											+ '<span id="filterStar-2" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)">'+ ratingIconHTML +'</span>' 
+											+ '<span id="filterStar-3" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)">'+ ratingIconHTML +'</span>' 
+											+ '<span id="filterStar-4" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)">'+ ratingIconHTML +'</span>' 
+											+ '<span id="filterStar-5" class="glyphicon glyphicon-star-empty" onclick="setFilterRating(this.id)" onmouseover="fillStars(this.id)" onmouseout="fillStars(null)">'+ ratingIconHTML +'</span>' 
 										+ '</div>' 
 									+ '</div>' 
 									+ '<div class="col-sm-2">' 
@@ -130,6 +138,17 @@ var popoverFilterContent = '<fieldset id="filterBox">'
 									+ '</div>' 
 								+ '</div>' 
 						+ '</fieldset>';
+						
+var popoverContent = 'Are you sure you want to delete the movie?<br>'
+					+'<button type="button" class="btn btn-primary btn-danger" onclick="removeMovie($(this))">Delete</button>'
+					+'<button type="button" class="btn btn-default" data-dismiss="popover">No</button>';
+
+var chooseTable = _.template('<tr data-imdbID="<%- imdbID %>">'
+									+'<td><%- movieTitle %></td>'
+									+'<td><%- year %></td>'
+									+'<td><%- type %></td>' 
+									+'<td><button type="button" class="btn btn-primary select">Select</button></td>'
+									+'</tr>');
 //@formatter:on
 
 $(document).ready(function() {
@@ -160,6 +179,7 @@ $(document).ready(function() {
 			left : "0px"
 		});
 	});
+
 	/*--------------------------------Ende Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
 
 	/*-----LOGIN--------*/
@@ -227,14 +247,14 @@ $(document).ready(function() {
 		var i = 0;
 		var interval = setInterval(function() {
 			i++;
-			if (!flag){
+			if (!flag) {
 				animateRefreshSpan(span);
 			}
-			if(i > 100) clearInterval(interval);
+			if (i > 100)
+				clearInterval(interval);
 		}, 10);
 	});
 });
-var rotation = 0;
 
 jQuery.fn.rotate = function(degrees) {
 	$(this).css({
@@ -281,42 +301,6 @@ function isLoggedInOrNot() {
 /*Setzt die Klasse fuer Parameter 'element' auf 'loggedOut' und entfernt Klasse 'loggedIn', falls der User nicht eingeloggt ist. Ansonsten umgekehrt. */
 function toggleClassOnAllElements(element) {
 	$(element).each(function() {
-		if (element === '.delete') {
-			// ueberpruefe ob User eingeloggt ist und Owner oder nur User und mach was
-			if (Parse.User.current() != null) {
-				$('#filmtable').find('.delete').each(function() {
-					var that = $(this);
-					var movie = new Parse.Query(Movie);
-					movie.equalTo('imdbID', that.parent().parent().attr('data-imdbid'));
-					movie.find(function(movieResults) {
-						// da die imdbID als eindeutige Schluessel gesehen werden kann wird nur ein Element bei der Suche zurueckgegeben
-						if (Parse.User.current() != null && movieResults[0].get("Owner").id == Parse.User.current().id) {
-							that.removeAttr("disabled");
-						} else {
-							that.attr("disabled", "disabled");
-						}
-					});
-				});
-			}
-		}
-		// if (element === '.delete') {
-		// // ueberpruefe ob User eingeloggt ist und Owner oder nur User und mach was
-		// if (Parse.User.current() != null) {
-		// $('#filmtable').find('.delete').each(function() {
-		// var that = $(this);
-		// var movie = new Parse.Query(Movie);
-		// movie.equalTo('imdbID', that.parent().parent().attr('data-imdbid'));
-		// movie.find(function(movieResults) {
-		// // da die imdbID als eindeutige Schluessel gesehen werden kann wird nur ein Element bei der Suche zurueckgegeben
-		// if (movieResults[0].get("Owner").id == Parse.User.current().id) {
-		// that.removeAttr("disabled");
-		// } else {
-		// that.attr("disabled", "disabled");
-		// }
-		// });
-		// });
-		// }
-		// }
 		$(this).fadeToggle('1000', function() {
 			$(this).toggleClass('loggedOut loggedIn');
 		});
@@ -338,7 +322,7 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 			} else {
 				poster = data.Poster;
 			}
-
+				
 			parse_getOwnerOfMovie(imdbID, function(username) {
 				$('#detailedView').html(detailedMovieView({
 					movieTitle : data.Title,

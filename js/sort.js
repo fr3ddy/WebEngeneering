@@ -16,7 +16,7 @@ $(document).ready(function() {
 			$('#sortTitleDESC').addClass('sortInactive');
 			sortTitleAlphabet(true);
 			
-			//Löscht die Rating-Sortierung
+			//Loescht die Rating-Sortierung
 			filter.movieRatingSorted = null;
 			$('#sortRatingASC').addClass('sortInactive');
 			$('#sortRatingDESC').addClass('sortInactive');			
@@ -87,7 +87,7 @@ $(document).ready(function() {
 			$('#sortRatingASC').addClass('sortInactive');
 			sortRating(false);
 
-			//Löscht die Titel-Sortierung
+			//Loescht die Titel-Sortierung
 			filter.movieTitleSorted = null;
 			$('#sortTitleASC').addClass('sortInactive');
 			$('#sortTitleDESC').addClass('sortInactive');
@@ -117,7 +117,7 @@ function removeSort() {
 		rows.sort();
 
 		//Aufbau der sortierten Tabelle
-		//erste Zeile in den Tabellen-Bauch hängen
+		//erste Zeile in den Tabellen-Bauch haengen
 		var segments = rows[0].split('-');
 		actRow = '#tr-' + segments[1];
 
@@ -131,7 +131,7 @@ function removeSort() {
 
 			$(actRow).insertAfter($(prevRow));
 				
-			//Am Ende wird actRow in prevRow gespeichert, damit die nächste Zeile an diese gehängt werden kann	
+			//Am Ende wird actRow in prevRow gespeichert, damit die naechste Zeile an diese gehaengt werden kann	
 			prevRow = actRow;
 		};
 	}
@@ -146,7 +146,7 @@ function sortTitleAlphabet(direction) {
 		var counter = 0;
 
 		//von jeder Zeile wird der Titel und die ID in das Array rows[] geschrieben
-		//mit next() wird dann die nächste Zeile selektiert
+		//mit next() wird dann die naechste Zeile selektiert
 		//wenn die selektierte Zeile leere ist wird die Schleife abgebrochen
 		while (actRow.length != 0) {
 			titles[counter] = actRow.find('.tableFilmTitle').text() + "-" + actRow.attr('id');
@@ -164,21 +164,21 @@ function sortTitleAlphabet(direction) {
 		}
 
 		//Aufbau der sortierten Tabelle
-		//erste Zeile in den Tabellen-Bauch hängen
+		//erste Zeile in den Tabellen-Bauch haengen
 		var segments = titles[0].split('-tr-');
 		actRow = '#tr-' + segments[1];
 
 		$(actRow).appendTo($('#list tbody'));
 		var prevRow = actRow;
 
-		//nun die restlichen Zeilen anhängen
+		//nun die restlichen Zeilen anhaengen
 		for (var i = 1; i < titles.length; i++) {
 			var segments = titles[i].split('-tr-');
 			actRow = '#tr-' + segments[1];
 
 			$(actRow).insertAfter($(prevRow));
 
-			//Am Ende wird actRow in prevRow gespeichert, damit die nächste Zeile an diese gehängt werden kann	
+			//Am Ende wird actRow in prevRow gespeichert, damit die naechste Zeile an diese gehaengt werden kann	
 			prevRow = actRow;
 		};
 	}
@@ -193,7 +193,7 @@ function sortRating(direction) {
 		var counter = 0;
 
 		//von jeder Zeile wird das Rating und die ID in das Array rows[] geschrieben
-		//mit next() wird dann die nächste Zeile selektiert
+		//mit next() wird dann die naechste Zeile selektiert
 		//wenn die selektierte Zeile leere ist wird die Schleife abgebrochen
 		while (actRow.length != 0) {
 			rating[counter] = actRow.find('.tableRating .stars').data('rated') + "-" + actRow.attr('id');
@@ -225,7 +225,7 @@ function sortRating(direction) {
 
 			$(actRow).insertAfter($(prevRow));
 
-			//Am Ende wird actRow in prevRow gespeichert, damit die nächste Zeile an diese gehängt werden kann	
+			//Am Ende wird actRow in prevRow gespeichert, damit die naechste Zeile an diese gehaengt werden kann	
 			prevRow = actRow;
 		};
 	}

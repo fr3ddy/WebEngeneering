@@ -57,7 +57,6 @@ function parse_loginUser(username, password) {
 			$('#passwordInput').val("");
 			$('#usernameInput').val("");
 			isLoggedInOrNot();
-			// parse_initialLoadMovieTable();
 		});
 		isLoggedInOrNot();
 		$('#submitLoginButton').button('reset');
@@ -91,10 +90,10 @@ function checkEdit(movieResult, callback) {
 				// es wurde ein Eintrag in EDIT zu der Selektion gefunden
 				if (editResult.get('movieSeen')) {
 					// Film wurde gesehen
-					callback("gesehen", editResult.get('rating'));
+					callback(seenText, editResult.get('rating'));
 				} else {
 					// Film wurde nicht gesehen
-					callback("nicht gesehen", editResult.get('rating'));
+					callback(notSeenText, editResult.get('rating'));
 				}
 			} else {
 				/* es wurde kein Eintrag in EDIT zur Selektion gefunden.
@@ -102,7 +101,7 @@ function checkEdit(movieResult, callback) {
 				 * als Default-Wert und die Bewertung auf 0 Sterne
 				 */
 
-				callback("nicht gesehen", 0);
+				callback(notSeenText, 0);
 			}
 		}));
 	}
@@ -124,7 +123,7 @@ function parse_initialLoadMovieTable() {
 					trID : 'tr-' + ++index,
 					editButton : null,
 					deleteButton : null,
-					seen : "gesehen (" + movieResult.get('numberOfUsersSeen') + " von " + userCount + ")",
+					seen : seenText + " (" + movieResult.get('numberOfUsersSeen') + " von " + userCount + ")",
 					numberOfStars : movieResult.get('avgRating'),
 					movieTitle : movieResult.get('Title'),
 					imdbID : movieResult.get('imdbID'),
@@ -161,9 +160,9 @@ function parse_initialLoadMovieTable() {
 		}).then(function() {
 			$('#filmtable').html(rows).fadeIn(1000);
 
-			//Lösche-Popover können erst an dieser Stelle den Zeilen hinzugefügt werden,
+			//Loeche-Popover koennen erst an dieser Stelle den Zeilen hinzugefügt werden,
 			//da diese nur existierenden Elementen zugeteilt werden können.
-			var popoverContent = 'Wollen Sie den Film wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
+			
 			for (var i = 0; i < rows.length; i++) {
 				/*Initialisiere PopOver fuer Delete-Button*/
 				$('#tr-' + i).find('.delete').popover({
@@ -179,14 +178,12 @@ function parse_initialLoadMovieTable() {
 		}, function(error) {
 			console.log("Error:" + error.message);
 		});
-
+		// ordnet die Eintraege in der richtigen Reihenfolge nach ihren id-Werten
 		removeSort();
 	});
 }
 
 function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, cb) {
-	var savingSuccessful;
-
 	var movie = new Movie();
 	movie.set("imdbID", imdbID);
 	movie.set("avgRating", numberOfStars);
@@ -231,7 +228,6 @@ function parse_saveRating(numberOfStars, seen, movie) {
 	promise = promise.then(function() {
 		return edit.save(null, {
 			success : function(edit) {
-				console.log("editEintragSpeichern");
 			},
 			error : function(edit, error) {
 				// TODO schoenere Fehlermeldung
@@ -285,14 +281,14 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 				if ( typeof (editResult) != 'undefined') {
 					// es gibt schon einen Eintrag zu dem Film und User in der Edit Tabelle
 					if (editResult.get('movieSeen')) {
-						// der letzte aktuelle Wert in der EDIT ist "gesehen" ("true")
-						// TODO ziehe 1 von numberOfUsersSeen in MOVIE ab wenn zu nicht gesehen geändert, ansonsten mach nichts
+						/* der letzte aktuelle Wert in der EDIT ist "gesehen" ("true")
+						ziehe 1 von numberOfUsersSeen in MOVIE ab wenn zu nicht gesehen geaendert, ansonsten mach nichts */
 						setNumberOfUsersSeen(false, function(numUserSeen) {
 							numberOfUserSeen = numUserSeen;
 						});
 					} else {
-						// der letzte aktuelle Wert in der EDIT ist "nicht gesehen" ("false")
-						// TODO füge 1 von numberOfUsersSeen in MOVIE hinzu wenn zu gesehen geändert, ansonsten mach nichts
+						/* der letzte aktuelle Wert in der EDIT ist "nicht gesehen" ("false")
+						/ fuege 1 von numberOfUsersSeen in MOVIE hinzu wenn zu gesehen geaendert, ansonsten mach nichts */
 						setNumberOfUsersSeen(true, function(numUserSeen) {
 							numberOfUserSeen = numUserSeen;
 						});
@@ -301,15 +297,8 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 					editResult.set('movieSeen', seen);
 
 					movieResult.set("numberOfUsersSeen", numberOfUserSeen);
-					return editResult.save({
-						success : function() {
-							console.log("edit erfolgreich aktualisiert");
-						},
-						error : function() {
-							console.log("edit konnte nicht aktualisiert werden");
-						}
-					});
-				} else { debugger;
+					return editResult.save();
+				} else {
 					// es gibt noch keinen Eintrag zu dem Film und User in der Edit Tabelle, somit wird einer hinzugefuegt
 					setNumberOfUsersSeen(true, function(numUserSeen) {
 						numberOfUserSeen = numUserSeen;
@@ -322,8 +311,6 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 			});
 			return promise;
 		}).then(function() {
-			console.log("movieSpeichern");
-
 			parse_calculateAverageRating(movieResult, function(average) {
 				movieResult.set('avgRating', average);
 				movieResult.save();
@@ -362,6 +349,7 @@ function parse_getOwnerOfMovie(imdbID, callback) {
 				callback(user.get('username'));
 			},
 			error : function(error) {
+				callback("User does not exist");
 				// TODO Fehlermeldung
 			}
 		});
@@ -389,7 +377,10 @@ function parse_getErrorMessage(error) {
 	}
 
 	//@formatter:off
-	$('.customAlert').html('<div class="alert alert-danger alert-dismissable">' + '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' + errorMessage + '</div>');
+	$('.customAlert').html('<div class="alert alert-danger alert-dismissable">' 
+								+ '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' 
+								+ errorMessage 
+							+ '</div>');
 	//@formatter:on
 }
 
@@ -416,7 +407,11 @@ function parse_facebookLoginSignUp() {
 			});
 		},
 		error : function(user, error) {
-			alert("User cancelled the Facebook login or did not fully authorize.");
+			return Parse.Promise.error("User cancelled the Facebook login or did not fully authorize.");
 		}
+	}).then(function() {
+		parse_initialLoadMovieTable();
+	}, function(error) {
+		alert("Error: " + error.message);
 	});
 }

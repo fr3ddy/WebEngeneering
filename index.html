@@ -65,7 +65,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="#list" id="listNav">Filmverwaltung</a>
+					<a class="navbar-brand" href="#list" id="listNav">Movie List</a>
 				</div>
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav navbar-right">
@@ -79,11 +79,11 @@
 									<fieldset class='textbox'>
 										<div class="input-group">
 											<span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-											<input type="text" class="form-control" id="usernameInput" name="username" placeholder="Benutzername">
+											<input type="text" class="form-control" id="usernameInput" name="username" placeholder="Username">
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
-											<input type="password" class="form-control" id="passwordInput" name="password" placeholder="Passwort">
+											<input type="password" class="form-control" id="passwordInput" name="password" placeholder="Password">
 										</div>
 
 										<div class="row">
@@ -111,23 +111,23 @@
 		</div>
 		<div id="home">
 			<div class="container" id="list">
-				<h1>Filmverwaltung
+				<h1>Movie List
 				<button data-toggle="modal" class="btn btn-default btn-sm pull-right loggedOut" id='add'>
-					<span class="glyphicon glyphicon-plus"></span><b>Neuen Film hinzufügen</b>
+					<span class="glyphicon glyphicon-plus"></span><b>Add new Movie</b>
 				</button></h1>
 				<table class="table table-hover">
 					<thead>
 						<tr id="tr-0">
 							<th><span class="glyphicon glyphicon-refresh" id="refreshTableButton"></span></th>
-							<th>Titel
+							<th>Title
 							<div id="sortButtonTitle">
 								<span class="glyphicon glyphicon-chevron-up sortInactive" id="sortTitleASC"></span><span class="glyphicon glyphicon-chevron-down sortInactive" id="sortTitleDESC"></span>
 							</div></th>
-							<th>Gesehen / nicht gesehen
+							<th>Seen / not seen
 							<div id="sortButtonGnG">
 								<!--Platz für filter-->
 							</div></th>
-							<th>Bewertung
+							<th>Rating
 							<div id="sortButtonRating">
 								<span class="glyphicon glyphicon-chevron-up sortInactive" id="sortRatingASC"></span><span class="glyphicon glyphicon-chevron-down sortInactive" id="sortRatingDESC"></span>
 							</div></th>
@@ -154,27 +154,27 @@
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
 							&times;
 						</button>
-						<h4 class="modal-title">Film hinzufügen</h4>
+						<h4 class="modal-title">Add movie</h4>
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							<input type="text" class="form-control" id="filmTitle" placeholder="Film eingeben">
+							<input type="text" class="form-control" id="filmTitle" placeholder="Movie Title">
 							<div class="switch-wrapper">
-								<span class="switch-button-label off">GESEHEN</span>
+								<span class="switch-button-label off">SEEN</span>
 								<div class="switch-button-background">
 									<div class="switch-button-button"></div>
-								</div><span class="switch-button-label on">NICHT GESEHEN</span><div style="clear: left;"></div>
+								</div><span class="switch-button-label on">NOT SEEN</span><div style="clear: left;"></div>
 							</div>
 							<div class="rating">
-								<label>Bewertung:</label>
+								<label>Rating:</label>
 							</div>
 						</div>
 						<div id="chooseTable">
 							<table class="table table-hover">
 								<thead>
 									<tr>
-										<th>Titel</th>
-										<th>Jahr</th>
+										<th>Title</th>
+										<th>Year</th>
 										<th>Type</th>
 										<th></th>
 									</tr>
@@ -185,10 +185,10 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">
-							Schließen
+							Close
 						</button>
 						<button type="button" class="btn btn-primary" id="saveFilm">
-							Speichern
+							Save
 						</button>
 					</div>
 				</div>
@@ -203,28 +203,28 @@
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
 							&times;
 						</button>
-						<h4 class="modal-title">Film ändern</h4>
+						<h4 class="modal-title">Change movie</h4>
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							<input type="text" class="form-control" id="filmTitleEdit" placeholder="Film eingeben" readonly="readonly">
+							<input type="text" class="form-control" id="filmTitleEdit" readonly="readonly">
 							<div class="switch-wrapper">
-								<span class="switch-button-label off">GESEHEN</span>
+								<span class="switch-button-label off">SEEN</span>
 								<div class="switch-button-background">
 									<div class="switch-button-button"></div>
-								</div><span class="switch-button-label on">NICHT GESEHEN</span><div style="clear: left;"></div>
+								</div><span class="switch-button-label on">NOT SEEN</span><div style="clear: left;"></div>
 							</div>
 							<div class="rating">
-								<label>Bewertung:</label>
+								<label>Rating:</label>
 							</div>
 						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">
-							Schließen
+							Close
 						</button>
 						<button type="button" class="btn btn-primary" id="changeMovie">
-							Ändern
+							Save changes
 						</button>
 					</div>
 				</div>
@@ -238,7 +238,7 @@
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
 							&times;
 						</button>
-						<h4 class="modal-title">Registrieren</h4>
+						<h4 class="modal-title">Register</h4>
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
@@ -252,7 +252,7 @@
 							Cancel
 						</button>
 						<button type="button" class="btn btn-primary" id="submitRegistration">
-							Registrieren
+							Register
 						</button>
 					</div>
 				</div>

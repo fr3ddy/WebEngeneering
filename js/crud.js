@@ -31,9 +31,9 @@ $(document).ready(function() {
 		// setze Rating am Anfang immer auf leer
 		$('#createFilmModal').find('.stars').children('span').removeClass(ratingIconOn).addClass(ratingIconOff);
 
-		// setze GESEHEN / NICHT GESEHEN am Anfang auf NICHT GESEHEN
-		if ($('#createFilmModal').find('.switch-wrapper').find('.on').text() === "GESEHEN") {
-			setModalSwitchButton.call($('#createFilmModal').find('.switch-wrapper'), 'NICHT GESEHEN');
+		// setze Seen Status am Anfang auf notSeenText
+		if ($('#createFilmModal').find('.switch-wrapper').find('.on').text() === seenText.toUpperCase()) {
+			setModalSwitchButton.call($('#createFilmModal').find('.switch-wrapper'), notSeenText.toUpperCase());
 		}
 
 		setListenerForSeenSwitch('#createFilmModal');
@@ -74,7 +74,7 @@ $(document).ready(function() {
 function createMovie(event) {
 	/*Tabelleneintrag hinzufuegen*/
 	var seen = true;
-	if ("NICHT GESEHEN" === $('#createFilmModal').find('.on').text().toUpperCase()) {
+	if (notSeenText.toUpperCase() === $('#createFilmModal').find('.on').text().toUpperCase()) {
 		seen = false;
 		numberOfStars = 0;
 	} else if (mouseoverForRatingOn) {
@@ -119,7 +119,7 @@ function searchMovie(numberOfStars, movieTitle, seen) {
 						addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
 					} else {
 						//TODO Fehlermeldung für Eintragung in DB nicht erfolgreich
-						alert("Film konnte nicht in DB eingetragen werden");
+						alert("Wasn't able to add movie to DB");
 					}
 				});
 			} else {
@@ -139,9 +139,14 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 	$('#createFilmModal').find('#saveFilm').hide();
 	$('#createFilmModal').find('#chooseTable').show();
 	$('#createFilmModal').find('#chooseTable tbody').empty();
-
+	
 	for (var i = 0; i < foundMovies.length; i++) {
-		$('<tr data-imdbID="' + foundMovies[i].imdbID + '"><td>' + foundMovies[i].Title + '</td><td>' + foundMovies[i].Year + '</td><td>' + foundMovies[i].Type + '</td>' + '<td><button type="button" class="btn btn-primary select">Auswahl</button></td></tr>').appendTo('#createFilmModal .modal-body tbody');
+		$(chooseTable({
+			imdbID : foundMovies[i].imdbID,
+			movieTitle : foundMovies[i].Title,
+			year : foundMovies[i].Year,
+			type : foundMovies[i].Type
+		})).appendTo('#createFilmModal .modal-body tbody');
 	};
 
 	$('tbody .select').on('click', function() {
@@ -158,11 +163,11 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 
 				} else {
 					//TODO Fehlermeldung für Eintragung in DB nicht erfolgreich
-					alert("Film konnte nicht in DB eingetragen werden");
+					alert("Wasn't able to add movie to DB");
 				}
 			});
 		} else {
-			alert("Film schon vorhanden");
+			alert("Movie does already exist");
 		}
 	});
 }
@@ -212,7 +217,6 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 	}));
 
 	/*Initialisiere PopOver fuer Delete-Button*/
-	var popoverContent = 'Wollen Sie den Film  wirklich löschen?<br><button type="button" class="btn btn-primary btn-danger"' + 'onclick="removeMovie($(this))">Löschen</button><button type="button" class="btn btn-default" data-dismiss="popover">Nein</button>';
 	$('#' + newID).find('.delete').popover({
 		trigger : 'focus',
 		title : 'Delete',
@@ -234,11 +238,11 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 	}
 
 	if (filter.movieSeen != null) {
-		if (filter.movieSeen == 'gesehen') {
+		if (filter.movieSeen == notSeenText) {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary active');
 			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary');
 
-		} else if (filter.movieSeen == 'nicht gesehen') {
+		} else if (filter.movieSeen == notSeenText) {
 			$('#filterBox #movieWatched').parent().attr('class', 'btn btn-primary');
 			$('#filterBox #movieNotWatched').parent().attr('class', 'btn btn-primary active');
 		} else if (filter.movieSeen == null) {
@@ -289,7 +293,7 @@ function changeTableRowValues(numberOfStars) {
 	$('#filmtable').find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text().toLowerCase());
 
 	// wurde ein Film als 'GESEHEN' markiert, erhält er die Anzahl an Sternen, mit denen er bewertet wurde. Ansonsten sind alle Sterne leer
-	if ("GESEHEN" === $(this).find('.on').text()) {
+	if (seenText.toUpperCase === $(this).find('.on').text()) {
 		if (mouseoverForRatingOn) {
 			/* an die Bewertung ist noch ein 'mouseover' Event gebunden, daher darf die Bewertung nicht geaendert werden und die bestehende Bewertung bleibt bestehen.
 			 * Ist die bestehende Bewertung aber 0, dann muss min. 1 Stern gesetzt werden.
@@ -307,7 +311,7 @@ function changeTableRowValues(numberOfStars) {
 
 	// aktualisiere die Edit Tabelle bei parse oder fuege einen neuen Eintrag hinzu
 	var getRating = $('#filmtable').find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
-	var seen = $(this).find('.on').text().toLowerCase() === "gesehen" ? true : false;
+	var seen = $(this).find('.on').text().toLowerCase() === seenText ? true : false;
 	parse_updateEntry($('#filmtable').find('#' + selectedRowId).data('imdbid'), getRating, seen);
 }
 
@@ -316,7 +320,7 @@ function removeMovie(element) {
 	$(element).parent().parent().parent().parent().remove();
 }
 
-/*------------------------------------- Anfang GESEHEN / NICHT GESEHEN ---------------------------------------------------------------------------------------- */
+/*------------------------------------- Anfang SEEN / NOT SEEN (GESEHEN / NICHT GESEHEN) ---------------------------------------------------------------------------------------- */
 /* einstellen, dass SwitchButton bei Druck auf Schalter oder auch Text reagiert*/
 function setListenerForSeenSwitch(modal) {
 	$(modal).find('.switch-button-label').on('click', function() {
@@ -368,12 +372,12 @@ function setModalSwitchButton(value) {
 	setSwitchButtonLabelStyle.apply($(this).find('.on'));
 
 	switch(value) {
-		case "GESEHEN":
+		case seenText.toUpperCase() :
 			$(this).find('.switch-button-button').css({
 				left : switchButtonSeen
 			});
 			break;
-		case "NICHT GESEHEN":
+		case notSeenText.toUpperCase() :
 			$(this).find('.switch-button-button').css({
 				left : switchButtonUnseen
 			});
@@ -383,7 +387,7 @@ function setModalSwitchButton(value) {
 	}
 }
 
-/*------------------------------------- Ende GESEHEN / NICHT GESEHEN ---------------------------------------------------------------------------------------- */
+/*------------------------------------- Ende SEEN / NOT SEEN (GESEHEN / NICHT GESEHEN) ---------------------------------------------------------------------------------------- */
 
 /* ------------------------------------ Anfang Bewertung ---------------------------------------------------------------------------------------------------- */
 /* bestimmt, ob Rating sichtbar oder unsichtbar ist, wenn Modal angezeigt wird. Rating wird nur angezeigt, wenn SwitchButton auf 'GESEHEN' steht */
@@ -402,8 +406,8 @@ function setRatingVisibility(numberOfSelectedStars) {
 	// Flag fuer ein aktives 'mouseover' Event an Bewertung setzen
 	mouseoverForRatingOn = true;
 
-	if ($(this).parent().find('.switch-wrapper').find('.on').text().toUpperCase() === "GESEHEN") {
-		// rating hinzufuegen und anzeigen, da SwitchButton auf 'GESEHEN' steht
+	if ($(this).parent().find('.switch-wrapper').find('.on').text().toUpperCase() === seenText.toUpperCase()) {
+		// rating hinzufuegen und anzeigen, da SwitchButton auf 'SEEN' steht
 		$(this).append(starRating).show();
 	} else {
 		// rating zwar hinzufuegen, aber nicht anzeigen
@@ -457,9 +461,9 @@ function toggleRatingClasses(elem, prev) {
 /* stellt ein, wie viele Sterne beim Rating in der Tabelle oder Bearbeitungsansicht ausgefuellt sind */
 function setRating(selectedStars, forTableOrDetailedView) {
 	var numberOfStars = selectedStars;
-	var starFull = _.template('<span class="glyphicon ' + ratingIconOn + '" title="<%- title %>">&#xe007;</span>');
-	var starEmpty = _.template('<span class="glyphicon ' + ratingIconOff + '" title="<%- title %>">&#xe007;</span>');
-	var starHalf = _.template('<span class="glyphicon ' + ratingIconHalf + '" title="<%- title %>">&#xe007;</span>');
+	var starFull = _.template('<span class="glyphicon ' + ratingIconOn + '" title="<%- title %>">'+ ratingIconHTML +'</span>');
+	var starEmpty = _.template('<span class="glyphicon ' + ratingIconOff + '" title="<%- title %>">'+ ratingIconHTML +'</span>');
+	var starHalf = _.template('<span class="glyphicon ' + ratingIconHalf + '" title="<%- title %>">'+ ratingIconHTML +'</span>');
 	var result = "";
 	var avg = "";
 	var tooltip = "";
@@ -478,19 +482,19 @@ function setRating(selectedStars, forTableOrDetailedView) {
 	for (var i = 1; i <= 5; i++) {
 		switch(i) {
 			case 1:
-				tooltip = "schlecht";
+				tooltip = "bad";
 				break;
 			case 2:
-				tooltip = "geht so";
+				tooltip = "okay";
 				break;
 			case 3:
-				tooltip = "in Ordnung";
+				tooltip = "good";
 				break;
 			case 4:
-				tooltip = "gut";
+				tooltip = "recommendable";
 				break;
 			case 5:
-				tooltip = "grandios";
+				tooltip = "magnificent";
 				break;
 			default:
 				tooltip = "";
@@ -508,7 +512,7 @@ function setRating(selectedStars, forTableOrDetailedView) {
 			if (i <= selectedStars) {
 				tableTooltip = tooltip;
 			} else if (selectedStars === 0) {
-				tableTooltip = "nicht bewertet";
+				tableTooltip = "not rated";
 			}
 			tooltip = "";
 		}
@@ -519,7 +523,6 @@ function setRating(selectedStars, forTableOrDetailedView) {
 			});
 		} else if (setHalfStarFlag) {
 			setHalfStarFlag = false;
-			console.log("Setze halben Stern");
 			result += starHalf({
 				title : tooltip
 			});
