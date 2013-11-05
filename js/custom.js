@@ -169,6 +169,7 @@ $(document).ready(function() {
 		isLoggedInOrNot();
 		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
 		$('#logoutButton').on('click', function() {
+			parse_initialLoadMovieTable();
 			$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
 			$('#menu1').removeClass("open");
 			Parse.User.logOut();
@@ -255,6 +256,7 @@ function changeLoginButtonOnFacebookLoginSignIn() {
 	isLoggedInOrNot();
 	$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
 	$('#logoutButton').on('click', function() {
+		parse_initialLoadMovieTable();
 		$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
 			Parse.User.logOut();
 			setTimeout('$("#usernameInput").focus()', 100);
