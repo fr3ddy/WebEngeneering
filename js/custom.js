@@ -170,7 +170,7 @@ $(document).ready(function() {
 		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
 		$('#logoutButton').on('click', function() {
 			$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
-
+			$('#menu1').removeClass("open");
 			Parse.User.logOut();
 
 			setTimeout('$("#usernameInput").focus()', 100);

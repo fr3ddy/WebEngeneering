@@ -40,11 +40,10 @@ function parse_loginUser(username, password) {
 		$('#loginDropdown').hide();
 		$('#logoutButton').on('click', function() {
 			$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
-
+			$('#menu1').removeClass("open");
 			Parse.User.logOut();
 			parse_initialLoadMovieTable();
 
-			$('#loginDropdown').show();
 			setTimeout('$("#usernameInput").focus()', 100);
 			//Login Button Listener
 			$('#loginButton').on('click', function() {
