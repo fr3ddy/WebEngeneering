@@ -45,9 +45,15 @@ table {
 	color: #808080;
 	cursor: pointer;
 }
-.sortInactive {
-	color: #d3d3d3;
+
+.detailView-loading {
+	background-image: url(../img/detail_loading.gif);
+	background-repeat: no-repeat;
+	width: 20px;
+	height: 20px;
+	vertical-align: middle;
 }
+
 .form-control {
 	margin: 0px 0 5px 0;
 }
@@ -106,6 +112,11 @@ table {
 	display: inline-block;
 	cursor: pointer;
 }
+
+.sortInactive {
+	color: #d3d3d3;
+}
+
 .stars, #filterStars {
 	color: #ffd700;
 	font-size: 140%;
