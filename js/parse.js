@@ -179,13 +179,12 @@ function parse_initialLoadMovieTable() {
 		}, function(error) {
 			console.log("Error:" + error.message);
 		});
-		
+
 		removeSort();
 	});
 }
 
 function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, cb) {
-
 	var savingSuccessful;
 
 	var movie = new Movie();
@@ -252,14 +251,19 @@ function parse_calculateAverageRating(movieID, callback) {
 	edit.equalTo("movieSeen", true);
 	edit.find({
 		success : function(results) {
-			var sum = 0;
-			for (var i = 0; i < results.length; i++) {
-				sum += results[i].get('rating');
+			if (results.length != 0) {
+				var sum = 0;
+				for (var i = 0; i < results.length; i++) {
+					sum += results[i].get('rating');
+				}
+				callback(sum / results.length);
+			} else {
+				// Gibt es keinen Eintrag in der EDIT, die besagt, dass der Film schonmal gesehen wurde, so ist die durchscnittliche Bewertung 0!
+				callback(0);
 			}
-			callback(sum / results.length);
 		},
 		error : function(error) {
-			// Er kann nicht nichts finden, weil wir ihm ja eine MovieID uebergeben
+			// TODO Fehlermeldung?
 		}
 	});
 }
@@ -270,6 +274,7 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 	movie.first().then(function(movieResult) {
 		return movieResult;
 	}).then(function(movieResult) {
+		var numberOfUserSeen;
 		edit = new Parse.Query(Edit);
 		edit.equalTo('userID', Parse.User.current());
 		edit.equalTo('movieID', movieResult);
@@ -279,8 +284,23 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 			promise = promise.then(function() {
 				if ( typeof (editResult) != 'undefined') {
 					// es gibt schon einen Eintrag zu dem Film und User in der Edit Tabelle
+					if (editResult.get('movieSeen')) {
+						// der letzte aktuelle Wert in der EDIT ist "gesehen" ("true")
+						// TODO ziehe 1 von numberOfUsersSeen in MOVIE ab wenn zu nicht gesehen geändert, ansonsten mach nichts
+						setNumberOfUsersSeen(false, function(numUserSeen) {
+							numberOfUserSeen = numUserSeen;
+						});
+					} else {
+						// der letzte aktuelle Wert in der EDIT ist "nicht gesehen" ("false")
+						// TODO füge 1 von numberOfUsersSeen in MOVIE hinzu wenn zu gesehen geändert, ansonsten mach nichts
+						setNumberOfUsersSeen(true, function(numUserSeen) {
+							numberOfUserSeen = numUserSeen;
+						});
+					}
 					editResult.set('rating', numberOfStars);
 					editResult.set('movieSeen', seen);
+
+					movieResult.set("numberOfUsersSeen", numberOfUserSeen);
 					return editResult.save({
 						success : function() {
 							console.log("edit erfolgreich aktualisiert");
@@ -289,14 +309,11 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 							console.log("edit konnte nicht aktualisiert werden");
 						}
 					});
-				} else {
+				} else { debugger;
 					// es gibt noch keinen Eintrag zu dem Film und User in der Edit Tabelle, somit wird einer hinzugefuegt
-					var numberOfUserSeen;
-					if (seen) {
-						numberOfUserSeen = movieResult.get("numberOfUsersSeen") + 1;
-					} else {
-						numberOfUserSeen = movieResult.get("numberOfUsersSeen");
-					}
+					setNumberOfUsersSeen(true, function(numUserSeen) {
+						numberOfUserSeen = numUserSeen;
+					});
 
 					movieResult.set("numberOfUsersSeen", numberOfUserSeen);
 
@@ -313,6 +330,21 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 			});
 		});
 	});
+	var setNumberOfUsersSeen = function(addUser, callback) {
+		if (addUser) {
+			if (seen) {
+				callback(movieResult.get("numberOfUsersSeen") + 1);
+			} else {
+				callback(movieResult.get("numberOfUsersSeen"));
+			}
+		} else {
+			if (seen) {
+				callback(movieResult.get("numberOfUsersSeen"));
+			} else {
+				callback(movieResult.get("numberOfUsersSeen") - 1);
+			}
+		}
+	};
 }
 
 /* ermittle zu einer imdbID den Owner in der Movie Tabelle */

@@ -69,6 +69,7 @@ $(document).ready(function() {
 		$(this).popover();
 	});
 });
+
 /* unterscheiden zwischen Enter-Event und Speichern-Button-Event. Zusätzlich Anzahl selektierter Sterne fuer Rating herausfinden*/
 function createMovie(event) {
 	/*Tabelleneintrag hinzufuegen*/
@@ -80,6 +81,8 @@ function createMovie(event) {
 		/* 'mouseover' Event ist noch an Bewertung gebunden, daher darf eine Bewertung nicht erfolgen.
 		 * Da der Film aber als 'GESEHEN' bewertet wurde, muss er mit min. 1 Stern bewertet werden */
 		numberOfStars = 1;
+	} else {
+		numberOfStars = $('#createFilmModal').find('.stars').find('.' + ratingIconOn).length;
 	}
 
 	switch(event.type) {
@@ -466,13 +469,10 @@ function setRating(selectedStars, forTableOrDetailedView) {
 	var commaSeperated = selectedStars.toFixed(2).toString().split('.')[1];
 	if (commaSeperated <= 25) {
 		selectedStars = Math.round(selectedStars);
-		console.log("Abrunden: " + selectedStars + "\t Originalwert: " + commaSeperated);
 	} else if (commaSeperated >= 75) {
 		selectedStars = Math.round(selectedStars);
-		console.log("Aufrunden: " + selectedStars + "\t Originalwert: " + commaSeperated);
 	} else {
 		setHalfStarFlag = true;
-		console.log("Halber Stern: " + selectedStars.toFixed(2).toString().split('.')[0] + ".5" + "\t Originalwert: " + commaSeperated);
 	}
 
 	for (var i = 1; i <= 5; i++) {
