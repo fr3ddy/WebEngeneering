@@ -217,7 +217,36 @@ $(document).ready(function() {
 		parse_initializeFacebook();
 		parse_facebookLoginSignUp();
 	});
+	/* -------------------Login / Logout Ende ------------------------------------*/
+	/* Refresh Button dreht sich und läd Tabelle neu */
+	$('.glyphicon-refresh').on("click", function() {
+		parse_initialLoadMovieTable();
+		var flag = false;
+		var span = $(this);
+		var i = 0;
+		var interval = setInterval(function() {
+			i++;
+			if (!flag){
+				animateRefreshSpan(span);
+			}
+			if(i > 100) clearInterval(interval);
+		}, 10);
+	});
 });
+var rotation = 0;
+
+jQuery.fn.rotate = function(degrees) {
+	$(this).css({
+		'-webkit-transform' : 'rotate(' + degrees + 'deg)',
+		'-moz-transform' : 'rotate(' + degrees + 'deg)',
+		'-ms-transform' : 'rotate(' + degrees + 'deg)',
+		'transform' : 'rotate(' + degrees + 'deg)'
+	});
+};
+function animateRefreshSpan(span) {
+	rotation += 5;
+	span.rotate(rotation);
+}
 
 //Call for Facebook Login and Signup
 function changeLoginButtonOnFacebookLoginSignIn() {
@@ -269,22 +298,22 @@ function toggleClassOnAllElements(element) {
 			}
 		}
 		// if (element === '.delete') {
-			// // ueberpruefe ob User eingeloggt ist und Owner oder nur User und mach was
-			// if (Parse.User.current() != null) {
-				// $('#filmtable').find('.delete').each(function() {
-					// var that = $(this);
-					// var movie = new Parse.Query(Movie);
-					// movie.equalTo('imdbID', that.parent().parent().attr('data-imdbid'));
-					// movie.find(function(movieResults) {
-						// // da die imdbID als eindeutige Schluessel gesehen werden kann wird nur ein Element bei der Suche zurueckgegeben
-						// if (movieResults[0].get("Owner").id == Parse.User.current().id) {
-							// that.removeAttr("disabled");
-						// } else {
-							// that.attr("disabled", "disabled");
-						// }
-					// });
-				// });
-			// }
+		// // ueberpruefe ob User eingeloggt ist und Owner oder nur User und mach was
+		// if (Parse.User.current() != null) {
+		// $('#filmtable').find('.delete').each(function() {
+		// var that = $(this);
+		// var movie = new Parse.Query(Movie);
+		// movie.equalTo('imdbID', that.parent().parent().attr('data-imdbid'));
+		// movie.find(function(movieResults) {
+		// // da die imdbID als eindeutige Schluessel gesehen werden kann wird nur ein Element bei der Suche zurueckgegeben
+		// if (movieResults[0].get("Owner").id == Parse.User.current().id) {
+		// that.removeAttr("disabled");
+		// } else {
+		// that.attr("disabled", "disabled");
+		// }
+		// });
+		// });
+		// }
 		// }
 		$(this).fadeToggle('1000', function() {
 			$(this).toggleClass('loggedOut loggedIn');
