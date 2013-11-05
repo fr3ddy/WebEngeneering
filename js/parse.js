@@ -352,8 +352,8 @@ function parse_facebookLoginSignUp() {
 				changeLoginButtonOnFacebookLoginSignIn();
 			}
 			// Ich versuche noch den Usernamen und die Email zu bekommen
-			FB.api('/me?fields=first_name,email', function(response) {
-				Parse.User.current().setUsername(response.first_name);
+			FB.api('/me?fields=username,email', function(response) {
+				Parse.User.current().setUsername(response.username);
 				Parse.User.current().setEmail(response.email);
 				Parse.User.saveAll(Parse.User.current(), {
 					success : function() {
