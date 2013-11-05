@@ -121,7 +121,9 @@ function filterTable() {
 //überprüft ob die übergebene Zeile einem Filterkriterium entspricht.
 function filterRow(actRow) {
 	if (filter.movieRating != null) {
-		if ($(actRow).find('.tableRating .stars').data('rated') != filter.movieRating) {
+		var rating 			= parseFloat($(actRow).find('.tableRating .stars').data('rated'));
+		var filterRating	= parseFloat(filter.movieRating);
+		if (rating < (filterRating - 0.9) || filterRating < rating) {
 			return true;
 		}
 	}
