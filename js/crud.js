@@ -84,11 +84,11 @@ function createMovie(event) {
 
 	switch(event.type) {
 		case ('click'):
-			searchMovie($(this).parent().parent().find('.stars').find('.' + ratingIconOn).length, $('#filmTitle').val(), seen);
+			searchMovie(numberOfStars, $('#filmTitle').val(), seen);
 			break;
 		case ('keypress'):
 			if (event.keyCode === 13) {
-				searchMovie($(this).parent().find('.stars').find('.' + ratingIconOn).length, $('#filmTitle').val(), seen);
+				searchMovie(numberOfStars, $('#filmTitle').val(), seen);
 			}
 			break;
 		default:
