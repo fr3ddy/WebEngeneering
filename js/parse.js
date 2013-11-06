@@ -123,7 +123,7 @@ function parse_initialLoadMovieTable() {
 					trID : 'tr-' + ++index,
 					editButton : null,
 					deleteButton : null,
-					seen : seenText + " (" + movieResult.get('numberOfUsersSeen') + " von " + userCount + ")",
+					seen : "Seen by " + movieResult.get('numberOfUsersSeen') + " of "+ userCount + " Users",
 					numberOfStars : movieResult.get('avgRating'),
 					movieTitle : movieResult.get('Title'),
 					imdbID : movieResult.get('imdbID'),
