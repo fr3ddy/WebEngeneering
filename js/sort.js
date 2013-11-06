@@ -97,6 +97,10 @@ $(document).ready(function() {
 
 //---------------------------------------------Sortierung
 function removeSort() {
+	
+	function numsort(a, b){
+		return a-b;
+	}
 	//Wenn keine Filme eingetragen sind wird nicht sortiert
 	if ($('#filmtable').find('tr').length !== 0) {
 		//erste Zeile in der Tabelle wird selektiert
@@ -108,26 +112,25 @@ function removeSort() {
 		//mit next() wird dann die nächste Zeile selektiert
 		//wenn die selektierte Zeile leere ist wird die Schleife abgebrochen
 		while (actRow.length != 0) {
-			rows[counter] = actRow.attr('id');
+			var segments = actRow.attr('id').split('-');
+			rows[counter] = segments[1];
 			actRow = actRow.next();
 			counter++;
 		}
 
 		//sortiert das Array nach den IDs
-		rows.sort();
+		rows.sort(numsort);
 
 		//Aufbau der sortierten Tabelle
 		//erste Zeile in den Tabellen-Bauch haengen
-		var segments = rows[0].split('-');
-		actRow = '#tr-' + segments[1];
+		actRow = '#tr-' + rows[0];
 
 		$(actRow).appendTo($('#list tbody'));
 		var prevRow = actRow;
 
 		//nun die restlichen Zeilen anhängen
 		for (var i = 1; i < rows.length; i++) {
-			var segments = rows[i].split('-');
-			actRow = '#tr-' + segments[1];
+			actRow = '#tr-' + rows[i];
 
 			$(actRow).insertAfter($(prevRow));
 				
