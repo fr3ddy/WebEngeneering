@@ -190,6 +190,10 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 	if (filter.movieTitle != null) {
 		removeTitleFilter();
 	}
+	
+	// ordnet die Eintraege in der richtigen Reihenfolge nach ihren id-Werten
+	removeSort();
+
 	/*ID Ermitteln*/
 	var newID = $('#filmtable').find('tr').last().attr('id');
 	//von der letzten Zeile in der Tabelle wir die ID gesucht um die neue zu ermitteln

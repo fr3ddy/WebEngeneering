@@ -163,7 +163,7 @@ function parse_initialLoadMovieTable() {
 			//Loeche-Popover koennen erst an dieser Stelle den Zeilen hinzugefügt werden,
 			//da diese nur existierenden Elementen zugeteilt werden können.
 
-			for (var i = 0; i < rows.length; i++) {
+			for (var i = 1; i <= rows.length; i++) {
 				/*Initialisiere PopOver fuer Delete-Button*/
 				$('#tr-' + i).find('.delete').popover({
 					trigger : 'focus',
@@ -178,8 +178,6 @@ function parse_initialLoadMovieTable() {
 		}, function(error) {
 			console.log("Error:" + error.message);
 		});
-		// ordnet die Eintraege in der richtigen Reihenfolge nach ihren id-Werten
-		removeSort();
 	});
 }
 
