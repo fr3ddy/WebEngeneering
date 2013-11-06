@@ -17,7 +17,7 @@ label {
 table {
 	cursor: default;
 }
-.alert {
+.customAlert {
 	position: fixed;
 	z-index: 10000;
 	width: 100%;
@@ -97,7 +97,7 @@ table {
 .navbar-static-top {
 	margin-bottom: 19px;
 }
-.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
+.navbar-default .navbar-brand:hover{
 	color: #fff;
 	background-color: #0088CC;
 }
@@ -194,6 +194,11 @@ table {
 #loginButton, #logoutButton {
 	margin-top: 2px;
 }
+
+#refreshTableButton, #sortTitleASC, #sortTitleDESC, #sortRatingASC, #sortRatingDESC {
+	cursor: pointer;
+}
+
 #sortButtonTitle {
 	margin-left: 40px;
 	margin-top: -20px;

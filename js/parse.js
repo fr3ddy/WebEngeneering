@@ -368,10 +368,8 @@ function parse_getErrorMessage(error) {
 	}
 
 	//@formatter:off
-	$('.customAlert').html('<div class="alert alert-danger alert-dismissable">' 
-								+ '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' 
-								+ errorMessage 
-							+ '</div>');
+	$('.customAlert').html('<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' 
+								+ errorMessage );
 	//@formatter:on
 }
 
