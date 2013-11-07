@@ -222,6 +222,7 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, cb) {
 		});
 
 	}, function(error){
+		('#createFilmModal').hide();
 		parse_getErrorMessage(error);
 	});
 }
