@@ -139,7 +139,7 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 	$('#createFilmModal').find('#saveFilm').hide();
 	$('#createFilmModal').find('#chooseTable').show();
 	$('#createFilmModal').find('#chooseTable tbody').empty();
-	
+
 	for (var i = 0; i < foundMovies.length; i++) {
 		$(chooseTable({
 			imdbID : foundMovies[i].imdbID,
@@ -162,12 +162,13 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 					$('#createFilmModal').find('#chooseTable').hide();
 
 				} else {
-					//TODO Fehlermeldung für Eintragung in DB nicht erfolgreich
-					alert("Wasn't able to add movie to DB");
+					var error = "Wasn't able to add movie to DB";
+					parse_getErrorMessage(error);
 				}
 			});
 		} else {
-			alert("Movie does already exist");
+			var error = "Movie does already exist!";
+			parse_getErrorMessage(error);
 		}
 	});
 }
@@ -190,7 +191,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 	if (filter.movieTitle != null) {
 		removeTitleFilter();
 	}
-	
+
 	// ordnet die Eintraege in der richtigen Reihenfolge nach ihren id-Werten
 	removeSort();
 
@@ -294,8 +295,7 @@ function changeMovieValues(event) {
 /* Die geaenderten Werte aus dem 'editFilmModal' werden in die entsprechende Zeile der Tabelle uebertragen. 'This' entspricht dem <div>, das die Sterne umgibt */
 function changeTableRowValues(numberOfStars) {
 
-	$('#filmtable').find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text().toLowerCase());
-	debugger;
+	$('#filmtable').find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text().toLowerCase()); debugger;
 	// wurde ein Film als 'GESEHEN' markiert, erhält er die Anzahl an Sternen, mit denen er bewertet wurde. Ansonsten sind alle Sterne leer
 	if (seenText.toUpperCase() === $(this).find('.on').text()) {
 		if (mouseoverForRatingOn) {
@@ -465,9 +465,9 @@ function toggleRatingClasses(elem, prev) {
 /* stellt ein, wie viele Sterne beim Rating in der Tabelle oder Bearbeitungsansicht ausgefuellt sind */
 function setRating(selectedStars, forTableOrDetailedView) {
 	var numberOfStars = selectedStars;
-	var starFull = _.template('<span class="glyphicon ' + ratingIconOn + '" title="<%- title %>">'+ ratingIconHTML +'</span>');
-	var starEmpty = _.template('<span class="glyphicon ' + ratingIconOff + '" title="<%- title %>">'+ ratingIconHTML +'</span>');
-	var starHalf = _.template('<span class="glyphicon ' + ratingIconHalf + '" title="<%- title %>">'+ ratingIconHTML +'</span>');
+	var starFull = _.template('<span class="glyphicon ' + ratingIconOn + '" title="<%- title %>">' + ratingIconHTML + '</span>');
+	var starEmpty = _.template('<span class="glyphicon ' + ratingIconOff + '" title="<%- title %>">' + ratingIconHTML + '</span>');
+	var starHalf = _.template('<span class="glyphicon ' + ratingIconHalf + '" title="<%- title %>">' + ratingIconHTML + '</span>');
 	var result = "";
 	var avg = "";
 	var tooltip = "";

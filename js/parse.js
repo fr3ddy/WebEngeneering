@@ -377,6 +377,7 @@ function parse_getErrorMessage(error) {
 			errorMessage = "This is it the apocalypse ;) - Thanks to Imagine Dragons ";
 			break;
 		default:
+			errorMessage = error;
 			break;
 	}
 
