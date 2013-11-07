@@ -123,7 +123,7 @@ function parse_initialLoadMovieTable() {
 					trID : 'tr-' + ++index,
 					editButton : null,
 					deleteButton : null,
-					seen : seenText + " (" + movieResult.get('numberOfUsersSeen') + " von " + userCount + ")",
+					seen : "Seen by " + movieResult.get('numberOfUsersSeen') + " of " + userCount + " Users",
 					numberOfStars : movieResult.get('avgRating'),
 					movieTitle : movieResult.get('Title'),
 					imdbID : movieResult.get('imdbID'),
@@ -182,33 +182,48 @@ function parse_initialLoadMovieTable() {
 }
 
 function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, cb) {
-	var movie = new Movie();
-	movie.set("imdbID", imdbID);
-	movie.set("avgRating", numberOfStars);
-	movie.set("Title", movieTitle);
-	movie.set("Owner", Parse.User.current());
-
-	var numberOfUserSeen;
-	if (seen) {
-		numberOfUserSeen = 1;
-	} else {
-		numberOfUserSeen = 0;
-	}
-
-	movie.set("numberOfUsersSeen", numberOfUserSeen);
-
-	movie.save(null, {
-		success : function(movie) {
-			parse_saveRating(numberOfStars, seen, movie);
-
-			cb(true);
-		},
-		error : function(movie, error) {
-			// TODO schoenere Fehlermeldung
-			alert('Failed to create new object, with error code: ' + error.description);
-
-			cb(false);
+	var check = new Parse.Query(Movie);
+	check.equalTo('imdbID', imdbID);
+	check.first(function(checkResult) {
+		return checkResult;
+	}).then(function(checkResult) {
+		if (checkResult == null) {
+			return true;
 		}
+		return Parse.Promise.error("Movie does already exists!");
+	}).then(function() {
+		var movie = new Movie();
+		movie.set("imdbID", imdbID);
+		movie.set("avgRating", numberOfStars);
+		movie.set("Title", movieTitle);
+		movie.set("Owner", Parse.User.current());
+
+		var numberOfUserSeen;
+		if (seen) {
+			numberOfUserSeen = 1;
+		} else {
+			numberOfUserSeen = 0;
+		}
+
+		movie.set("numberOfUsersSeen", numberOfUserSeen);
+
+		movie.save(null, {
+			success : function(movie) {
+				parse_saveRating(numberOfStars, seen, movie);
+
+				cb(true);
+			},
+			error : function(movie, error) {
+				// TODO schoenere Fehlermeldung
+				alert('Failed to create new object, with error code: ' + error.description);
+
+				cb(false);
+			}
+		});
+
+	}, function(error){
+		('#createFilmModal').hide();
+		parse_getErrorMessage(error);
 	});
 }
 
