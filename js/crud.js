@@ -118,17 +118,16 @@ function searchMovie(numberOfStars, movieTitle, seen) {
 					if (success) {
 						addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
 					} else {
-						//TODO Fehlermeldung für Eintragung in DB nicht erfolgreich
-						alert("Wasn't able to add movie to DB");
+						parse_getErrorMessage("Wasn't able to add movie to DB");
 					}
 				});
 			} else {
 				$('#createFilmModal').modal('hide');
-				//TODO Fehlermeldung weil Film nicht gefunden
+				parse_getErrorMessage('No Movie found!');				
 			}
 		} else {
 			$('#createFilmModal').modal('hide');
-			//TODO Fehlermeldung weil Film nicht gefunden
+			parse_getErrorMessage('No Movie found!');
 		}
 	});
 }

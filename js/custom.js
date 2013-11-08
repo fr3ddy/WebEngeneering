@@ -315,8 +315,7 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 	// alternative Quelle könnte "http://mymovieapi.com/?title=" sein
 	$.getJSON("http://www.omdbapi.com/?i=" + imdbID + "&plot=full").done(function(data) {
 		if (data.Response == "False") {
-			// TODO Fehlermeldung machen
-			alert('Fehler');
+			parse_getErrorMessage("Error with connecting to OMDB Api! Try again later!");
 		} else {// data.Response == "True"
 			var poster;
 			if (data.Poster === "N/A") {

@@ -415,7 +415,6 @@ function parse_facebookLoginSignUp() {
 	}).then(function() {
 		parse_initialLoadMovieTable();
 	}, function(error) {
-		// TODO bessere Fehlermeldung
-		alert("Error: " + error.message);
+		parse_getErrorMessage(error);
 	});
 }
