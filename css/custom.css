@@ -99,7 +99,7 @@ table {
 .navbar-static-top {
 	margin-bottom: 19px;
 }
-.navbar-default .navbar-brand:hover{
+.navbar-default .navbar-brand:hover {
 	color: #fff;
 	background-color: #0088CC;
 }
@@ -201,7 +201,7 @@ table {
 	cursor: pointer;
 }
 
-#refreshTableButton{
+#refreshTableButton {
 	margin-left: 5px;
 }
 
@@ -225,4 +225,9 @@ table {
 	padding-left: 75px;
 	padding-bottom: 0px;
 	padding-top: 0px;
+}
+
+#welcometext {
+	padding-right: 15px;
+	margin-top: -20px;
 }

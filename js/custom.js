@@ -186,6 +186,7 @@ $(document).ready(function() {
 	// prüft ob angemeldet oder nicht!
 	if (Parse.User.current() != null) {
 		//@formatter:off
+		parse_setWelcomeText();
 		isLoggedInOrNot();
 		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
 		$('#logoutButton').on('click', function() {
@@ -201,6 +202,7 @@ $(document).ready(function() {
 			});
 			$('#passwordInput').val("");
 			$('#usernameInput').val("");
+			parse_setWelcomeText();
 			isLoggedInOrNot();
 		});
 		//@formatter:on
@@ -286,6 +288,7 @@ function changeLoginButtonOnFacebookLoginSignIn() {
 		});
 		$('#passwordInput').val("");
 		$('#usernameInput').val("");
+		parse_setWelcomeText();
 		isLoggedInOrNot();
 	});
 	//@formatter:on

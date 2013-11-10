@@ -56,11 +56,13 @@ function parse_loginUser(username, password) {
 			});
 			$('#passwordInput').val("");
 			$('#usernameInput').val("");
+			parse_setWelcomeText();
 			isLoggedInOrNot();
 		});
 		isLoggedInOrNot();
 		$('#submitLoginButton').button('reset');
 	}).then(function() {
+		parse_setWelcomeText();
 		parse_initialLoadMovieTable();
 	}, function(error) {
 		$('#submitLoginButton').button('reset');
@@ -413,8 +415,19 @@ function parse_facebookLoginSignUp() {
 			return Parse.Promise.error("User cancelled the Facebook login or did not fully authorize.");
 		}
 	}).then(function() {
+		parse_setWelcomeText();
 		parse_initialLoadMovieTable();
 	}, function(error) {
 		parse_getErrorMessage(error);
 	});
+}
+
+function parse_setWelcomeText(){
+	var username;
+	if(Parse.User.current() != null){
+		username = Parse.User.current().get("username");
+	}else{
+		username = "Guest";
+	}
+	$('#welcometext').find("name").html(username);
 }
