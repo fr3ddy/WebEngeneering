@@ -43,22 +43,12 @@ function parse_loginUser(username, password) {
 			Parse.User.logOut();
 			parse_initialLoadMovieTable();
 
-			setTimeout('$("#usernameInput").focus()', 100);
-			//Login Button Listener
-			$('#loginButton').on('click', function() {
-				if (!$(this).parent().parent().hasClass("open")) {
-					$('#loginDropdown').show();
-					setTimeout('$("#usernameInput").focus()', 100);
-				} else {
-					//Bei klick auf Login ausblenden vom Inputfeld
-					$('#loginDropdown').hide();
-				}
-			});
 			$('#passwordInput').val("");
 			$('#usernameInput').val("");
 			parse_setWelcomeText();
 			isLoggedInOrNot();
 		});
+		$('#menu1').removeClass("open");
 		isLoggedInOrNot();
 		$('#submitLoginButton').button('reset');
 	}).then(function() {
@@ -392,6 +382,7 @@ function parse_getErrorMessage(error) {
 function parse_facebookLoginSignUp() {
 	Parse.FacebookUtils.logIn("email", {
 		success : function(user) {
+			$('#menu1').removeClass("open");
 			if (!user.existed()) {
 				changeLoginButtonOnFacebookLoginSignIn();
 			} else {
