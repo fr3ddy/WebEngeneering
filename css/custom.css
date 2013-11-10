@@ -201,6 +201,10 @@ table {
 	cursor: pointer;
 }
 
+#refreshTableButton{
+	margin-left: 5px;
+}
+
 #sortButtonTitle {
 	margin-left: 40px;
 	margin-top: -20px;
