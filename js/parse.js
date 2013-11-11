@@ -36,21 +36,9 @@ function parse_registerUser(username, password) {
 
 function parse_loginUser(username, password) {
 	Parse.User.logIn(username, password).then(function(user) {
-		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton"><span class="glyphicon glyphicon-remove-circle"></span> Logout</button>');
-		$('#logoutButton').on('click', function() {
-			$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
-			$('#menu1').removeClass("open");
-			Parse.User.logOut();
-			parse_initialLoadMovieTable();
-
-			$('#passwordInput').val("");
-			$('#usernameInput').val("");
-			$('#welcometext').slideToggle();
-			//parse_setWelcomeText();
-			isLoggedInOrNot();
-		});
 		$('#menu1').removeClass("open");
 		isLoggedInOrNot();
+		allLoginActions();
 		$('#submitLoginButton').button('reset');
 	}).then(function() {
 		parse_setWelcomeText();

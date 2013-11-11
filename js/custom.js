@@ -56,7 +56,7 @@ var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %
 										+ '</td>' 
 										+ '<td>' 
 											+ '<%= deleteButton %>' 
-										+ '</td>' 
+										+ '</td>'
 								+ '</tr>');
 
 var detailedMovieView = _.template('<div class="container">' 
@@ -185,28 +185,9 @@ $(document).ready(function() {
 	/*-----LOGIN--------*/
 	// prüft ob angemeldet oder nicht!
 	if (Parse.User.current() != null) {
-		//@formatter:off
 		parse_setWelcomeText();
 		isLoggedInOrNot();
-		$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
-		$('#logoutButton').on('click', function() {
-			parse_initialLoadMovieTable();
-			$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
-			$('#menu1').removeClass("open");
-			Parse.User.logOut();
-
-			setTimeout('$("#usernameInput").focus()', 100);
-			//Login Button Listener
-			$('#loginButton').on('click', function() {
-				setTimeout('$("#usernameInput").focus()', 100);
-			});
-			$('#passwordInput').val("");
-			$('#usernameInput').val("");
-			$('#welcometext').slideToggle();
-			//parse_setWelcomeText();
-			isLoggedInOrNot();
-		});
-		//@formatter:on
+		allLoginActions();
 	}
 	//Login Button Listener
 	$('#loginButton').on('click', function() {
@@ -277,23 +258,7 @@ function changeLoginButtonOnFacebookLoginSignIn() {
 	//@formatter:off
 	$('#menu1').removeClass("open");
 	isLoggedInOrNot();
-	$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
-	$('#logoutButton').on('click', function() {
-		parse_initialLoadMovieTable();
-		$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
-			Parse.User.logOut();
-			setTimeout('$("#usernameInput").focus()', 100);
-		//Login Button Listener
-		$('#loginButton').on('click', function() {
-			setTimeout('$("#usernameInput").focus()', 100);
-		});
-		$('#passwordInput').val("");
-		$('#usernameInput').val("");
-		$('#welcometext').slideToggle();
-		//parse_setWelcomeText();
-		isLoggedInOrNot();
-	});
-	//@formatter:on
+	allLoginActions();
 }
 
 // Toggle Klassen fuer Edit-, Delete- und Hinzufuege-Buttons
@@ -312,6 +277,29 @@ function toggleClassOnAllElements(element) {
 	});
 }
 
+function allLoginActions() {
+	//@formatter:off
+	$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
+	$('#logoutButton').on('click', function() {
+		parse_initialLoadMovieTable();
+		$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
+		$('#menu1').removeClass("open");
+		Parse.User.logOut();
+
+		setTimeout('$("#usernameInput").focus()', 100);
+		//Login Button Listener
+		$('#loginButton').on('click', function() {
+			setTimeout('$("#usernameInput").focus()', 100);
+		});
+		$('#passwordInput').val("");
+		$('#usernameInput').val("");
+		$('#welcometext').slideToggle();
+	//parse_setWelcomeText();
+		isLoggedInOrNot();
+	});
+	//@formatter:on
+}
+
 /*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
 /* Detailansicht wird aufgebaut. Dafuer werden Daten von der OMDB Database als JSON geholt */
 function buildDetailView(numberOfStars, movieSeen, imdbID) {
@@ -328,7 +316,7 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 			} else {
 				poster = data.Poster;
 			}
-				
+
 			parse_getOwnerOfMovie(imdbID, function(username) {
 				$('#detailedView').html(detailedMovieView({
 					movieTitle : data.Title,
@@ -352,7 +340,7 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 				}, function() {
 					$('#home').hide();
 				});
-				
+
 				that.toggleClass('glyphicon-search detailView-loading');
 			});
 
