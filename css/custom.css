@@ -176,6 +176,7 @@ table {
 	vertical-align: bottom;
 	border-bottom: 2px solid #0088CC;
 }
+
 #closeDetailedView {
 	left: -20px;
 	color: black;
@@ -204,7 +205,7 @@ table {
 	vertical-align: middle;
 }
 
-#headContainer .btn .btn-default .btn-sm {
+#filterButton, #add, #refreshTableButton{
 	margin: 0 1.5px 0 1.5px;	
 }
 
@@ -218,12 +219,8 @@ table {
 	margin-top: 2px;
 }
 
-#refreshTableButton, #sortTitleASC, #sortTitleDESC, #sortRatingASC, #sortRatingDESC {
+#sortTitleASC, #sortTitleDESC, #sortRatingASC, #sortRatingDESC {
 	cursor: pointer;
-}
-
-#refreshTableButton {
-	margin-left: 5px;
 }
 
 #sortButtonTitle {
