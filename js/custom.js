@@ -60,7 +60,7 @@ var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %
 								+ '</tr>');
 
 var detailedMovieView = _.template('<div class="container">' 
-										+ '<h3 id="detailViewMovieTitle"><%- movieTitle %>' 
+										+ '<h3 id="detailViewMovieTitle" class="heading"><%- movieTitle %>' 
 											+ '<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>' 
 										+ '</h3>' 
 										+ '<h6><span class="glyphicon glyphicon-user"/>  <%= username %></h6>' 

@@ -7,7 +7,7 @@
 		<meta name="author" content="">
 
 		<title>Movie Database</title>
-		
+
 		<!-- Facebook SDK -->
 		<script src="http://connect.facebook.net/en_US/all.js" id="facebook-jssdk" ></script>
 
@@ -75,14 +75,14 @@
 
 										<div class="row">
 											<div class="col-xs-9" style="padding-right: 0px;">
-											<button class="btn btn-primary form-control" id="submitLoginButton" data-loading-text="Loggin In..." style="width: 100%;">
-												Log In
-											</button>
+												<button class="btn btn-primary form-control" id="submitLoginButton" data-loading-text="Loggin In..." style="width: 100%;">
+													Log In
+												</button>
 											</div>
 											<div class="col-xs-3" style="padding-left: 8px;">
-											<button class="btn btn-primary" id="loginFacebook">
-												<img src="img/facebook-icon.png" />
-											</button>
+												<button class="btn btn-primary" id="loginFacebook">
+													<img src="img/facebook-icon.png" />
+												</button>
 											</div>
 										</div>
 										<button class="btn btn-link" id="register">
@@ -94,17 +94,27 @@
 						</li>
 					</ul>
 					<div class="navbar-text navbar-right" id="welcometext">
-						Welcome, <name>Guest</name>!
+						Welcome,
+						<name>
+						</name>!
 					</div>
 				</div>
 			</div>
 		</div>
 		<div id="home">
 			<div class="container" id="list">
-				<h1>Movie List
-				<button data-toggle="modal" class="btn btn-default btn-sm pull-right loggedOut" id='add'>
-					<span class="glyphicon glyphicon-plus"></span><b> Add new Movie</b>
-				</button></h1>
+				<h1 class="heading">Movie List
+				<div id="headContainer">
+					<button class="btn btn-default btn-sm pull-right"  id="filterButton">
+						<span class="glyphicon glyphicon-filter"></span>
+					</button>
+					<button class="btn btn-default btn-sm pull-right">
+						<span class="glyphicon glyphicon-refresh" id="refreshTableButton"></span>
+					</button>
+					<button data-toggle="modal" class="btn btn-default btn-sm pull-right loggedOut" id='add'>
+						<span class="glyphicon glyphicon-plus"></span><b> Add new Movie</b>
+					</button>
+				</div></h1>
 				<table class="table table-hover">
 					<thead>
 						<tr id="tr-0">
@@ -122,11 +132,7 @@
 								<span class="glyphicon glyphicon-chevron-up sortInactive" id="sortRatingASC"></span><span class="glyphicon glyphicon-chevron-down sortInactive" id="sortRatingDESC"></span>
 							</div></th>
 							<th><!--Bearbeiten--></th>
-							<th><!--Loeschen/Filter-->
-							<button class="btn btn-default btn-sm"  id="filterButton">
-								<span class="glyphicon glyphicon-filter"></span>
-							</button>
-							<span class="glyphicon glyphicon-refresh" id="refreshTableButton"></span></th>
+							<th><!--Loeschen/Filter--></th>
 						<tr>
 					</thead>
 					<tbody id="filmtable"></tbody>
