@@ -228,6 +228,8 @@ table {
 }
 
 #welcometext {
-	padding-right: 15px;
-	margin-top: -20px;
+	display: none;
+	right: 0;
+	/*padding-right: 15px;
+	margin-top: -20px;*/
 }

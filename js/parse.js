@@ -45,7 +45,8 @@ function parse_loginUser(username, password) {
 
 			$('#passwordInput').val("");
 			$('#usernameInput').val("");
-			parse_setWelcomeText();
+			$('#welcometext').slideToggle();
+			//parse_setWelcomeText();
 			isLoggedInOrNot();
 		});
 		$('#menu1').removeClass("open");
@@ -421,4 +422,5 @@ function parse_setWelcomeText(){
 		username = "Guest";
 	}
 	$('#welcometext').find("name").html(username);
+	$('#welcometext').slideToggle();
 }

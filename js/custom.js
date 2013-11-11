@@ -202,7 +202,8 @@ $(document).ready(function() {
 			});
 			$('#passwordInput').val("");
 			$('#usernameInput').val("");
-			parse_setWelcomeText();
+			$('#welcometext').slideToggle();
+			//parse_setWelcomeText();
 			isLoggedInOrNot();
 		});
 		//@formatter:on
@@ -288,7 +289,8 @@ function changeLoginButtonOnFacebookLoginSignIn() {
 		});
 		$('#passwordInput').val("");
 		$('#usernameInput').val("");
-		parse_setWelcomeText();
+		$('#welcometext').slideToggle();
+		//parse_setWelcomeText();
 		isLoggedInOrNot();
 	});
 	//@formatter:on
