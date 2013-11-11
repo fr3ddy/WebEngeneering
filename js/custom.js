@@ -98,7 +98,7 @@ var popoverFilterContent = '<fieldset id="filterBox">'
 								+ '<div class="form-group row">' 
 									+ '<div class="input-group col-sm-10" style="width: 252px;">' 
 										+ '<span class="input-group-addon"><span class="glyphicon glyphicon-film"></span></span>' 
-										+ '<input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Movie Title" onkeyup="movieTitleFilterKeyUp()">' 
+										+ '<input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Movie Title" onkeyup="movieTitleFilterKeyUp()" style="height: 45px;">' 
 									+ '</div>' + '<div class="col-sm-2" style="margin-left: -25px;">' 
 									+ '<button type="button" class="close" aria-hidden="true" onclick="removeTitleFilter()">' 
 										+ '×' 
@@ -224,10 +224,10 @@ $(document).ready(function() {
 	});
 	/* -------------------Login / Logout Ende ------------------------------------*/
 	/* Refresh Button dreht sich und läd Tabelle neu */
-	$('.glyphicon-refresh').on("click", function() {
+	$('#refreshTableButton').on("click", function() {
 		parse_initialLoadMovieTable();
 		var flag = false;
-		var span = $(this);
+		var span = $(this).find(".glyphicon-refresh");
 		var i = 0;
 		var interval = setInterval(function() {
 			i++;
