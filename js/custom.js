@@ -140,7 +140,7 @@ var popoverFilterContent = '<fieldset id="filterBox">'
 						+ '</fieldset>';
 						
 var popoverContent = 'Are you sure you want to delete the movie?<br>'
-					+'<button type="button" class="btn btn-primary btn-danger" onclick="removeMovie($(this))">Delete</button>'
+					+'<button type="button" class="btn btn-primary btn-danger" onclick="removeMovie($(this).parent().parent().parent().parent())">Delete</button>'
 					+'<button type="button" class="btn btn-default" data-dismiss="popover">No</button>';
 
 var chooseTable = _.template('<tr data-imdbID="<%- imdbID %>">'

@@ -320,7 +320,13 @@ function changeTableRowValues(numberOfStars) {
 
 /* Loescht ausgewaehlte Zeile aus Tabelle*/
 function removeMovie(element) {
-	$(element).parent().parent().parent().parent().remove();
+	parse_removeMovie($(element).attr('data-imdbID'), function(deleteRow){
+		if(deleteRow){
+			$(element).remove();
+		}else{
+			$(element).find('td:last').find('button').attr('disabled', 'disabled');
+		}
+	});
 }
 
 /*------------------------------------- Anfang SEEN / NOT SEEN (GESEHEN / NICHT GESEHEN) ---------------------------------------------------------------------------------------- */

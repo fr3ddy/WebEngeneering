@@ -424,3 +424,33 @@ function parse_setWelcomeText(){
 	$('#welcometext').find("name").html(username);
 	$('#welcometext').slideToggle();
 }
+
+function parse_removeMovie(imdbID, cb){
+	var movie = new Parse.Query(Movie);
+	movie.equalTo('imdbID', imdbID);
+	movie.first(function(checkResult) {
+		return checkResult;
+	}).then(function(checkResult) {
+		if (checkResult._hasData) {
+			return checkResult;
+		}
+		return Parse.Promise.error("Movie ID not found!");
+	}).then(function(checkResult){
+		var editEntry	= new Parse.Query(Edit);
+		editEntry.equalTo('movieID', checkResult);
+		editEntry.notEqualTo('userID', Parse.User.current());
+		editEntry.include('userID');
+		editEntry.first().then(function(entrie){
+			if(typeof(entrie) != 'undefined'){
+				checkResult.set('Owner', entrie.get('userID'));
+				checkResult.save();	
+				cb(false);			
+			}else{
+				checkResult.destroy();
+				cb(true);				
+			}
+		});
+	}, function(error){
+		alert("AAAAA HILFE " + error);
+	});
+}
