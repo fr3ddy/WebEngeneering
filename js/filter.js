@@ -31,6 +31,12 @@ $(document).ready(function() {
 				$('#filterStar-' + i).removeClass('glyphicon-star');
 			}
 		}
+
+		if (Parse.User.current() != null) {
+			$('#ratingFilterRow').show();
+		} else {
+			$('#ratingFilterRow').hide();
+		}
 	});
 });
 
@@ -121,8 +127,8 @@ function filterTable() {
 //überprüft ob die übergebene Zeile einem Filterkriterium entspricht.
 function filterRow(actRow) {
 	if (filter.movieRating != null) {
-		var rating 			= parseFloat($(actRow).find('.tableRating .stars').data('rated'));
-		var filterRating	= parseFloat(filter.movieRating);
+		var rating = parseFloat($(actRow).find('.tableRating .stars').data('rated'));
+		var filterRating = parseFloat(filter.movieRating);
 		if (rating < (filterRating - 0.9) || filterRating < rating) {
 			return true;
 		}

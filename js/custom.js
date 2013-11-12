@@ -105,7 +105,7 @@ var popoverFilterContent = '<fieldset id="filterBox">'
 									+ '</button>' 
 									+ '</div>' 
 								+ '</div>' 
-								+ '<div class="row">' 
+								+ '<div class="row" id="ratingFilterRow">' 
 									+ '<div class="col-sm-10">' 
 										+ '<div class="btn-group" data-toggle="buttons" style="width: 223px;">' 
 											+ '<label class="btn btn-primary"  onclick="filterWatchStatusSet(true)">' 
@@ -301,6 +301,7 @@ function isLoggedInOrNot() {
 	// toggleClassOnAllElements('.edit');
 	// toggleClassOnAllElements('.delete');
 	toggleClassOnAllElements('#add');
+	toggleClassOnAllElements('#ratingFilterRow');
 }
 
 /*Setzt die Klasse fuer Parameter 'element' auf 'loggedOut' und entfernt Klasse 'loggedIn', falls der User nicht eingeloggt ist. Ansonsten umgekehrt. */
