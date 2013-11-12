@@ -74,6 +74,15 @@ table {
 	position: absolute;
 }
 
+.heading {
+	display: table;
+	width: 100%;
+	padding: 5px 10px 5px 10px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	background-color: #f0f0f0;
+}
+
 .loading-Indicator {
 	position: fixed;
 	width: 100%;
@@ -121,7 +130,7 @@ table {
 
 .stars, #filterStars {
 	color: #ffd700;
-	font-size: 140%;
+	font-size: 20px;
 	display: inline-block;
 }
 .switch-wrapper {
@@ -167,9 +176,12 @@ table {
 	vertical-align: bottom;
 	border-bottom: 2px solid #0088CC;
 }
+
 #closeDetailedView {
 	left: -20px;
-	font-size: inherit;
+	color: black;
+	font-size: 113%;
+	opacity: 1;
 	padding: 0;
 	cursor: pointer;
 	background: transparent;
@@ -187,6 +199,16 @@ table {
 	background-color: #fff;
 	cursor: default;
 }
+
+#headContainer {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+#filterButton, #add, #refreshTableButton{
+	margin: 0 1.5px 0 1.5px;	
+}
+
 #home {
 	width: 100%;
 	height: 90%;
@@ -197,12 +219,8 @@ table {
 	margin-top: 2px;
 }
 
-#refreshTableButton, #sortTitleASC, #sortTitleDESC, #sortRatingASC, #sortRatingDESC {
+#sortTitleASC, #sortTitleDESC, #sortRatingASC, #sortRatingDESC {
 	cursor: pointer;
-}
-
-#refreshTableButton {
-	margin-left: 5px;
 }
 
 #sortButtonTitle {
@@ -230,6 +248,4 @@ table {
 #welcometext {
 	display: none;
 	right: 0;
-	/*padding-right: 15px;
-	margin-top: -20px;*/
 }
