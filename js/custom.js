@@ -82,16 +82,16 @@ var detailedMovieView = _.template('<div class="container">'
 //Initialisierung des Popovers
 var popoverFilterContent = '<fieldset id="filterBox">' 
 								+ '<div class="form-group row">' 
-									+ '<div class="input-group col-sm-10" style="width: 252px;">' 
+									+ '<div class="input-group col-sm-10">' 
 										+ '<span class="input-group-addon"><span class="glyphicon glyphicon-film"></span></span>' 
 										+ '<input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Movie Title" onkeyup="movieTitleFilterKeyUp()" style="height: 45px;">' 
-									+ '</div>' + '<div class="col-sm-2" style="margin-left: -25px;">' 
+									+ '</div>' + '<div class="col-sm-2">' 
 									+ '<button type="button" class="close" aria-hidden="true" onclick="removeTitleFilter()">' 
 										+ '×' 
 									+ '</button>' 
 									+ '</div>' 
 								+ '</div>' 
-								+ '<div class="row">' 
+								+ '<div class="row" id="ratingFilterRow">' 
 									+ '<div class="col-sm-10">' 
 										+ '<div class="btn-group" data-toggle="buttons" style="width: 223px;">' 
 											+ '<label class="btn btn-primary"  onclick="filterWatchStatusSet(true)">' 
@@ -252,6 +252,7 @@ function isLoggedInOrNot() {
 	// toggleClassOnAllElements('.edit');
 	// toggleClassOnAllElements('.delete');
 	toggleClassOnAllElements('#add');
+	toggleClassOnAllElements('#ratingFilterRow');
 }
 
 /*Setzt die Klasse fuer Parameter 'element' auf 'loggedOut' und entfernt Klasse 'loggedIn', falls der User nicht eingeloggt ist. Ansonsten umgekehrt. */
