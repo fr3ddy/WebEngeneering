@@ -4,7 +4,7 @@ $(document).ready(function() {
 	/* Action Listener für Detail View Lupe */
 	$('table').on('click', '.detailMagnifier', function() {
 		var clickedTr = $(this).parent().parent();
-		buildDetailView.call(this, clickedTr.find('.stars').find('.' + ratingIconOn).length, clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
+		buildDetailView.call(this, parseFloat(clickedTr.find('.stars').data('rated')), clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
 	});
 
 	/* Setze Focus auf Film Titel Input, wenn Modal geoeffnet wird */
@@ -468,7 +468,7 @@ function toggleRatingClasses(elem, prev) {
 }
 
 /* stellt ein, wie viele Sterne beim Rating in der Tabelle oder Bearbeitungsansicht ausgefuellt sind */
-function setRating(selectedStars, forTableOrDetailedView) {
+function setRating(selectedStars, forTableOrDetailedView, isAvgRating) {
 	var numberOfStars = selectedStars;
 	var starFull = _.template('<span class="glyphicon ' + ratingIconOn + '" title="<%- title %>">' + ratingIconHTML + '</span>');
 	var starEmpty = _.template('<span class="glyphicon ' + ratingIconOff + '" title="<%- title %>">' + ratingIconHTML + '</span>');
@@ -478,7 +478,10 @@ function setRating(selectedStars, forTableOrDetailedView) {
 	var tooltip = "";
 	var tableTooltip = "";
 	var setHalfStarFlag = false;
-
+	
+	// optionaler Parameter. Wird nur gebraucht, wenn der User angemeldet ist und die Durchschnittsbewertung in der Detailansicht angezeigt wird
+	if (isAvgRating === undefined) isAvgRating = false;
+	
 	var commaSeperated = selectedStars.toFixed(2).toString().split('.')[1];
 	if (commaSeperated <= 25) {
 		selectedStars = Math.round(selectedStars);
@@ -515,13 +518,17 @@ function setRating(selectedStars, forTableOrDetailedView) {
 		 * Ist keine Bewertung gesetzt, dann setze "nicht bewertet" als Tooltip */
 		if (forTableOrDetailedView) {
 			if (Parse.User.current() == null) {
-				avg = '<span>    (' + numberOfStars.toFixed(2) + ')</span>';
+				avg = ", " + numberOfStars.toFixed(2) + " of 5";
+			}
+			
+			if(isAvgRating) {
+				avg = ", " + numberOfStars.toFixed(2) + " of 5";
 			}
 
 			if (i <= selectedStars) {
-				tableTooltip = tooltip;
+				tableTooltip = tooltip + avg;
 			} else if (selectedStars === 0) {
-				tableTooltip = "not rated";
+				tableTooltip = "not rated" + avg;
 			}
 			tooltip = "";
 		}
@@ -542,7 +549,7 @@ function setRating(selectedStars, forTableOrDetailedView) {
 		}
 	}
 
-	return '<div class="stars" title="' + tableTooltip + '" data-rated="' + numberOfStars.toFixed(2) + '">' + result + '</div>' + avg;
+	return '<div class="stars" title="' + tableTooltip + '" data-rated="' + numberOfStars.toFixed(2) + '">' + result + '</div>';
 }
 
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/

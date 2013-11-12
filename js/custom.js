@@ -66,7 +66,8 @@ var detailedMovieView = _.template('<div class="container">'
 										+ '<h6><span class="glyphicon glyphicon-user"/>  <%= username %></h6>' 
 										+ '<div class="row">' + '<div class="col-xs-7">' 
 											+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
-											+ '<label>Rating: </label><span><%= rating %></span><br>' 
+											+ '<%= rating %>'
+											+ '<label>Avg. Rating: </label><span><%= avgRating %></span><br>' 
 											+ '<label>Released: </label><span><%- release %></span><br>' 
 											+ '<label>Runtime: </label><span><%- runtime %></span><br>' 
 											+ '<label>Genre: </label><span><%- genre %></span><br>' 
@@ -77,21 +78,6 @@ var detailedMovieView = _.template('<div class="container">'
 											+ '<div class="col-xs-5">' + '<img src="<%- picture %>" class="img-thumbnail"/>' 
 										+ '</div>' 
 									+ '</div>');
-
-//Initialisierung von FilmModal Content
-// Auskommentiert, da es nirgendwo genutzt wurde
-// var insertCreateFilmModal = '<div class="form-group">' 
-								// + '<input type="text" class="form-control" id="filmTitle" placeholder="Movie Title">' 
-								// + '<div class="switch-wrapper">' 
-									// + '<span class="switch-button-label off">'+ seenText.toUpperCase() +'</span>' 
-									// + '<div class="switch-button-background">' 
-										// + '<div class="switch-button-button"></div>' 
-									// + '</div><span class="switch-button-label on">'+ notSeenText.toUpperCase() +'</span><div style="clear: left;"></div>' 
-								// + '</div>' 
-								// + '<div class="rating">' 
-									// + '<label>Rating:</label>' 
-								// + '</div>' 
-							// + '</div>';
 
 //Initialisierung des Popovers
 var popoverFilterContent = '<fieldset id="filterBox">' 
@@ -317,12 +303,23 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 				poster = data.Poster;
 			}
 
+			var avgStars;
+			var rating = "";
+			if (Parse.User.current() !== null) {
+				rating = '<label>Rating: </label><span>' + setRating(numberOfStars, true) + '</span><br>';
+			}
+
+			parse_getAvgRating(imdbID, function(stars) {
+				avgStars = stars;
+			});
+
 			parse_getOwnerOfMovie(imdbID, function(username) {
 				$('#detailedView').html(detailedMovieView({
 					movieTitle : data.Title,
 					username : username,
 					movieSeen : movieSeen,
-					rating : setRating(numberOfStars, true),
+					rating : rating,
+					avgRating : setRating(avgStars, true, true),
 					picture : poster,
 					release : data.Released,
 					runtime : data.Runtime,
