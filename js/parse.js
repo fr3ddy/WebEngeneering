@@ -28,8 +28,9 @@ function parse_registerUser(username, password) {
 			$('#registerModal .modal-body #regPasswordInput').val("");
 		},
 		error : function(user, error) {
-			$('#registerModal .modal-body .alert').html(error.message);
-			$('#registerModal .modal-body .alert').show();
+			// $('#registerModal .modal-body .alert').html(error.message);
+			// $('#registerModal .modal-body .alert').show();
+			parse_getErrorMessage(error);
 		}
 	});
 }
@@ -356,8 +357,17 @@ function parse_getErrorMessage(error) {
 		case Parse.Error.INTERNAL_SERVER_ERROR:
 			errorMessage = error.message;
 			break;
+		case Parse.Error.PASSWORD_MISSING:
+			errorMessage = error.message;
+			break;
+		case Parse.Error.USERNAME_TAKEN:
+			errorMessage = error.message;
+			break;	
+		case Parse.Error.USERNAME_MISSING:
+			errorMessage = error.message;
+			break;
 		case Parse.Error.OTHER_CAUSE:
-			errorMessage = "This is it the apocalypse ;) - Thanks to Imagine Dragons ";
+			errorMessage = "There has been an unknown error. Please try again later";
 			break;
 		default:
 			errorMessage = error;
