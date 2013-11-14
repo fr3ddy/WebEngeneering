@@ -60,10 +60,10 @@ var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %
 								+ '</tr>');
 
 var detailedMovieView = _.template('<div class="container">' 
-										+ '<h3 id="detailViewMovieTitle" class="heading"><%- movieTitle %>' 
+										+ '<h3 id="detailViewMovieTitle" class="heading" data-imdbID="<%- imdbID %>"><%- movieTitle %>' 
 											+ '<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>' 
 										+ '</h3>' 
-										+ '<h6><span class="glyphicon glyphicon-user"/>  <%= username %></h6>' 
+										+ '<h6><span class="glyphicon glyphicon-user"/><a href="#user" class="user">  <%= username %></a></h6>' 
 										+ '<div class="row">' + '<div class="col-xs-7">' 
 											+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
 											+ '<%= rating %>'
@@ -316,6 +316,7 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 
 			parse_getOwnerOfMovie(imdbID, function(username) {
 				$('#detailedView').html(detailedMovieView({
+					imdbID : imdbID,
 					movieTitle : data.Title,
 					username : username,
 					movieSeen : movieSeen,
@@ -347,3 +348,12 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 }
 
 /*-------------------------------- Ende Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
+
+/*-------------------------------- Anfang Benutzeruebersicht ---------------------------------------------------------------------------------------------------*/
+$('.user').on('click', function() {
+	parse_getUserView(function(view) {
+		$('#userView').html(view);
+	});
+});
+
+/*-------------------------------- Anfang Benutzeruebersicht ---------------------------------------------------------------------------------------------------*/
