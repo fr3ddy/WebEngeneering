@@ -339,3 +339,7 @@ table {
 	display: none;
 	right: 0;
 }
+
+#facebookMoviesProgressBar{
+	padding-top: 250px;
+}

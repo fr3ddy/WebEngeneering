@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	parse_initializeFacebook();
-	if(Parse.User.current() != null && typeof(Parse.User.current().attributes.authData.facebook.id) != "undefined"){
+	if (Parse.User.current() != null && typeof (Parse.User.current().attributes.authData.facebook.id) != "undefined") {
 		$('#facebookButtonList').css("display", "block");
 	}
 	$('#facebookMovieList').hide();
@@ -25,6 +25,40 @@ $(document).ready(function() {
 	});
 
 	//LOADING FACEBOOK MOVIES
+	loadMoviesUserLiked();
+});
+
+function closeFacebookMovieView() {
+	$('#facebookMovieList').stop().animate({
+		left : "-100%"
+	}, function() {
+		$('#facebookMovieList').hide();
+		loadMoviesUserLiked();
+	});
+}
+
+function movieDoesNotExist(movieData, callback) {
+	var movieName = movieData.name.replace(" ", "%20");
+	$.getJSON("http://www.omdbapi.com/?t=" + movieName).done(function(data) {
+		movieData.imdbID = data.imdbID;
+	}).then(function() {
+		var check = new Parse.Query(Movie);
+		check.equalTo('imdbID', movieData.imdbID);
+		check.first(function(checkResult) {
+			movieData.checkResult = checkResult;
+		}).then(function() {
+			if ( typeof (movieData.checkResult) == "undefined") {
+				callback(movieData);
+			} else {
+				callback(false);
+			}
+		});
+	});
+}
+
+function loadMoviesUserLiked() {
+	$('#facebookMovies').hide();
+	$('#facebookMoviesProgressBar').show();
 	FB.getLoginStatus(function(response) {
 		if (response.status === 'connected') {
 			// the user is logged in and has authenticated your
@@ -47,7 +81,7 @@ $(document).ready(function() {
 						for (var i = 0; i < movieData.length; i++) {
 							if (responsecat.category == "Movie" && typeof (movieData[i].cover) != "undefined") {
 								movieDoesNotExist(movieData[i], function(movieDataObject) {
-									if (movieDataObject != false && $.inArray(movieDataObject.name , alreadyInsertedMovies) < 0 && counter < 8) {
+									if (movieDataObject != false && $.inArray(movieDataObject.name, alreadyInsertedMovies) < 0 && counter < 8) {
 										//Render into Movielist
 										if (counter % 4 == 0) {
 											$('#facebookMovies').append("<div class='row'>");
@@ -62,9 +96,19 @@ $(document).ready(function() {
 											$('#facebookMovies').append("</div>");
 										}
 										counter++;
+										if (counter < 8) {
+											var val = counter * 12.5;
+											$('#facebookMoviesProgressBar').find('.progress-bar').css("width", val+"%");
+											$('#facebookMoviesProgressBar').find('.progress-bar').css("aria-valuenow", val);
+										} else if (counter == 8) {
+											$('#facebookMoviesProgressBar').hide();
+											$('#facebookMovies').show();
+											$('#facebookMoviesProgressBar').find('.progress-bar').css("width", "0%");
+											$('#facebookMoviesProgressBar').find('.progress-bar').css("aria-valuenow", "0");
+										}
 									}
-								});
 
+								});
 							}
 						}
 					});
@@ -83,31 +127,4 @@ $(document).ready(function() {
 			// the user isn't logged in to Facebook.
 		}
 	}, true);
-});
-
-function closeFacebookMovieView() {
-	$('#facebookMovieList').stop().animate({
-		left : "-100%"
-	}, function() {
-		$('#facebookMovieList').hide();
-	});
-}
-
-function movieDoesNotExist(movieData, callback) {
-	var movieName = movieData.name.replace(" ", "%20");
-	$.getJSON("http://www.omdbapi.com/?t=" + movieName).done(function(data) {
-		movieData.imdbID = data.imdbID;
-	}).then(function() {
-		var check = new Parse.Query(Movie);
-		check.equalTo('imdbID', movieData.imdbID);
-		check.first(function(checkResult) {
-			movieData.checkResult = checkResult;
-		}).then(function() {
-			if ( typeof (movieData.checkResult) == "undefined") {
-				callback(movieData);
-			} else {
-				callback(false);
-			}
-		});
-	});
 }

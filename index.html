@@ -44,9 +44,21 @@
 		<div id="fb-root"></div>
 		<div class="customAlert"></div>
 		<div id="facebookButtonList">
-			<div>Facebook</div>
+			<div>
+				Facebook
+			</div>
 		</div>
-		<div id="facebookMovieList" class="container"><h1>Your Facebook Movies<button type="button" id="closeFacebookView" class="close" aria-hidden="true"> ×</button></h1><div id="facebookMovies"></div></div>
+		<div id="facebookMovieList" class="container">
+			<h1>Your Facebook Movies
+			<button type="button" id="closeFacebookView" class="close" aria-hidden="true">
+				×
+			</button></h1>
+			<div id="facebookMoviesProgressBar">
+				<div class="progress progress-striped">
+					<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"><span class="sr-only">Loading Movies...</span></div>
+				</div>
+			</div><div id="facebookMovies"></div>
+		</div>
 		<!-- Fixed navbar -->
 		<div class="navbar navbar-default navbar-static-top">
 
@@ -61,9 +73,9 @@
 				</div>
 				<div class="navbar-collapse collapse">
 					<!-- <ul class="nav navbar-nav">
-						<li>
-							<a href="#userList" id="userList">User List</a>
-						</li>
+					<li>
+					<a href="#userList" id="userList">User List</a>
+					</li>
 					</ul> -->
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown" id="menu1">
