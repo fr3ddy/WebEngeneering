@@ -60,7 +60,7 @@ var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %
 								+ '</tr>');
 
 var detailedMovieView = _.template('<div class="container">' 
-										+ '<h3 id="detailViewMovieTitle" class="heading"><%- movieTitle %>' 
+										+ '<h3 id="detailViewMovieTitle" class="heading" data-imdbID="<%- imdbID %>"><%- movieTitle %>' 
 											+ '<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>' 
 										+ '</h3>' 
 										+ '<h6><span class="glyphicon glyphicon-user"/>  <%= username %></h6>' 
@@ -260,7 +260,7 @@ $(document).ready(function() {
 			var yyyy = today.getFullYear();
 			var date = dd + "." + mm + "." + yyyy;
 			
-			parse_saveComment($('#detailViewMovieTitle').data('imdbID'), $('#comment-box').find('textarea').val(), date, function(){
+			parse_saveComment($('#detailViewMovieTitle').data('imdbid'), $('#comment-box').find('textarea').val(), function(){
 				var newComment = commentField({
 					comment: $('#comment-box').find('textarea').val(),
 					author: Parse.User.current().get('username'),
@@ -364,6 +364,7 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 
 			parse_getOwnerOfMovie(imdbID, function(username) {
 				$('#detailedView').html(detailedMovieView({
+					imdbID : imdbID,
 					movieTitle : data.Title,
 					username : username,
 					movieSeen : movieSeen,
@@ -395,3 +396,12 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 }
 
 /*-------------------------------- Ende Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
+
+/*-------------------------------- Anfang Benutzeruebersicht ---------------------------------------------------------------------------------------------------*/
+$('.user').on('click', function() {
+	parse_getUserView(function(view) {
+		$('#userView').html(view);
+	});
+});
+
+/*-------------------------------- Anfang Benutzeruebersicht ---------------------------------------------------------------------------------------------------*/

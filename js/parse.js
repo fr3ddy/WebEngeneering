@@ -465,13 +465,12 @@ function parse_getAvgRating(imdbID, cb) {
 	});
 }
 
-function parse_saveComment(imdbId, commentText, date, cb){
-	var comment = new Comment;
+function parse_saveComment(imdbId, commentText, cb){
+	var comment = new Comment();
 	
 	comment.set("imdbID", imdbId);
 	comment.set("userID", Parse.User.current());
 	comment.set("commentText", commentText);
-	comment.set("createDate", date);
 	
 	comment.save(null, {
 		success : function() {
