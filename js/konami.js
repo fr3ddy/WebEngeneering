@@ -1,3 +1,4 @@
+var z;
 $(document).ready(function() {
 	$(window).konami();
 });
@@ -11,7 +12,9 @@ jQuery.fn.konami = function() {
                 keys.push( event.keyCode );
                 if ( keys.toString().indexOf( konami ) >= 0 ){
                     // do something when the konami code is executed
-                    alert("Easter Egg");
+                    if (!z) {
+						z = new ZergRush(20);
+					}
                     // empty the array containing the key sequence entered by the user
                     keys = [];
                 }

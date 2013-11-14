@@ -1,22 +1,32 @@
 html, body {
 	height: 100%;
 }
+
 form {
 	margin: 0px;
 }
+
 form input {
 	margin-top: 0px;
 }
+
 form fieldset {
 	padding: 10px;
 }
+
 label {
 	display: inline-block;
 	width: 8em;
 }
+
+li {
+	list-style: none;
+}
+
 table {
 	cursor: default;
 }
+
 .customAlert .alert {
 	position: fixed;
 	z-index: 10000;
@@ -24,8 +34,10 @@ table {
 	height: 50px;
 	color: #ffffff;
 	font-weight: bold;
+	font-size: 121%;
 	background-color: #d9534f;
-	text-align: center;
+	border-radius: 0px;
+	/*text-align: center;*/
 }
 .alert .close {
 	opacity: 0.9;
@@ -116,6 +128,7 @@ table {
 	text-align: justify;
 	margin-left: 5.2em;
 	margin-top: -25px;
+	margin-bottom: -13px;
 }
 .rating .stars, #filterStars {
 	color: #ffd700;
@@ -176,6 +189,7 @@ table {
 	vertical-align: bottom;
 	border-bottom: 2px solid #0088CC;
 }
+
 #closeDetailedView {
 	left: -20px;
 	color: black;
@@ -200,6 +214,32 @@ table {
 #chooseTable {
 	display: none;
 }
+#comment-box{
+	border-top: 	solid 2px #f0f0f0;
+	margin-top: 	20px;
+	margin-bottom:	20px;
+	padding-top:	10px;
+}
+#comment-box textarea{
+	resize: none;
+}
+#comment-box .row{
+	border-bottom:	solid 1px #000000 ;
+}
+#comment-box .commentContent:hover{
+	background-color: #f0f0f0;
+}
+#comment-box .row .col-xs-5{
+	border-left:	solid 1px #000000;
+	padding-top:	10px;
+}
+#comment-box .row .col-xs-7{
+	padding-top:	10px;
+}
+#comment-box #comment-textarea{
+	border: none;
+}
+
 #detailedView {
 	display: none;
 	height: 90%;
@@ -255,6 +295,10 @@ table {
 	margin: 0 1.5px 0 1.5px;
 }
 
+#filterButton, #add, #refreshTableButton{
+	margin: 0 1.5px 0 1.5px;	
+}
+
 #home {
 	width: 100%;
 	height: 90%;
@@ -265,12 +309,8 @@ table {
 	margin-top: 2px;
 }
 
-#refreshTableButton, #sortTitleASC, #sortTitleDESC, #sortRatingASC, #sortRatingDESC {
+#sortTitleASC, #sortTitleDESC, #sortRatingASC, #sortRatingDESC {
 	cursor: pointer;
-}
-
-#refreshTableButton {
-	margin-left: 5px;
 }
 
 #sortButtonTitle {

@@ -60,52 +60,50 @@ var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %
 								+ '</tr>');
 
 var detailedMovieView = _.template('<div class="container">' 
-										+ '<h3 id="detailViewMovieTitle" class="heading"><%- movieTitle %>' 
+										+ '<h3 id="detailViewMovieTitle" class="heading" data-imdbID="<%- imdbID %>"><%- movieTitle %>' 
 											+ '<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>' 
 										+ '</h3>' 
 										+ '<h6><span class="glyphicon glyphicon-user"/>  <%= username %></h6>' 
-										+ '<div class="row">' + '<div class="col-xs-7">' 
-											+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
-											+ '<label>Rating: </label><span><%= rating %></span><br>' 
-											+ '<label>Released: </label><span><%- release %></span><br>' 
-											+ '<label>Runtime: </label><span><%- runtime %></span><br>' 
-											+ '<label>Genre: </label><span><%- genre %></span><br>' 
-											+ '<label>Director: </label><span><%- director %></span><br>' 
-											+ '<label>Actors: </label><span><%- actors %></span><br>'
-											+ '<label>Plot: </label><ul class="plot"><%- plot %></ul>' 
-										+ '</div>' 
-											+ '<div class="col-xs-5">' + '<img src="<%- picture %>" class="img-thumbnail"/>' 
-										+ '</div>' 
+										+ '<div class="row">' 
+											+ '<div class="col-xs-7">' 
+												+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
+												+ '<%= rating %>'
+												+ '<label>Avg. Rating: </label><span><%= avgRating %></span><br>' 
+												+ '<label>Released: </label><span><%- release %></span><br>' 
+												+ '<label>Runtime: </label><span><%- runtime %></span><br>' 
+												+ '<label>Genre: </label><span><%- genre %></span><br>' 
+												+ '<label>Director: </label><span><%- director %></span><br>' 
+												+ '<label>Actors: </label><span><%- actors %></span><br>'
+												+ '<label>Plot: </label><ul class="plot"><%- plot %></ul>' 
+											+ '</div>' 
+												+ '<div class="col-xs-5">' + '<img src="<%- picture %>" class="img-thumbnail"/>' 
+											+ '</div>'
+										+ '</div> <%= comments %>'
 									+ '</div>');
-
-//Initialisierung von FilmModal Content
-// Auskommentiert, da es nirgendwo genutzt wurde
-// var insertCreateFilmModal = '<div class="form-group">' 
-								// + '<input type="text" class="form-control" id="filmTitle" placeholder="Movie Title">' 
-								// + '<div class="switch-wrapper">' 
-									// + '<span class="switch-button-label off">'+ seenText.toUpperCase() +'</span>' 
-									// + '<div class="switch-button-background">' 
-										// + '<div class="switch-button-button"></div>' 
-									// + '</div><span class="switch-button-label on">'+ notSeenText.toUpperCase() +'</span><div style="clear: left;"></div>' 
-								// + '</div>' 
-								// + '<div class="rating">' 
-									// + '<label>Rating:</label>' 
-								// + '</div>' 
-							// + '</div>';
+									
+var commentField = _.template('<div class="row commentContent">'
+								+ '<div class="col-xs-7">'
+									+ '<%- comment %>' 
+								+ '</div>'
+								+ '<div class="col-xs-5">'
+									+ '<label>By: </label><span><%- author%></span><br>'
+									+ '<label>Date </label><span><%- date%></&span>'  
+								+ '</div>' 								
+							+ '</div>');	
 
 //Initialisierung des Popovers
 var popoverFilterContent = '<fieldset id="filterBox">' 
 								+ '<div class="form-group row">' 
-									+ '<div class="input-group col-sm-10" style="width: 252px;">' 
+									+ '<div class="input-group col-sm-10">' 
 										+ '<span class="input-group-addon"><span class="glyphicon glyphicon-film"></span></span>' 
 										+ '<input type="text" class="form-control" id="movieTitle" name="movieTitle" placeholder="Movie Title" onkeyup="movieTitleFilterKeyUp()" style="height: 45px;">' 
-									+ '</div>' + '<div class="col-sm-2" style="margin-left: -25px;">' 
+									+ '</div>' + '<div class="col-sm-2">' 
 									+ '<button type="button" class="close" aria-hidden="true" onclick="removeTitleFilter()">' 
 										+ '×' 
 									+ '</button>' 
 									+ '</div>' 
 								+ '</div>' 
-								+ '<div class="row">' 
+								+ '<div class="row" id="ratingFilterRow">' 
 									+ '<div class="col-sm-10">' 
 										+ '<div class="btn-group" data-toggle="buttons" style="width: 223px;">' 
 											+ '<label class="btn btn-primary"  onclick="filterWatchStatusSet(true)">' 
@@ -237,6 +235,32 @@ $(document).ready(function() {
 				clearInterval(interval);
 		}, 10);
 	});
+
+	/*--------------------------------Comments--------------------------------------------*/
+	$('#detailedView').on('click', 'button', function() {
+		if ($('#comment-box').find('textarea').val() != "") {
+
+			//Get actual Date
+			var today = new Date();
+			var dd = today.getDate();
+			var mm = today.getMonth() + 1;
+			//January is 0!
+
+			var yyyy = today.getFullYear();
+			var date = dd + "." + mm + "." + yyyy;
+
+			parse_saveComment($('#detailViewMovieTitle').data('imdbid'), $('#comment-box').find('textarea').val(), function() {
+				var newComment = commentField({
+					comment : $('#comment-box').find('textarea').val(),
+					author : Parse.User.current().get('username'),
+					date : date
+				});
+
+				$(newComment).insertBefore('#comment-textarea');
+				$('#comment-box').find('textarea').val("");
+			});
+		}
+	});
 });
 
 jQuery.fn.rotate = function(degrees) {
@@ -265,6 +289,8 @@ function isLoggedInOrNot() {
 	// toggleClassOnAllElements('.edit');
 	// toggleClassOnAllElements('.delete');
 	toggleClassOnAllElements('#add');
+	toggleClassOnAllElements('#ratingFilterRow');
+	toggleClassOnAllElements('#comment-textarea');
 }
 
 /*Setzt die Klasse fuer Parameter 'element' auf 'loggedOut' und entfernt Klasse 'loggedIn', falls der User nicht eingeloggt ist. Ansonsten umgekehrt. */
@@ -317,19 +343,37 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 				poster = data.Poster;
 			}
 
+			var avgStars;
+			var rating = "";
+			if (Parse.User.current() !== null) {
+				rating = '<label>Rating: </label><span>' + setRating(numberOfStars, true) + '</span><br>';
+			}
+
+			parse_getAvgRating(imdbID, function(stars) {
+				avgStars = stars;
+			});
+
+			var userComments;
+			parse_getComments(imdbID, function(comments) {
+				userComments = comments;
+			});
+
 			parse_getOwnerOfMovie(imdbID, function(username) {
 				$('#detailedView').html(detailedMovieView({
+					imdbID : imdbID,
 					movieTitle : data.Title,
 					username : username,
 					movieSeen : movieSeen,
-					rating : setRating(numberOfStars, true),
+					rating : rating,
+					avgRating : setRating(avgStars, true, true),
 					picture : poster,
 					release : data.Released,
 					runtime : data.Runtime,
 					genre : data.Genre,
 					director : data.Director,
 					actors : data.Actors,
-					plot : data.Plot
+					plot : data.Plot,
+					comments : userComments
 				}));
 
 				$('#detailedView').stop().show().animate({
@@ -349,3 +393,12 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 }
 
 /*-------------------------------- Ende Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
+
+/*-------------------------------- Anfang Benutzeruebersicht ---------------------------------------------------------------------------------------------------*/
+$('.user').on('click', function() {
+	parse_getUserView(function(view) {
+		$('#userView').html(view);
+	});
+});
+
+/*-------------------------------- Anfang Benutzeruebersicht ---------------------------------------------------------------------------------------------------*/
