@@ -1,6 +1,8 @@
 $(document).ready(function() {
 	parse_initializeFacebook();
-
+	if(Parse.User.current() != null && typeof(Parse.User.current().attributes.authData.facebook.id) != "undefined"){
+		$('#facebookButtonList').css("display", "block");
+	}
 	$('#facebookMovieList').hide();
 	$('#facebookMovieList').stop().animate({
 		left : "-100%"
