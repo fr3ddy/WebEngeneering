@@ -510,15 +510,18 @@ function parse_getComments(imdbID, cb) {
 		});
 
 		//@formatter:off
-		comments = comments + '<div class="row" id="comment-textarea">'
-									+ '<div class="col-xs-7">' 
-										+ '<textarea class="form-control" rows="3"></textarea>'
-										+ '<p>'
-								 			+ '<button type="button" class="btn btn-primary btn-sm pull-right">Comment</button>'
-										+ '</p>'	
-									+ '</div>'
-								+ '</div>'
-							+ '</div>';
+		if(Parse.User.current() != null){
+			comments = comments + '<div class="row" id="comment-textarea">'
+										+ '<div class="col-xs-7">' 
+											+ '<textarea class="form-control" rows="3"></textarea>'
+											+ '<p>'
+									 			+ '<button type="button" class="btn btn-primary btn-sm pull-right">Comment</button>'
+											+ '</p>'	
+										+ '</div>'
+									+ '</div>';			
+		}
+
+		comments = comments	+ '</div>';
 		//@formatter:on
 		cb(comments);
 		

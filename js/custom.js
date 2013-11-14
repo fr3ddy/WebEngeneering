@@ -81,7 +81,7 @@ var detailedMovieView = _.template('<div class="container">'
 										+ '</div> <%= comments %>'
 									+ '</div>');
 									
-var commentField = _.template('<div class="row">'
+var commentField = _.template('<div class="row commentContent">'
 								+ '<div class="col-xs-7">'
 									+ '<%- comment %>' 
 								+ '</div>'
@@ -291,6 +291,7 @@ function isLoggedInOrNot() {
 	// toggleClassOnAllElements('.delete');
 	toggleClassOnAllElements('#add');
 	toggleClassOnAllElements('#ratingFilterRow');
+	toggleClassOnAllElements('#comment-textarea');
 }
 
 /*Setzt die Klasse fuer Parameter 'element' auf 'loggedOut' und entfernt Klasse 'loggedIn', falls der User nicht eingeloggt ist. Ansonsten umgekehrt. */
