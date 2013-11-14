@@ -295,6 +295,7 @@ function allLoginActions() {
 		$('#welcometext').slideToggle();
 	//parse_setWelcomeText();
 		isLoggedInOrNot();
+		$('#facebookButtonList').css("display", "none");
 	});
 	//@formatter:on
 }

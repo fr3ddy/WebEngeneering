@@ -373,12 +373,12 @@ function parse_facebookLoginSignUp() {
 		success : function(user) {
 			$('#menu1').removeClass("open");
 			changeLoginButtonOnFacebookLoginSignIn();
+			$('#facebookButtonList').css("display", "block");
 			FB.api('/me?fields=username,email', function(response) {
 				Parse.User.current().setUsername(response.username);
 				Parse.User.current().setEmail(response.email);
 				Parse.User.saveAll(Parse.User.current(), {
 					success : function() {
-
 					},
 					error : function(error) {
 						console.error(error);
