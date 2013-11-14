@@ -363,7 +363,7 @@ function parse_getErrorMessage(error) {
 			break;
 		case Parse.Error.USERNAME_TAKEN:
 			errorMessage = error.message;
-			break;	
+			break;
 		case Parse.Error.USERNAME_MISSING:
 			errorMessage = error.message;
 			break;
@@ -465,18 +465,64 @@ function parse_getAvgRating(imdbID, cb) {
 	});
 }
 
-function parse_saveComment(imdbId, commentText, cb){
+function parse_saveComment(imdbId, commentText, cb) {
 	var comment = new Comment();
-	
+
 	comment.set("imdbID", imdbId);
 	comment.set("userID", Parse.User.current());
 	comment.set("commentText", commentText);
-	
+
 	comment.save(null, {
 		success : function() {
-				cb();
-			},
-			error : function(error) {
-			}
+			cb();
+		},
+		error : function(error) {
+		}
+	});
+}
+
+function parse_getComments(imdbID, cb) {
+	var comments = '<div id="comment-box">' + '<h3><span class="label label-default">User Comments</span></h3>';
+	var comment = new Parse.Query(Comment);
+
+	comment.equalTo('imdbID', imdbID);
+	comment.include('userID');
+	comment.find().then(function(results) {
+		_.each(results, function(result) {
+			var text = result.get('commentText');
+			var user = result.get('userID').get('username');
+			var date = result.createdAt;
+
+			var dd = date.getDate();
+			var mm = date.getMonth() + 1;
+			//January is 0!
+
+			var yyyy = date.getFullYear();
+			var date = dd + "." + mm + "." + yyyy;
+
+			var newComment = commentField({
+				comment : text,
+				author : user,
+				date : date
+			});
+
+			comments = comments + newComment;
 		});
+
+		//@formatter:off
+		comments = comments + '<div class="row" id="comment-textarea">'
+									+ '<div class="col-xs-7">' 
+										+ '<textarea class="form-control" rows="3"></textarea>'
+										+ '<p>'
+								 			+ '<button type="button" class="btn btn-primary btn-sm pull-right">Comment</button>'
+										+ '</p>'	
+									+ '</div>'
+								+ '</div>'
+							+ '</div>';
+		//@formatter:on
+		cb(comments);
+		
+	}, function(error) {
+		parse_getErrorMessage(error);
+	});
 }

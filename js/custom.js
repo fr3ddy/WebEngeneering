@@ -78,18 +78,7 @@ var detailedMovieView = _.template('<div class="container">'
 											+ '</div>' 
 												+ '<div class="col-xs-5">' + '<img src="<%- picture %>" class="img-thumbnail"/>' 
 											+ '</div>'
-										+ '</div>'
-											+ '<div id="comment-box">'
-												+'<h3><span class="label label-default">User Comments</span></h3>'
-												+ '<div class="row" id="comment-textarea">'
-													+ '<div class="col-xs-7">' 
-														+ '<textarea class="form-control" rows="3"></textarea>'
-														+ '<p>'
-															 + '<button type="button" class="btn btn-primary btn-sm pull-right">Comment</button>'
-														+ '</p>'	
-													+ '</div>'
-												+ '</div>'
-											+ '</div>'
+										+ '</div> <%= comments %>'
 									+ '</div>');
 									
 var commentField = _.template('<div class="row">'
@@ -247,28 +236,29 @@ $(document).ready(function() {
 				clearInterval(interval);
 		}, 10);
 	});
-	
+
 	/*--------------------------------Comments--------------------------------------------*/
 	$('#detailedView').on('click', 'button', function() {
-		if($('#comment-box').find('textarea').val() != ""){
-	
+		if ($('#comment-box').find('textarea').val() != "") {
+
 			//Get actual Date
 			var today = new Date();
 			var dd = today.getDate();
-			var mm = today.getMonth()+1; //January is 0!
-			
+			var mm = today.getMonth() + 1;
+			//January is 0!
+
 			var yyyy = today.getFullYear();
 			var date = dd + "." + mm + "." + yyyy;
-			
-			parse_saveComment($('#detailViewMovieTitle').data('imdbid'), $('#comment-box').find('textarea').val(), function(){
+
+			parse_saveComment($('#detailViewMovieTitle').data('imdbid'), $('#comment-box').find('textarea').val(), function() {
 				var newComment = commentField({
-					comment: $('#comment-box').find('textarea').val(),
-					author: Parse.User.current().get('username'),
-					date: date
+					comment : $('#comment-box').find('textarea').val(),
+					author : Parse.User.current().get('username'),
+					date : date
 				});
-				
+
 				$(newComment).insertBefore('#comment-textarea');
-				$('#comment-box').find('textarea').val("");				
+				$('#comment-box').find('textarea').val("");
 			});
 		}
 	});
@@ -362,6 +352,11 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 				avgStars = stars;
 			});
 
+			var userComments;
+			parse_getComments(imdbID, function(comments) {
+				userComments = comments;
+			});
+
 			parse_getOwnerOfMovie(imdbID, function(username) {
 				$('#detailedView').html(detailedMovieView({
 					imdbID : imdbID,
@@ -376,7 +371,8 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 					genre : data.Genre,
 					director : data.Director,
 					actors : data.Actors,
-					plot : data.Plot
+					plot : data.Plot,
+					comments : userComments
 				}));
 
 				$('#detailedView').stop().show().animate({
