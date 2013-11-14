@@ -67,7 +67,8 @@ var detailedMovieView = _.template('<div class="container">'
 										+ '<div class="row">' 
 											+ '<div class="col-xs-7">' 
 												+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
-												+ '<label>Rating: </label><span><%= rating %></span><br>' 
+												+ '<%= rating %>'
+												+ '<label>Avg. Rating: </label><span><%= avgRating %></span><br>' 
 												+ '<label>Released: </label><span><%- release %></span><br>' 
 												+ '<label>Runtime: </label><span><%- runtime %></span><br>' 
 												+ '<label>Genre: </label><span><%- genre %></span><br>' 
@@ -75,21 +76,20 @@ var detailedMovieView = _.template('<div class="container">'
 												+ '<label>Actors: </label><span><%- actors %></span><br>'
 												+ '<label>Plot: </label><ul class="plot"><%- plot %></ul>' 
 											+ '</div>' 
-											+ '<div class="col-xs-5">' 
-												+ '<img src="<%- picture %>" class="img-thumbnail"/>' 
-											+ '</div>' 
-										+ '</div>'
-										+ '<div id="comment-box">'
-											+'<h3><span class="label label-default">User Comments</span></h3>'
-											+ '<div class="row" id="comment-textarea">'
-												+ '<div class="col-xs-7">' 
-													+ '<textarea class="form-control" rows="3"></textarea>'
-													+ '<p>'
-														 + '<button type="button" class="btn btn-primary btn-sm pull-right">Comment</button>'
-													+ '</p>'	
-												+ '</div>'
+												+ '<div class="col-xs-5">' + '<img src="<%- picture %>" class="img-thumbnail"/>' 
 											+ '</div>'
 										+ '</div>'
+											+ '<div id="comment-box">'
+												+'<h3><span class="label label-default">User Comments</span></h3>'
+												+ '<div class="row" id="comment-textarea">'
+													+ '<div class="col-xs-7">' 
+														+ '<textarea class="form-control" rows="3"></textarea>'
+														+ '<p>'
+															 + '<button type="button" class="btn btn-primary btn-sm pull-right">Comment</button>'
+														+ '</p>'	
+													+ '</div>'
+												+ '</div>'
+											+ '</div>'
 									+ '</div>');
 									
 var commentField = _.template('<div class="row">'
@@ -101,21 +101,6 @@ var commentField = _.template('<div class="row">'
 									+ '<label>Date </label><span><%- date%></&span>'  
 								+ '</div>' 								
 							+ '</div>');	
-
-//Initialisierung von FilmModal Content
-// Auskommentiert, da es nirgendwo genutzt wurde
-// var insertCreateFilmModal = '<div class="form-group">' 
-								// + '<input type="text" class="form-control" id="filmTitle" placeholder="Movie Title">' 
-								// + '<div class="switch-wrapper">' 
-									// + '<span class="switch-button-label off">'+ seenText.toUpperCase() +'</span>' 
-									// + '<div class="switch-button-background">' 
-										// + '<div class="switch-button-button"></div>' 
-									// + '</div><span class="switch-button-label on">'+ notSeenText.toUpperCase() +'</span><div style="clear: left;"></div>' 
-								// + '</div>' 
-								// + '<div class="rating">' 
-									// + '<label>Rating:</label>' 
-								// + '</div>' 
-							// + '</div>';
 
 //Initialisierung des Popovers
 var popoverFilterContent = '<fieldset id="filterBox">' 
@@ -275,14 +260,16 @@ $(document).ready(function() {
 			var yyyy = today.getFullYear();
 			var date = dd + "." + mm + "." + yyyy;
 			
-			var newComment = commentField({
-				comment: $('#comment-box').find('textarea').val(),
-				author: Parse.User.current().get('username'),
-				date: date
+			parse_saveComment($('#detailViewMovieTitle').data('imdbID'), $('#comment-box').find('textarea').val(), date, function(){
+				var newComment = commentField({
+					comment: $('#comment-box').find('textarea').val(),
+					author: Parse.User.current().get('username'),
+					date: date
+				});
+				
+				$(newComment).insertBefore('#comment-textarea');
+				$('#comment-box').find('textarea').val("");				
 			});
-			
-			$(newComment).insertBefore('#comment-textarea');
-			$('#comment-box').find('textarea').val("");
 		}
 	});
 });
@@ -365,12 +352,23 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 				poster = data.Poster;
 			}
 
+			var avgStars;
+			var rating = "";
+			if (Parse.User.current() !== null) {
+				rating = '<label>Rating: </label><span>' + setRating(numberOfStars, true) + '</span><br>';
+			}
+
+			parse_getAvgRating(imdbID, function(stars) {
+				avgStars = stars;
+			});
+
 			parse_getOwnerOfMovie(imdbID, function(username) {
 				$('#detailedView').html(detailedMovieView({
 					movieTitle : data.Title,
 					username : username,
 					movieSeen : movieSeen,
-					rating : setRating(numberOfStars, true),
+					rating : rating,
+					avgRating : setRating(avgStars, true, true),
 					picture : poster,
 					release : data.Released,
 					runtime : data.Runtime,

@@ -3,6 +3,7 @@ Parse.initialize("L6o5RS5o7y3L2qq0MdbUUx1rTm8dIzLVJR6etJ5K", "QyEYNDiJAI3ctZ9pZC
 
 var Movie = Parse.Object.extend("Movie");
 var Edit = Parse.Object.extend("Edit");
+var Comment = Parse.Object.extend("Comment");
 
 function parse_initializeFacebook() {
 	Parse.FacebookUtils.init({
@@ -28,8 +29,9 @@ function parse_registerUser(username, password) {
 			$('#registerModal .modal-body #regPasswordInput').val("");
 		},
 		error : function(user, error) {
-			$('#registerModal .modal-body .alert').html(error.message);
-			$('#registerModal .modal-body .alert').show();
+			// $('#registerModal .modal-body .alert').html(error.message);
+			// $('#registerModal .modal-body .alert').show();
+			parse_getErrorMessage(error);
 		}
 	});
 }
@@ -202,7 +204,7 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, cb) {
 			}
 		});
 
-	}, function(error){
+	}, function(error) {
 		$('#createFilmModal').modal('hide');
 		parse_getErrorMessage(error);
 		parse_initialLoadMovieTable();
@@ -312,6 +314,7 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 			});
 			return promise;
 		}).then(function() {
+			// berechne durchschnittliche Bewertung des Films
 			parse_calculateAverageRating(movieResult, function(average) {
 				movieResult.set('avgRating', average);
 				movieResult.save();
@@ -355,8 +358,17 @@ function parse_getErrorMessage(error) {
 		case Parse.Error.INTERNAL_SERVER_ERROR:
 			errorMessage = error.message;
 			break;
+		case Parse.Error.PASSWORD_MISSING:
+			errorMessage = error.message;
+			break;
+		case Parse.Error.USERNAME_TAKEN:
+			errorMessage = error.message;
+			break;	
+		case Parse.Error.USERNAME_MISSING:
+			errorMessage = error.message;
+			break;
 		case Parse.Error.OTHER_CAUSE:
-			errorMessage = "This is it the apocalypse ;) - Thanks to Imagine Dragons ";
+			errorMessage = "There has been an unknown error. Please try again later";
 			break;
 		default:
 			errorMessage = error;
@@ -402,18 +414,18 @@ function parse_facebookLoginSignUp() {
 	});
 }
 
-function parse_setWelcomeText(){
+function parse_setWelcomeText() {
 	var username;
-	if(Parse.User.current() != null){
+	if (Parse.User.current() != null) {
 		username = Parse.User.current().get("username");
-	}else{
+	} else {
 		username = "Guest";
 	}
 	$('#welcometext').find("name").html(username);
 	$('#welcometext').slideToggle();
 }
 
-function parse_removeMovie(imdbID, cb){
+function parse_removeMovie(imdbID, cb) {
 	var movie = new Parse.Query(Movie);
 	movie.equalTo('imdbID', imdbID);
 	movie.first(function(checkResult) {
@@ -423,22 +435,49 @@ function parse_removeMovie(imdbID, cb){
 			return checkResult;
 		}
 		return Parse.Promise.error("Movie ID not found!");
-	}).then(function(checkResult){
-		var editEntry	= new Parse.Query(Edit);
+	}).then(function(checkResult) {
+		var editEntry = new Parse.Query(Edit);
 		editEntry.equalTo('movieID', checkResult);
 		editEntry.notEqualTo('userID', Parse.User.current());
 		editEntry.include('userID');
-		editEntry.first().then(function(entrie){
-			if(typeof(entrie) != 'undefined'){
+		editEntry.first().then(function(entrie) {
+			if ( typeof (entrie) != 'undefined') {
 				checkResult.set('Owner', entrie.get('userID'));
-				checkResult.save();	
-				cb(false);			
-			}else{
+				checkResult.save();
+				cb(false);
+			} else {
 				checkResult.destroy();
-				cb(true);				
+				cb(true);
 			}
 		});
-	}, function(error){
-		alert("AAAAA HILFE " + error);
+	}, function(error) {
+		parse_getErrorMessage(error);
 	});
+}
+
+function parse_getAvgRating(imdbID, cb) {
+	var movie = new Parse.Query(Movie);
+	movie.equalTo('imdbID', imdbID);
+	movie.first().then(function(result) {
+		cb(result.get('avgRating'));
+	}, function(error) {
+		parse_getErrorMessage(error);
+	});
+}
+
+function parse_saveComment(imdbId, commentText, date, cb){
+	var comment = new Comment;
+	
+	comment.set("imdbID", imdbId);
+	comment.set("userID", Parse.User.current());
+	comment.set("commentText", commentText);
+	comment.set("createDate", date);
+	
+	comment.save(null, {
+		success : function() {
+				cb();
+			},
+			error : function(error) {
+			}
+		});
 }
