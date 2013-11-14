@@ -200,9 +200,46 @@ table {
 	background: transparent;
 	border: 0;
 }
+
+#closeFacebookView {
+	color: white;
+	font-size: 100%;
+	opacity: 1;
+	padding: 0;
+	cursor: pointer;
+	background: transparent;
+	border: 0;
+}
+
 #chooseTable {
 	display: none;
 }
+#comment-box{
+	border-top: 	solid 2px #f0f0f0;
+	margin-top: 	20px;
+	margin-bottom:	20px;
+	padding-top:	10px;
+}
+#comment-box textarea{
+	resize: none;
+}
+#comment-box .row{
+	border-bottom:	solid 1px #000000 ;
+}
+#comment-box .commentContent:hover{
+	background-color: #f0f0f0;
+}
+#comment-box .row .col-xs-5{
+	border-left:	solid 1px #000000;
+	padding-top:	10px;
+}
+#comment-box .row .col-xs-7{
+	padding-top:	10px;
+}
+#comment-box #comment-textarea{
+	border: none;
+}
+
 #detailedView {
 	display: none;
 	height: auto;
@@ -213,6 +250,42 @@ table {
 	cursor: default;
 }
 
+#facebookButtonList {
+	background-color: #3b5998;
+	width: 25px;
+	height: 100px;
+	position: fixed;
+	margin-top: 300px;
+	z-index: 1;
+	cursor: pointer;
+	display: none;
+}
+
+#facebookButtonList div {
+	-webkit-transform: rotate(-90deg);
+	transform: rotate(90deg);
+	margin-top: 60px;
+	color: white;
+}
+
+#facebookMovieList {
+	height: 87%;
+	width: 100%;
+	background-color: #3b5998;
+	position: fixed;
+	z-index: 1;
+	margin-left: 210px;
+	margin-top: 5.6%;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+}
+
+#facebookMovieList h1 {
+	text-align: center;
+	color: white;
+}
+
 #headContainer {
 	display: table-cell;
 	vertical-align: middle;
@@ -220,6 +293,14 @@ table {
 
 #filterButton, #add, #refreshTableButton {
 	margin: 0 1.5px 0 1.5px;
+}
+
+#headContainer .btn .btn-default .btn-sm {
+	margin: 0 1.5px 0 1.5px;
+}
+
+#filterButton, #add, #refreshTableButton{
+	margin: 0 1.5px 0 1.5px;	
 }
 
 #home {
@@ -278,4 +359,8 @@ table {
 #welcometext {
 	display: none;
 	right: 0;
+}
+
+#facebookMoviesProgressBar{
+	padding-top: 250px;
 }

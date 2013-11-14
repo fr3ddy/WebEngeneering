@@ -63,21 +63,33 @@ var detailedMovieView = _.template('<div class="container">'
 										+ '<h3 id="detailViewMovieTitle" class="heading" data-imdbID="<%- imdbID %>"><%- movieTitle %>' 
 											+ '<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>' 
 										+ '</h3>' 
-										+ '<h6><span class="glyphicon glyphicon-user"/><a href="#user" class="user">  <%= username %></a></h6>' 
-										+ '<div class="row">' + '<div class="col-xs-7">' 
-											+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
-											+ '<%= rating %>'
-											+ '<label>Avg. Rating: </label><span><%= avgRating %></span><br>' 
-											+ '<label>Released: </label><span><%- release %></span><br>' 
-											+ '<label>Runtime: </label><span><%- runtime %></span><br>' 
-											+ '<label>Genre: </label><span><%- genre %></span><br>' 
-											+ '<label>Director: </label><span><%- director %></span><br>' 
-											+ '<label>Actors: </label><span><%- actors %></span><br>'
-											+ '<label>Plot: </label><ul class="plot"><%- plot %></ul>' 
-										+ '</div>' 
-											+ '<div class="col-xs-5">' + '<img src="<%- picture %>" class="img-thumbnail"/>' 
-										+ '</div>' 
+										+ '<h6><span class="glyphicon glyphicon-user"/>  <%= username %></h6>' 
+										+ '<div class="row">' 
+											+ '<div class="col-xs-7">' 
+												+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
+												+ '<%= rating %>'
+												+ '<label>Avg. Rating: </label><span><%= avgRating %></span><br>' 
+												+ '<label>Released: </label><span><%- release %></span><br>' 
+												+ '<label>Runtime: </label><span><%- runtime %></span><br>' 
+												+ '<label>Genre: </label><span><%- genre %></span><br>' 
+												+ '<label>Director: </label><span><%- director %></span><br>' 
+												+ '<label>Actors: </label><span><%- actors %></span><br>'
+												+ '<label>Plot: </label><ul class="plot"><%- plot %></ul>' 
+											+ '</div>' 
+												+ '<div class="col-xs-5">' + '<img src="<%- picture %>" class="img-thumbnail"/>' 
+											+ '</div>'
+										+ '</div> <%= comments %>'
 									+ '</div>');
+									
+var commentField = _.template('<div class="row commentContent">'
+								+ '<div class="col-xs-7">'
+									+ '<%- comment %>' 
+								+ '</div>'
+								+ '<div class="col-xs-5">'
+									+ '<label>By: </label><span><%- author%></span><br>'
+									+ '<label>Date </label><span><%- date%></&span>'  
+								+ '</div>' 								
+							+ '</div>');	
 
 //Initialisierung des Popovers
 var popoverFilterContent = '<fieldset id="filterBox">' 
@@ -212,7 +224,6 @@ $(document).ready(function() {
 	//Facebook Login and SignUp
 	$('#loginFacebook').on("click", function(event) {
 		event.preventDefault();
-		parse_initializeFacebook();
 		parse_facebookLoginSignUp();
 	});
 	/* -------------------Login / Logout Ende ------------------------------------*/
@@ -230,6 +241,32 @@ $(document).ready(function() {
 			if (i > 100)
 				clearInterval(interval);
 		}, 10);
+	});
+
+	/*--------------------------------Comments--------------------------------------------*/
+	$('#detailedView').on('click', 'button', function() {
+		if ($('#comment-box').find('textarea').val() != "") {
+
+			//Get actual Date
+			var today = new Date();
+			var dd = today.getDate();
+			var mm = today.getMonth() + 1;
+			//January is 0!
+
+			var yyyy = today.getFullYear();
+			var date = dd + "." + mm + "." + yyyy;
+
+			parse_saveComment($('#detailViewMovieTitle').data('imdbid'), $('#comment-box').find('textarea').val(), function() {
+				var newComment = commentField({
+					comment : $('#comment-box').find('textarea').val(),
+					author : Parse.User.current().get('username'),
+					date : date
+				});
+
+				$(newComment).insertBefore('#comment-textarea');
+				$('#comment-box').find('textarea').val("");
+			});
+		}
 	});
 });
 
@@ -260,6 +297,7 @@ function isLoggedInOrNot() {
 	// toggleClassOnAllElements('.delete');
 	toggleClassOnAllElements('#add');
 	toggleClassOnAllElements('#ratingFilterRow');
+	toggleClassOnAllElements('#comment-textarea');
 }
 
 /*Setzt die Klasse fuer Parameter 'element' auf 'loggedOut' und entfernt Klasse 'loggedIn', falls der User nicht eingeloggt ist. Ansonsten umgekehrt. */
@@ -290,6 +328,7 @@ function allLoginActions() {
 		$('#welcometext').slideToggle();
 	//parse_setWelcomeText();
 		isLoggedInOrNot();
+		$('#facebookButtonList').css("display", "none");
 	});
 	//@formatter:on
 }
@@ -321,6 +360,11 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 				avgStars = stars;
 			});
 
+			var userComments;
+			parse_getComments(imdbID, function(comments) {
+				userComments = comments;
+			});
+
 			parse_getOwnerOfMovie(imdbID, function(username) {
 				$('#detailedView').html(detailedMovieView({
 					imdbID : imdbID,
@@ -335,7 +379,8 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 					genre : data.Genre,
 					director : data.Director,
 					actors : data.Actors,
-					plot : data.Plot
+					plot : data.Plot,
+					comments : userComments
 				}));
 
 				$('#detailedView').stop().show().animate({

@@ -3,6 +3,7 @@ Parse.initialize("L6o5RS5o7y3L2qq0MdbUUx1rTm8dIzLVJR6etJ5K", "QyEYNDiJAI3ctZ9pZC
 
 var Movie = Parse.Object.extend("Movie");
 var Edit = Parse.Object.extend("Edit");
+var Comment = Parse.Object.extend("Comment");
 
 function parse_initializeFacebook() {
 	Parse.FacebookUtils.init({
@@ -380,21 +381,16 @@ function parse_getErrorMessage(error) {
 }
 
 function parse_facebookLoginSignUp() {
-	Parse.FacebookUtils.logIn("email", {
+	Parse.FacebookUtils.logIn(null, {
 		success : function(user) {
 			$('#menu1').removeClass("open");
-			if (!user.existed()) {
-				changeLoginButtonOnFacebookLoginSignIn();
-			} else {
-				changeLoginButtonOnFacebookLoginSignIn();
-			}
-			// Ich versuche noch den Usernamen und die Email zu bekommen
+			changeLoginButtonOnFacebookLoginSignIn();
+			$('#facebookButtonList').css("display", "block");
 			FB.api('/me?fields=username,email', function(response) {
 				Parse.User.current().setUsername(response.username);
 				Parse.User.current().setEmail(response.email);
 				Parse.User.saveAll(Parse.User.current(), {
 					success : function() {
-
 					},
 					error : function(error) {
 						console.error(error);
@@ -501,11 +497,11 @@ function parse_getUserView(username, callback) {
 
 		movie.find().then(function(movies) {
 			var userSpecificButtons = "";
-			if(Parse.User.current() !== null && Parse.User.current().id === userName.id) {
+			if (Parse.User.current() !== null && Parse.User.current().id === userName.id) {
 				userSpecificButtons = '<button id="changePassword" class="btn btn-default btn-sm">Change Password</button>';
 			}
-			
-			movieOfUser = '<div class="container">'+ userSpecificButtons +'<h4>User created following movies with following ratings:</h4><table class="table"><thead><tr id="tr-0"><th></th><th>Title</th><th>Seen / not seen</th><th>Rating</th><th></th><th></th></tr></thead><tbody>';
+
+			movieOfUser = '<div class="container">' + userSpecificButtons + '<h4>User created following movies with following ratings:</h4><table class="table"><thead><tr id="tr-0"><th></th><th>Title</th><th>Seen / not seen</th><th>Rating</th><th></th><th></th></tr></thead><tbody>';
 			var promises = [];
 			var i = 0;
 			_.each(movies, function(movie) {
@@ -556,5 +552,70 @@ function parse_getUserView(username, callback) {
 				callback(movieOfUser);
 			});
 		});
+	});
+}
+
+function parse_saveComment(imdbId, commentText, cb) {
+	var comment = new Comment();
+
+	comment.set("imdbID", imdbId);
+	comment.set("userID", Parse.User.current());
+	comment.set("commentText", commentText);
+
+	comment.save(null, {
+		success : function() {
+			cb();
+		},
+		error : function(error) {
+		}
+	});
+}
+
+function parse_getComments(imdbID, cb) {
+	var comments = '<div id="comment-box">' + '<h3><span class="label label-default">User Comments</span></h3>';
+	var comment = new Parse.Query(Comment);
+
+	comment.equalTo('imdbID', imdbID);
+	comment.include('userID');
+	comment.find().then(function(results) {
+		_.each(results, function(result) {
+			var text = result.get('commentText');
+			var user = result.get('userID').get('username');
+			var date = result.createdAt;
+
+			var dd = date.getDate();
+			var mm = date.getMonth() + 1;
+			//January is 0!
+
+			var yyyy = date.getFullYear();
+			var date = dd + "." + mm + "." + yyyy;
+
+			var newComment = commentField({
+				comment : text,
+				author : user,
+				date : date
+			});
+
+			comments = comments + newComment;
+		});
+
+		//@formatter:off
+		if(Parse.User.current() != null){
+			comments = comments + '<div class="row" id="comment-textarea">'
+										+ '<div class="col-xs-7">' 
+											+ '<textarea class="form-control" rows="3"></textarea>'
+											+ '<p>'
+									 			+ '<button type="button" class="btn btn-primary btn-sm pull-right">Comment</button>'
+											+ '</p>'	
+										+ '</div>'
+									+ '</div>';			
+		}
+
+		comments = comments	+ '</div>';
+		//@formatter:on
+		cb(comments);
+
+	}, function(error) {
+		parse_getErrorMessage(error);
 	});
 }
