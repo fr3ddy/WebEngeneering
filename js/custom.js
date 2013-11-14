@@ -64,19 +64,43 @@ var detailedMovieView = _.template('<div class="container">'
 											+ '<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>' 
 										+ '</h3>' 
 										+ '<h6><span class="glyphicon glyphicon-user"/>  <%= username %></h6>' 
-										+ '<div class="row">' + '<div class="col-xs-7">' 
-											+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
-											+ '<label>Rating: </label><span><%= rating %></span><br>' 
-											+ '<label>Released: </label><span><%- release %></span><br>' 
-											+ '<label>Runtime: </label><span><%- runtime %></span><br>' 
-											+ '<label>Genre: </label><span><%- genre %></span><br>' 
-											+ '<label>Director: </label><span><%- director %></span><br>' 
-											+ '<label>Actors: </label><span><%- actors %></span><br>'
-											+ '<label>Plot: </label><ul class="plot"><%- plot %></ul>' 
-										+ '</div>' 
-											+ '<div class="col-xs-5">' + '<img src="<%- picture %>" class="img-thumbnail"/>' 
-										+ '</div>' 
+										+ '<div class="row">' 
+											+ '<div class="col-xs-7">' 
+												+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
+												+ '<label>Rating: </label><span><%= rating %></span><br>' 
+												+ '<label>Released: </label><span><%- release %></span><br>' 
+												+ '<label>Runtime: </label><span><%- runtime %></span><br>' 
+												+ '<label>Genre: </label><span><%- genre %></span><br>' 
+												+ '<label>Director: </label><span><%- director %></span><br>' 
+												+ '<label>Actors: </label><span><%- actors %></span><br>'
+												+ '<label>Plot: </label><ul class="plot"><%- plot %></ul>' 
+											+ '</div>' 
+											+ '<div class="col-xs-5">' 
+												+ '<img src="<%- picture %>" class="img-thumbnail"/>' 
+											+ '</div>' 
+										+ '</div>'
+										+ '<div id="comment-box">'
+											+'<h3><span class="label label-default">User Comments</span></h3>'
+											+ '<div class="row" id="comment-textarea">'
+												+ '<div class="col-xs-7">' 
+													+ '<textarea class="form-control" rows="3"></textarea>'
+													+ '<p>'
+														 + '<button type="button" class="btn btn-primary btn-sm pull-right">Comment</button>'
+													+ '</p>'	
+												+ '</div>'
+											+ '</div>'
+										+ '</div>'
 									+ '</div>');
+									
+var commentField = _.template('<div class="row">'
+								+ '<div class="col-xs-7">'
+									+ '<%- comment %>' 
+								+ '</div>'
+								+ '<div class="col-xs-5">'
+									+ '<label>By: </label><span><%- author%></span><br>'
+									+ '<label>Date </label><span><%- date%></&span>'  
+								+ '</div>' 								
+							+ '</div>');	
 
 //Initialisierung von FilmModal Content
 // Auskommentiert, da es nirgendwo genutzt wurde
@@ -237,6 +261,29 @@ $(document).ready(function() {
 			if (i > 100)
 				clearInterval(interval);
 		}, 10);
+	});
+	
+	/*--------------------------------Comments--------------------------------------------*/
+	$('#detailedView').on('click', 'button', function() {
+		if($('#comment-box').find('textarea').val() != ""){
+	
+			//Get actual Date
+			var today = new Date();
+			var dd = today.getDate();
+			var mm = today.getMonth()+1; //January is 0!
+			
+			var yyyy = today.getFullYear();
+			var date = dd + "." + mm + "." + yyyy;
+			
+			var newComment = commentField({
+				comment: $('#comment-box').find('textarea').val(),
+				author: Parse.User.current().get('username'),
+				date: date
+			});
+			
+			$(newComment).insertBefore('#comment-textarea');
+			$('#comment-box').find('textarea').val("");
+		}
 	});
 });
 

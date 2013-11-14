@@ -190,6 +190,12 @@ table {
 #chooseTable {
 	display: none;
 }
+#comment-box{
+	border-top: 	solid 2px #f0f0f0;
+	margin-top: 	20px;
+	margin-bottom:	20px;
+	padding-top:	10px;
+}
 #detailedView {
 	display: none;
 	height: 90%;
