@@ -31,17 +31,21 @@
 		<script src="js/filter.js"></script>
 		<script src="js/sort.js"></script>
 		<script src="js/crud.js"></script>
+		<script src="js/facebook.js"></script>
 
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-		<script src="../../assets/js/html5shiv.js"></script>
-		<script src="../../assets/js/respond.min.js"></script>
+		<p>Sie benutzen einen alten Browser!</p>
 		<![endif]-->
 	</head>
 
 	<body>
 		<div id="fb-root"></div>
 		<div class="customAlert"></div>
+		<div id="facebookButtonList">
+			<div>Facebook</div>
+		</div>
+		<div id="facebookMovieList" class="container"><h1>Your Facebook Movies<button type="button" id="closeFacebookView" class="close" aria-hidden="true"> ×</button></h1><div id="facbeookMovies"></div></div>
 		<!-- Fixed navbar -->
 		<div class="navbar navbar-default navbar-static-top">
 
@@ -95,8 +99,8 @@
 					</ul>
 					<div class="navbar-text navbar-right" id="welcometext">
 						Welcome,
-						<name>
-						</name>!
+						<name></name>
+						!
 					</div>
 				</div>
 			</div>

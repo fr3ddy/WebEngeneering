@@ -186,6 +186,17 @@ table {
 	background: transparent;
 	border: 0;
 }
+
+#closeFacebookView {
+	color: white;
+	font-size: 100%;
+	opacity: 1;
+	padding: 0;
+	cursor: pointer;
+	background: transparent;
+	border: 0;
+}
+
 #chooseTable {
 	display: none;
 }
@@ -199,13 +210,48 @@ table {
 	cursor: default;
 }
 
+#facebookButtonList {
+	background-color: #3b5998;
+	width: 25px;
+	height: 100px;
+	position: fixed;
+	margin-top: 300px;
+	z-index: 1;
+	cursor: pointer;
+}
+
+#facebookButtonList div {
+	-webkit-transform: rotate(-90deg);
+	transform: rotate(90deg);
+	margin-top: 60px;
+	color: white;
+}
+
+#facebookMovieList {
+	height: 87%;
+	width: 100%;
+	background-color: #3b5998;
+	position: fixed;
+	z-index: 1;
+	margin-left: 210px;
+	margin-top: 5.6%;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+}
+
+#facebookMovieList h1 {
+	text-align: center;
+	color: white;
+}
+
 #headContainer {
 	display: table-cell;
 	vertical-align: middle;
 }
 
 #headContainer .btn .btn-default .btn-sm {
-	margin: 0 1.5px 0 1.5px;	
+	margin: 0 1.5px 0 1.5px;
 }
 
 #home {

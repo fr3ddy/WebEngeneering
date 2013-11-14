@@ -202,7 +202,7 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, cb) {
 			}
 		});
 
-	}, function(error){
+	}, function(error) {
 		$('#createFilmModal').modal('hide');
 		parse_getErrorMessage(error);
 		parse_initialLoadMovieTable();
@@ -369,15 +369,10 @@ function parse_getErrorMessage(error) {
 }
 
 function parse_facebookLoginSignUp() {
-	Parse.FacebookUtils.logIn("email", {
+	Parse.FacebookUtils.logIn(null, {
 		success : function(user) {
 			$('#menu1').removeClass("open");
-			if (!user.existed()) {
-				changeLoginButtonOnFacebookLoginSignIn();
-			} else {
-				changeLoginButtonOnFacebookLoginSignIn();
-			}
-			// Ich versuche noch den Usernamen und die Email zu bekommen
+			changeLoginButtonOnFacebookLoginSignIn();
 			FB.api('/me?fields=username,email', function(response) {
 				Parse.User.current().setUsername(response.username);
 				Parse.User.current().setEmail(response.email);
@@ -402,18 +397,18 @@ function parse_facebookLoginSignUp() {
 	});
 }
 
-function parse_setWelcomeText(){
+function parse_setWelcomeText() {
 	var username;
-	if(Parse.User.current() != null){
+	if (Parse.User.current() != null) {
 		username = Parse.User.current().get("username");
-	}else{
+	} else {
 		username = "Guest";
 	}
 	$('#welcometext').find("name").html(username);
 	$('#welcometext').slideToggle();
 }
 
-function parse_removeMovie(imdbID, cb){
+function parse_removeMovie(imdbID, cb) {
 	var movie = new Parse.Query(Movie);
 	movie.equalTo('imdbID', imdbID);
 	movie.first(function(checkResult) {
@@ -423,22 +418,22 @@ function parse_removeMovie(imdbID, cb){
 			return checkResult;
 		}
 		return Parse.Promise.error("Movie ID not found!");
-	}).then(function(checkResult){
-		var editEntry	= new Parse.Query(Edit);
+	}).then(function(checkResult) {
+		var editEntry = new Parse.Query(Edit);
 		editEntry.equalTo('movieID', checkResult);
 		editEntry.notEqualTo('userID', Parse.User.current());
 		editEntry.include('userID');
-		editEntry.first().then(function(entrie){
-			if(typeof(entrie) != 'undefined'){
+		editEntry.first().then(function(entrie) {
+			if ( typeof (entrie) != 'undefined') {
 				checkResult.set('Owner', entrie.get('userID'));
-				checkResult.save();	
-				cb(false);			
-			}else{
+				checkResult.save();
+				cb(false);
+			} else {
 				checkResult.destroy();
-				cb(true);				
+				cb(true);
 			}
 		});
-	}, function(error){
+	}, function(error) {
 		alert("AAAAA HILFE " + error);
 	});
 }

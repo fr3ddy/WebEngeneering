@@ -20,25 +20,7 @@ $(document).ready(function() {
 
 	/* Modal öffnen, um neuen Film hinzuzufügen 'createFilmModal'*/
 	$('#add').on('click', function() {
-		//Falls Auswahl abgebrochen wurde
-		$('#createFilmModal').find('#saveFilm').show();
-		$('#createFilmModal').find('.modal-body .form-group').show();
-		$('#createFilmModal').find('#chooseTable').hide();
-
-		// leere Film Input Feld, falls noch etwas drin stehen sollte
-		$('#filmTitle').val("");
-
-		// setze Rating am Anfang immer auf leer
-		$('#createFilmModal').find('.stars').children('span').removeClass(ratingIconOn).addClass(ratingIconOff);
-
-		// setze Seen Status am Anfang auf notSeenText
-		if ($('#createFilmModal').find('.switch-wrapper').find('.on').text() === seenText.toUpperCase()) {
-			setModalSwitchButton.call($('#createFilmModal').find('.switch-wrapper'), notSeenText.toUpperCase());
-		}
-
-		setListenerForSeenSwitch('#createFilmModal');
-		setRatingVisibility.call($('#createFilmModal').find('.rating'), '0');
-		$('#createFilmModal').modal('show');
+		showCreateFilmModal();
 	});
 
 	/*Aendere-Button auf Modal 'editFilmModal'*/
@@ -123,7 +105,7 @@ function searchMovie(numberOfStars, movieTitle, seen) {
 				});
 			} else {
 				$('#createFilmModal').modal('hide');
-				parse_getErrorMessage('No Movie found!');				
+				parse_getErrorMessage('No Movie found!');
 			}
 		} else {
 			$('#createFilmModal').modal('hide');
@@ -170,6 +152,29 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 			parse_getErrorMessage(error);
 		}
 	});
+}
+
+//* Create new Film Modal wird angezeigt und alles nötige Initialisiert **/
+function showCreateFilmModal() {
+	//Falls Auswahl abgebrochen wurde
+	$('#createFilmModal').find('#saveFilm').show();
+	$('#createFilmModal').find('.modal-body .form-group').show();
+	$('#createFilmModal').find('#chooseTable').hide();
+
+	// leere Film Input Feld, falls noch etwas drin stehen sollte
+	$('#filmTitle').val("");
+
+	// setze Rating am Anfang immer auf leer
+	$('#createFilmModal').find('.stars').children('span').removeClass(ratingIconOn).addClass(ratingIconOff);
+
+	// setze Seen Status am Anfang auf notSeenText
+	if ($('#createFilmModal').find('.switch-wrapper').find('.on').text() === seenText.toUpperCase()) {
+		setModalSwitchButton.call($('#createFilmModal').find('.switch-wrapper'), notSeenText.toUpperCase());
+	}
+
+	setListenerForSeenSwitch('#createFilmModal');
+	setRatingVisibility.call($('#createFilmModal').find('.rating'), '0');
+	$('#createFilmModal').modal('show');
 }
 
 /* Der Filmliste wird ein neuer Eintrag hinzugefuegt*/
@@ -294,7 +299,8 @@ function changeMovieValues(event) {
 /* Die geaenderten Werte aus dem 'editFilmModal' werden in die entsprechende Zeile der Tabelle uebertragen. 'This' entspricht dem <div>, das die Sterne umgibt */
 function changeTableRowValues(numberOfStars) {
 
-	$('#filmtable').find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text().toLowerCase()); debugger;
+	$('#filmtable').find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text().toLowerCase());
+	debugger;
 	// wurde ein Film als 'GESEHEN' markiert, erhält er die Anzahl an Sternen, mit denen er bewertet wurde. Ansonsten sind alle Sterne leer
 	if (seenText.toUpperCase() === $(this).find('.on').text()) {
 		if (mouseoverForRatingOn) {
@@ -320,10 +326,10 @@ function changeTableRowValues(numberOfStars) {
 
 /* Loescht ausgewaehlte Zeile aus Tabelle*/
 function removeMovie(element) {
-	parse_removeMovie($(element).attr('data-imdbID'), function(deleteRow){
-		if(deleteRow){
+	parse_removeMovie($(element).attr('data-imdbID'), function(deleteRow) {
+		if (deleteRow) {
 			$(element).remove();
-		}else{
+		} else {
 			$(element).find('td:last').find('button').attr('disabled', 'disabled');
 		}
 	});

@@ -219,7 +219,6 @@ $(document).ready(function() {
 	//Facebook Login and SignUp
 	$('#loginFacebook').on("click", function(event) {
 		event.preventDefault();
-		parse_initializeFacebook();
 		parse_facebookLoginSignUp();
 	});
 	/* -------------------Login / Logout Ende ------------------------------------*/
