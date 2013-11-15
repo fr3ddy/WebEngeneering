@@ -49,6 +49,7 @@ $(document).ready(function() {
 
 	/*Loesche-Button in Filmeintrag*/
 	$('body').on('click', '.delete', function() {
+		table = '#' + $(this).parent().parent().parent().attr('id');
 		$(this).popover();
 	});
 });
@@ -306,7 +307,7 @@ function changeMovieValues(event) {
 function changeTableRowValues(numberOfStars) {
 
 	$(table).find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text().toLowerCase());
-	debugger;
+	
 	// wurde ein Film als 'GESEHEN' markiert, erhält er die Anzahl an Sternen, mit denen er bewertet wurde. Ansonsten sind alle Sterne leer
 	if (seenText.toUpperCase() === $(this).find('.on').text()) {
 		if (mouseoverForRatingOn) {
@@ -337,6 +338,17 @@ function removeMovie(element) {
 			$(element).remove();
 		} else {
 			$(element).find('td:last').find('button').attr('disabled', 'disabled');
+			
+			// wird der Film aus der "userCreatedTable" geloescht, muss er der "userRatedTable" hinzugefuegt werden, falls der Film nicht komplett geloescht wird
+			if(table === "#userCreatedTable") {
+				var row = $(element);
+				// passe den Zaehler in der ID des TR-Elements an, um in die neue Tabelle geschrieben werden zu koennen
+				var newTrID = $('body').find('#userRatedTable').find('tr').length + 1;
+				row.attr('id', 'tr-' + newTrID);
+				
+				$(element).remove();
+				$('body').find('#userRatedTable').append(row);
+			}
 		}
 	});
 }

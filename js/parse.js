@@ -159,7 +159,7 @@ function parse_initialLoadMovieTable() {
 				$(this).remove();
 			});
 		}, function(error) {
-			console.log("Error:" + error.message);
+			parse_getErrorMessage(error);
 		});
 	});
 }
@@ -500,8 +500,15 @@ function parse_getUserView(username, callback) {
 			if (Parse.User.current() !== null && Parse.User.current().id === userName.id) {
 				userSpecificButtons = '<button id="changePassword" class="btn btn-default btn-sm">Change Password</button>';
 			}
-
-			movieOfUser = '<div class="container">' + userSpecificButtons + '<h4>User created following movies with following ratings:</h4><table class="table"><thead><tr id="tr-0"><th></th><th>Title</th><th>Seen / not seen</th><th>Rating</th><th></th><th></th></tr></thead><tbody id="userCreatedTable">';
+			//@formatter:off
+			movieOfUser = '<div class="container">'+ 
+								'<h4>Information about '+ userName.get('username') +'</h4>' + userSpecificButtons 
+								+'<br><div class="panel panel-default">'
+								+'<div class="panel-heading">User created following movies with following ratings</div>'
+								+'<table class="table">'
+									+'<thead><tr id="tr-0"><th></th><th>Title</th><th>Seen / not seen</th><th>Rating</th><th></th><th></th></tr></thead>'
+									+'<tbody id="userCreatedTable">';
+			//@formatter:on
 			var promises = [];
 			var i = 0;
 			_.each(movies, function(movie) {
@@ -514,7 +521,17 @@ function parse_getUserView(username, callback) {
 			});
 			return Parse.Promise.when(promises);
 		}).then(function() {
-			movieOfUser += '</tbody></table><br><h4>User rated following movies with following ratings</h4><table class="table"><thead><tr id="tr-0"><th></th><th>Title</th><th>Seen / not seen</th><th>Rating</th><th></th><th></th></tr></thead><tbody id="userRatedTable">';
+			//@formatter:off
+			movieOfUser += '</tbody>'
+					+'</table></div><br>'
+					+'<div class="panel panel-default">'
+					+'<div class="panel-heading">User rated following movies with following ratings</div>'
+					+'<table class="table">'
+						+'<thead>'
+							+'<tr id="tr-0"><th></th><th>Title</th><th>Seen / not seen</th><th>Rating</th><th></th><th></th></tr>'
+						+'</thead>'
+						+'<tbody id="userRatedTable">';
+			//@formatter:on
 			var edit = new Parse.Query(Edit);
 
 			edit.equalTo('userID', userName);
@@ -551,7 +568,7 @@ function parse_getUserView(username, callback) {
 				});
 				return Parse.Promise.when(promises);
 			}).then(function() {
-				movieOfUser += '</tbody></table></div>';
+				movieOfUser += '</tbody></table></div></div>';
 				callback(movieOfUser);
 			});
 		});

@@ -211,6 +211,10 @@ table {
 	border: 0;
 }
 
+#changePasswordForm {
+	display: none;	
+}
+
 #chooseTable {
 	display: none;
 }

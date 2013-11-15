@@ -151,13 +151,12 @@ var chooseTable = _.template('<tr data-imdbID="<%- imdbID %>">'
 //@formatter:on
 
 $(document).ready(function() {
+	/* Benutzeransicht zu einem ausgewaehlten Benutzer aufrufen */
 	$('body').on('click', '.user', function() {
-		console.log("success");
 		parse_getUserView($(this).text().trim(), function(view) {
 			$('#userView').html(view);
-			
-			debugger;
-			for(var i = 1; i <= $('#userCreatedTable').find('tr').length; i++) {
+
+			for (var i = 1; i <= $('#userCreatedTable').find('tr').length; i++) {
 				$('#userCreatedTable').find('#tr-' + i).find('.delete').popover({
 					trigger : 'focus',
 					title : 'Löschen',
@@ -165,12 +164,26 @@ $(document).ready(function() {
 					html : 'true'
 				});
 			}
-			
+
 			$('#userView').show();
 			$('#detailedView').hide();
 			$('#home').hide();
 		});
 	});
+
+	/* Passwort des angemeldeten Benutzers aendern */
+	$('body').on('click', '#changePassword', function() {
+		// //@formatter:off
+		// var changeField = '<div id="changePasswordForm">'
+								// + '<input type="password" placeholder="old password">'
+								// + '<input type="password" placeholder="new password">'
+								// + '<input type="password" placeholder="repeat new password">'
+							// +'</div>';
+		// //@formatter:on
+// 		
+		// $(this).append(changeField).slideToggle();
+	});
+
 	/*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
 
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
