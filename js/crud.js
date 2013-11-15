@@ -100,7 +100,6 @@ function searchMovie(numberOfStars, movieTitle, seen) {
 					if (success) {
 						addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
 						//Lade Auch Ansicht mit Filmen die der user geliked hat neu, damit nur die richtigen angezeigt werden
-						loadMoviesUserLiked();
 					} else {
 						parse_getErrorMessage("Wasn't able to add movie to DB");
 					}
@@ -265,6 +264,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		$('#filterBox #movieTitle').val(filter.movieTitle);
 	}
 	filterTable();
+	loadMoviesUserLiked();
 
 }
 
