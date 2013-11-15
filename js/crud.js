@@ -27,7 +27,8 @@ $(document).ready(function() {
 	$('#changeMovie').on('click', changeMovieValues);
 
 	/*Aufbau Modal um den Film zu editieren*/
-	$('#list').on('click', '.edit', function() {
+	$('body').on('click', '.edit', function() {
+		table = '#' + $(this).parent().parent().parent().attr('id');
 		var title = $(this).parent().parent().find('.tableFilmTitle').text();
 		var movieSeen = $(this).parent().parent().find('.tableMovieSeen').text().toUpperCase();
 		var rating = $(this).parent().parent().find('.tableRating').find('.' + ratingIconOn).length;
@@ -47,7 +48,7 @@ $(document).ready(function() {
 	});
 
 	/*Loesche-Button in Filmeintrag*/
-	$('#list').on('click', '.delete', function() {
+	$('body').on('click', '.delete', function() {
 		$(this).popover();
 	});
 });
@@ -286,11 +287,11 @@ function changeMovieValues(event) {
 		case ('click'):
 			changeTableRowValues.call($(this).parent().parent(), $(this).parent().parent().find('.stars').find('.' + ratingIconOn).length);
 			break;
-		case ('keypress'):
-			if (event.keyCode === 13) {
-				changeTableRowValues.call($(this).parent(), $(this).parent().find('.stars').find('.' + ratingIconOn).length);
-			}
-			break;
+		// case ('keypress'):
+			// if (event.keyCode === 13) {
+				// changeTableRowValues.call($(this).parent(), $(this).parent().find('.stars').find('.' + ratingIconOn).length);
+			// }
+			// break;
 		default:
 			break;
 	}
@@ -299,7 +300,7 @@ function changeMovieValues(event) {
 /* Die geaenderten Werte aus dem 'editFilmModal' werden in die entsprechende Zeile der Tabelle uebertragen. 'This' entspricht dem <div>, das die Sterne umgibt */
 function changeTableRowValues(numberOfStars) {
 
-	$('#filmtable').find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text().toLowerCase());
+	$(table).find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text().toLowerCase());
 	debugger;
 	// wurde ein Film als 'GESEHEN' markiert, erhält er die Anzahl an Sternen, mit denen er bewertet wurde. Ansonsten sind alle Sterne leer
 	if (seenText.toUpperCase() === $(this).find('.on').text()) {
@@ -307,21 +308,21 @@ function changeTableRowValues(numberOfStars) {
 			/* an die Bewertung ist noch ein 'mouseover' Event gebunden, daher darf die Bewertung nicht geaendert werden und die bestehende Bewertung bleibt bestehen.
 			 * Ist die bestehende Bewertung aber 0, dann muss min. 1 Stern gesetzt werden.
 			 */
-			var numberOfStarsInTable = $('#filmtable').find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
-			$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStarsInTable >= 1 ? numberOfStarsInTable : 1, true));
+			var numberOfStarsInTable = $(table).find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
+			$(table).find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStarsInTable >= 1 ? numberOfStarsInTable : 1, true));
 		} else {
-			$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStars, true));
+			$(table).find('#' + selectedRowId).find('.tableRating').html(setRating(numberOfStars, true));
 		}
 	} else {
-		$('#filmtable').find('#' + selectedRowId).find('.tableRating').html(setRating(0, true));
+		$(table).find('#' + selectedRowId).find('.tableRating').html(setRating(0, true));
 	}
 
 	$('#editFilmModal').modal('hide');
 
 	// aktualisiere die Edit Tabelle bei parse oder fuege einen neuen Eintrag hinzu
-	var getRating = $('#filmtable').find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
+	var getRating = $(table).find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
 	var seen = $(this).find('.on').text().toLowerCase() === seenText ? true : false;
-	parse_updateEntry($('#filmtable').find('#' + selectedRowId).data('imdbid'), getRating, seen);
+	parse_updateEntry($(table).find('#' + selectedRowId).data('imdbid'), getRating, seen);
 }
 
 /* Loescht ausgewaehlte Zeile aus Tabelle*/

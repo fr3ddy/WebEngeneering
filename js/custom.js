@@ -1,4 +1,5 @@
 var selectedRowId;
+var table;
 
 /* Flag: Ist das 'mouseover' Event noch an die Bewertung gebunden?
  * Falls ja, darf die Bewertung nicht in die Tabelle übernommen werden, da sie durch 'mouseover' zu Stande gemkommen sein koennte.
@@ -63,7 +64,7 @@ var detailedMovieView = _.template('<div class="container">'
 										+ '<h3 id="detailViewMovieTitle" class="heading" data-imdbID="<%- imdbID %>"><%- movieTitle %>' 
 											+ '<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>' 
 										+ '</h3>' 
-										+ '<h6><span class="glyphicon glyphicon-user"/>  <%= username %></h6>' 
+										+ '<h6><span class="glyphicon glyphicon-user"/><a href="#user" class="user">  <%= username %></a></h6>' 
 										+ '<div class="row">' 
 											+ '<div class="col-xs-7">' 
 												+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
@@ -154,7 +155,20 @@ $(document).ready(function() {
 		console.log("success");
 		parse_getUserView($(this).text().trim(), function(view) {
 			$('#userView').html(view);
+			
+			debugger;
+			for(var i = 1; i <= $('#userCreatedTable').find('tr').length; i++) {
+				$('#userCreatedTable').find('#tr-' + i).find('.delete').popover({
+					trigger : 'focus',
+					title : 'Löschen',
+					content : popoverContent,
+					html : 'true'
+				});
+			}
+			
 			$('#userView').show();
+			$('#detailedView').hide();
+			$('#home').hide();
 		});
 	});
 	/*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
@@ -175,6 +189,7 @@ $(document).ready(function() {
 	$('#listNav').on('click', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
+		$('#userView').hide();
 		$('#detailedView').stop().animate({
 			right : "-100%"
 		}, function() {
@@ -382,7 +397,7 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 					plot : data.Plot,
 					comments : userComments
 				}));
-
+				$('#userView').hide();
 				$('#detailedView').stop().show().animate({
 					right : "0px"
 				});

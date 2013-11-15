@@ -501,18 +501,20 @@ function parse_getUserView(username, callback) {
 				userSpecificButtons = '<button id="changePassword" class="btn btn-default btn-sm">Change Password</button>';
 			}
 
-			movieOfUser = '<div class="container">' + userSpecificButtons + '<h4>User created following movies with following ratings:</h4><table class="table"><thead><tr id="tr-0"><th></th><th>Title</th><th>Seen / not seen</th><th>Rating</th><th></th><th></th></tr></thead><tbody>';
+			movieOfUser = '<div class="container">' + userSpecificButtons + '<h4>User created following movies with following ratings:</h4><table class="table"><thead><tr id="tr-0"><th></th><th>Title</th><th>Seen / not seen</th><th>Rating</th><th></th><th></th></tr></thead><tbody id="userCreatedTable">';
 			var promises = [];
 			var i = 0;
 			_.each(movies, function(movie) {
 				promises.push(checkEdit(movie, userName, function(seen, stars) {
 					i++;
-					movieOfUser += initiateTableRow(i, stars, movie.get('Title'), movie.get('imdbID'), seen, editButton, deleteButton);
+					var trID = 'tr-' + i;
+					movieOfUser += initiateTableRow(trID, stars, movie.get('Title'), movie.get('imdbID'), seen, editButton, deleteButton);
+
 				}));
 			});
 			return Parse.Promise.when(promises);
 		}).then(function() {
-			movieOfUser += '</tbody></table><br><h4>User rated following movies with following ratings</h4><table class="table"><thead><tr id="tr-0"><th></th><th>Title</th><th>Seen / not seen</th><th>Rating</th><th></th><th></th></tr></thead><tbody></div>';
+			movieOfUser += '</tbody></table><br><h4>User rated following movies with following ratings</h4><table class="table"><thead><tr id="tr-0"><th></th><th>Title</th><th>Seen / not seen</th><th>Rating</th><th></th><th></th></tr></thead><tbody id="userRatedTable">';
 			var edit = new Parse.Query(Edit);
 
 			edit.equalTo('userID', userName);
@@ -542,7 +544,8 @@ function parse_getUserView(username, callback) {
 
 						promises.push(checkEdit(editResult.get('movieID'), userName, function(seen, stars) {
 							i++;
-							movieOfUser += initiateTableRow(i, stars, editResult.get('movieID').get('Title'), editResult.get('movieID').get('imdbID'), seen, editButton, deleteButton);
+							var trID = 'tr-' + i;
+							movieOfUser += initiateTableRow(trID, stars, editResult.get('movieID').get('Title'), editResult.get('movieID').get('imdbID'), seen, editButton, deleteButton);
 						}));
 					}
 				});
