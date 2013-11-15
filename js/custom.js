@@ -322,6 +322,7 @@ function allLoginActions() {
 	//parse_setWelcomeText();
 		isLoggedInOrNot();
 		$('#facebookButtonList').css("display", "none");
+		$('#facebookMovieList').hide();
 	});
 	//@formatter:on
 }

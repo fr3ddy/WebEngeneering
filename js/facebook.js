@@ -1,9 +1,9 @@
 $(document).ready(function() {
 	parse_initializeFacebook();
+	$('#facebookMovieList').hide();
 	if (Parse.User.current() != null && typeof (Parse.User.current().attributes.authData.facebook.id) != "undefined") {
 		$('#facebookButtonList').css("display", "block");
 	}
-	$('#facebookMovieList').hide();
 	$('#facebookMovieList').stop().animate({
 		left : "-100%"
 	});
@@ -98,7 +98,7 @@ function loadMoviesUserLiked() {
 										counter++;
 										if (counter < 8) {
 											var val = counter * 12.5;
-											$('#facebookMoviesProgressBar').find('.progress-bar').css("width", val+"%");
+											$('#facebookMoviesProgressBar').find('.progress-bar').css("width", val + "%");
 											$('#facebookMoviesProgressBar').find('.progress-bar').css("aria-valuenow", val);
 										} else if (counter == 8) {
 											$('#facebookMoviesProgressBar').hide();
