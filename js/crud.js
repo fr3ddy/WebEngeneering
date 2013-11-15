@@ -100,6 +100,7 @@ function searchMovie(numberOfStars, movieTitle, seen) {
 				parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, function(success) {
 					if (success) {
 						addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
+						//Lade Auch Ansicht mit Filmen die der user geliked hat neu, damit nur die richtigen angezeigt werden
 					} else {
 						parse_getErrorMessage("Wasn't able to add movie to DB");
 					}
@@ -132,6 +133,8 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 	};
 
 	$('tbody .select').on('click', function() {
+		$(this).button();
+		$(this).button("loading");
 		var imdbID = $(this).parent().parent().attr('data-imdbID');
 		if (checkForDuplicate(imdbID)) {
 			var movieTitle = $(this).parent().parent().find('td:first-child').text();
@@ -142,6 +145,7 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 					$('#createFilmModal').find('#saveFilm').show();
 					$('#createFilmModal').find('.modal-body .form-group').show();
 					$('#createFilmModal').find('#chooseTable').hide();
+					$(this).button("reset");
 
 				} else {
 					var error = "Wasn't able to add movie to DB";
@@ -264,6 +268,7 @@ function addNewTableLine(numberOfStars, movieTitle, imdbID) {
 		$('#filterBox #movieTitle').val(filter.movieTitle);
 	}
 	filterTable();
+	loadMoviesUserLiked();
 
 }
 
