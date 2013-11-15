@@ -2,7 +2,7 @@ $(document).ready(function() {
 	parse_initialLoadMovieTable();
 
 	/* Action Listener für Detail View Lupe */
-	$('table').on('click', '.detailMagnifier', function() {
+	$('body').on('click', 'table .detailMagnifier', function() {
 		var clickedTr = $(this).parent().parent();
 		buildDetailView.call(this, parseFloat(clickedTr.find('.stars').data('rated')), clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
 	});

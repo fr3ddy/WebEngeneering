@@ -150,6 +150,13 @@ var chooseTable = _.template('<tr data-imdbID="<%- imdbID %>">'
 //@formatter:on
 
 $(document).ready(function() {
+	$('body').on('click', '.user', function() {
+		console.log("success");
+		parse_getUserView($(this).text().trim(), function(view) {
+			$('#userView').html(view);
+			$('#userView').show();
+		});
+	});
 	/*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
 
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
@@ -394,12 +401,3 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 }
 
 /*-------------------------------- Ende Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
-
-/*-------------------------------- Anfang Benutzeruebersicht ---------------------------------------------------------------------------------------------------*/
-$('.user').on('click', function() {
-	parse_getUserView(function(view) {
-		$('#userView').html(view);
-	});
-});
-
-/*-------------------------------- Anfang Benutzeruebersicht ---------------------------------------------------------------------------------------------------*/
