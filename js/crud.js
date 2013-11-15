@@ -132,6 +132,8 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 	};
 
 	$('tbody .select').on('click', function() {
+		$(this).button();
+		$(this).button("loading");
 		var imdbID = $(this).parent().parent().attr('data-imdbID');
 		if (checkForDuplicate(imdbID)) {
 			var movieTitle = $(this).parent().parent().find('td:first-child').text();
@@ -142,6 +144,7 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 					$('#createFilmModal').find('#saveFilm').show();
 					$('#createFilmModal').find('.modal-body .form-group').show();
 					$('#createFilmModal').find('#chooseTable').hide();
+					$(this).button("reset");
 
 				} else {
 					var error = "Wasn't able to add movie to DB";

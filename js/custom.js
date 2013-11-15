@@ -145,7 +145,7 @@ var chooseTable = _.template('<tr data-imdbID="<%- imdbID %>">'
 									+'<td><%- movieTitle %></td>'
 									+'<td><%- year %></td>'
 									+'<td><%- type %></td>' 
-									+'<td><button type="button" class="btn btn-primary select">Select</button></td>'
+									+'<td><button type="button" class="btn btn-primary select" data-loading-text="Selecting...">Select</button></td>'
 									+'</tr>');
 //@formatter:on
 
