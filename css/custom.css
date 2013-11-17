@@ -105,7 +105,7 @@ table {
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
 	opacity: 0.8;
-	z-index: 2;
+	z-index: 2000;
 }
 
 .loggedIn {
@@ -190,6 +190,15 @@ table {
 	border-bottom: 2px solid #0088CC;
 }
 
+#changePassword {
+	margin-bottom: 5px;
+}
+
+#changePasswordForm {
+	display: none;
+	margin-top: 5px;	
+}
+
 #closeDetailedView {
 	left: -20px;
 	color: black;
@@ -211,13 +220,10 @@ table {
 	border: 0;
 }
 
-#changePasswordForm {
-	display: none;	
-}
-
 #chooseTable {
 	display: none;
 }
+
 #comment-box{
 	border-top: 	solid 2px #f0f0f0;
 	margin-top: 	20px;

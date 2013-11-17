@@ -29,8 +29,6 @@ function parse_registerUser(username, password) {
 			$('#registerModal .modal-body #regPasswordInput').val("");
 		},
 		error : function(user, error) {
-			// $('#registerModal .modal-body .alert').html(error.message);
-			// $('#registerModal .modal-body .alert').show();
 			parse_getErrorMessage(error);
 		}
 	});
@@ -57,10 +55,14 @@ function parse_countUsers(callback) {
 	var promise = Parse.Promise.as();
 	promise = promise.then(function() {
 		return user.count();
+	}, function(error) {
+		return Parse.Promise.error(error);
 	});
 	return promise;
 }
 
+/* Beim Aufbau der Tabellen wird geschaut, ob ein Benutzer (wenn er angemeldet ist) einen Film bewertet hat
+ * und wie er ihn bewertet hat. Hat er ihn noch nicht bewertet, so wird dies angezeigt */
 function checkEdit(movieResult, userID, callback) {
 	var promises = [];
 	if (userID !== null) {
@@ -79,13 +81,15 @@ function checkEdit(movieResult, userID, callback) {
 					callback(notSeenText, editResult.get('rating'));
 				}
 			} else {
-				/* es wurde kein Eintrag in EDIT zur Selektion gefunden.
+				/* es wurde kein Eintrag in EDIT zu movieResult + userID gefunden.
 				 * Daher wird gesehen / nicht gesehen auf nicht gesehen gesetzt,
 				 * als Default-Wert und die Bewertung auf 0 Sterne
 				 */
 
 				callback(notSeenText, 0);
 			}
+		}, function(error) {
+			return Parse.Promise.error(error);
 		}));
 	}
 	return Parse.Promise.when(promises);
@@ -137,6 +141,8 @@ function parse_initialLoadMovieTable() {
 					row.numberOfStars = stars;
 				}).then(function() {
 					rows.push(initiateTableRow(row.trID, row.numberOfStars, row.movieTitle, row.imdbID, row.seen, row.editButton, row.deleteButton));
+				}, function(error) {
+					return Parse.Promise.error(error);
 				}));
 			});
 			return Parse.Promise.when(promises);
@@ -145,7 +151,6 @@ function parse_initialLoadMovieTable() {
 
 			//Loeche-Popover koennen erst an dieser Stelle den Zeilen hinzugefügt werden,
 			//da diese nur existierenden Elementen zugeteilt werden können.
-
 			for (var i = 1; i <= rows.length; i++) {
 				/*Initialisiere PopOver fuer Delete-Button*/
 				$('#tr-' + i).find('.delete').popover({
@@ -164,6 +169,7 @@ function parse_initialLoadMovieTable() {
 	});
 }
 
+/* Speichere neuen Film in MOVIE Tabelle ab, falls dieser nicht schon vorhanden ist */
 function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, cb) {
 	var check = new Parse.Query(Movie);
 	check.equalTo('imdbID', imdbID);
@@ -197,14 +203,12 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, cb) {
 				cb(true);
 			},
 			error : function(movie, error) {
-				// TODO schoenere Fehlermeldung
-				alert('Failed to create new object, with error code: ' + error.description);
-
 				cb(false);
 			}
 		});
 
 	}, function(error) {
+		// Tritt ein Fehler auf, dass z.B. der Film schon existiert, dann zeige dies als Fehlermeldung an und lade die Tabelle im Browser neu
 		$('#createFilmModal').modal('hide');
 		parse_getErrorMessage(error);
 		parse_initialLoadMovieTable();
@@ -227,9 +231,7 @@ function parse_saveRating(numberOfStars, seen, movie) {
 			success : function(edit) {
 			},
 			error : function(edit, error) {
-				// TODO schoenere Fehlermeldung
-				parse_getErrorMessage(error);
-				alert('Failed to create new object, with error code: ' + error.message);
+				return Parse.Promise.error(error);
 			}
 		});
 	});
@@ -256,11 +258,12 @@ function parse_calculateAverageRating(movieID, callback) {
 			}
 		},
 		error : function(error) {
-			// TODO Fehlermeldung?
+			return Parse.Promise.error(error);
 		}
 	});
 }
 
+/* Aktualisiere oder speichere Bewertung eines Benutzers zu einem Film */
 function parse_updateEntry(imdbID, numberOfStars, seen) {
 	var movie = new Parse.Query(Movie);
 	movie.equalTo('imdbID', imdbID);
@@ -311,6 +314,8 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 
 					return parse_saveRating(numberOfStars, seen, movieResult);
 				}
+			}, function(error) {
+				return Parse.Promise.error(error);
 			});
 			return promise;
 		}).then(function() {
@@ -319,6 +324,8 @@ function parse_updateEntry(imdbID, numberOfStars, seen) {
 				movieResult.set('avgRating', average);
 				movieResult.save();
 			});
+		}, function(error) {
+			parse_getErrorMessage(error);
 		});
 	});
 }
@@ -339,13 +346,14 @@ function parse_getOwnerOfMovie(imdbID, callback) {
 			},
 			error : function(error) {
 				callback("User does not exist");
-				// TODO Fehlermeldung
 			}
 		});
+	}, function(error) {
+		parse_getErrorMessage(error);
 	});
 }
 
-// TODO Versuch eine Methode zu entwickeln, die die verschiedenen Fehler kontextspezifisch verarbeitet
+/* Verabeitet die entstehenden Fehlermeldungen und zeigt sie als Leiste oben in der Webseite an */
 function parse_getErrorMessage(error) {
 	var errorMessage;
 	switch(error.code) {
@@ -376,7 +384,9 @@ function parse_getErrorMessage(error) {
 	}
 
 	//@formatter:off
-	$('.customAlert').html('<div class="alert alert-dismissable">'+ errorMessage +'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button></div>');
+	$('.customAlert').html('<div class="alert alert-dismissable">'
+								+ errorMessage 
+								+'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button></div>');
 	//@formatter:on
 }
 
@@ -409,6 +419,8 @@ function parse_facebookLoginSignUp() {
 	});
 }
 
+/* Setze eine Begruessungsnachrit, wenn ein Benutzer sich angemeldet hat.
+ * Diese erscheint in der Navigationsleiste und beinhaltet den Benutzernamen des angemeldeten Benutzers */
 function parse_setWelcomeText() {
 	var username;
 	if (Parse.User.current() != null) {
@@ -420,9 +432,14 @@ function parse_setWelcomeText() {
 	$('#welcometext').slideToggle();
 }
 
+/* Loesche einen Film aus der USER Tabelle. Aber nur, wenn kein anderer Benutzer diesen Bewertet hat.
+ * Hat ein anderer Benutzer als der Besitzer den Film bewertet, wird der, der den Film bewertet hat zum neuen Besitzer.
+ * Ansonsten wird der Film aus der MOVIE Tabelle entfernt */
 function parse_removeMovie(imdbID, cb) {
 	var movie = new Parse.Query(Movie);
 	movie.equalTo('imdbID', imdbID);
+
+	// finde den zu loeschenden Film in der MOVIE Tabelle
 	movie.first(function(checkResult) {
 		return checkResult;
 	}).then(function(checkResult) {
@@ -435,12 +452,17 @@ function parse_removeMovie(imdbID, cb) {
 		editEntry.equalTo('movieID', checkResult);
 		editEntry.notEqualTo('userID', Parse.User.current());
 		editEntry.include('userID');
+
+		// Finde eine Bewertung eines anderen Benutzers, falls es eine gibt
 		editEntry.first().then(function(entrie) {
 			if ( typeof (entrie) != 'undefined') {
 				checkResult.set('Owner', entrie.get('userID'));
 				checkResult.save();
+
+				// aendere den Besitzer des Films
 				cb(false);
 			} else {
+				// entferne den Film
 				checkResult.destroy();
 				cb(true);
 			}
@@ -450,6 +472,7 @@ function parse_removeMovie(imdbID, cb) {
 	});
 }
 
+/* Finde durschnittliche Bewertung eines Films mit Hilfe der imdbID in der MOVIE Tabelle */
 function parse_getAvgRating(imdbID, cb) {
 	var movie = new Parse.Query(Movie);
 	movie.equalTo('imdbID', imdbID);
@@ -460,11 +483,17 @@ function parse_getAvgRating(imdbID, cb) {
 	});
 }
 
+/* Baue eine Benutzeransicht auf und zeige diese an. Dafuer wird ein Benutzername ausgewahlt in der Detailansicht
+ * oder der angemeldete Nutzer klickt auf seinen Namen in der Navigationsleiste. Anschliessend werden zwei Tabellen aufgebaut.
+ * In der ersten stehen alle Filme, die ein Benutzer erstellt hat.
+ * In der zweiten alle Filme, die ein Benutzer bewertet hat ausgenommen der Filme, die schon in der ersten Tabelle stehen.
+ * Ist der angemeldete Benutzer zudem in seiner eigenen Benutzeransicht, hat er dort die Moeglichkeit sein Passwort zu aendern */
 function parse_getUserView(username, callback) {
 	var movieOfUser = "";
 	var user = new Parse.Query(Parse.User);
 	user.equalTo('username', username);
 
+	// Ueberpruefe ob Benutzer in USER Tabelle existiert und finde das passende Benutzer-Objekt
 	user.first().then(function(userName) {
 		return userName;
 	}).then(function(userName) {
@@ -479,11 +508,6 @@ function parse_getUserView(username, callback) {
 				deleteButton = deleteButtonActive;
 
 			}
-			// else {
-			// // angemeldeter User, der den Film nicht "besitzt"
-			// editButton = editButtonActive;
-			// deleteButton = deleteButtonInactive;
-			// }
 		} else {
 			//nicht angemeldet, daher nur Berechtigung zum Anschauen
 			editButton = editButtonNone;
@@ -491,19 +515,28 @@ function parse_getUserView(username, callback) {
 		}
 
 		var movie = new Parse.Query(Movie);
-
-		// movie.equalTo('imdbID', imdbID);
 		movie.equalTo('Owner', userName);
 
+		// Finde die Filme in der Tabelle, die dem Benutzer gehoeren dessen Namen geklickt wurde
 		movie.find().then(function(movies) {
 			var userSpecificButtons = "";
-			if (Parse.User.current() !== null && Parse.User.current().id === userName.id) {
-				userSpecificButtons = '<button id="changePassword" class="btn btn-default btn-sm">Change Password</button>';
-			}
 			//@formatter:off
-			movieOfUser = '<div class="container">'+ 
-								'<h4>Information about '+ userName.get('username') +'</h4>' + userSpecificButtons 
-								+'<br><div class="panel panel-default">'
+			if (Parse.User.current() !== null && Parse.User.current().id === userName.id) {
+				// ist der Benutzername der geklickt wurde gleich dem Benutzernamen des angemeldet Benutzers, so darf er sein Passwort in der Benutzeransicht aendern
+				userSpecificButtons = '<button id="changePassword" class="btn btn-default btn-sm">Change Password</button>'
+										+ '<div class="panel panel-default" id="changePasswordForm" style="width: 40%">'
+										+ '<div class="panel-heading">Change password</div>'
+										+ '<div class="panel-body">'
+										+ '<div class="form-group">'
+											+ '<input class="form-control" type="password" placeholder="new password">'
+											+ '<input class="form-control" type="password" placeholder="repeat new password">'
+											+ '<button type="button" class="btn btn-primary btn-sm form-control pull-right" id="saveChangePassword" data-loading-text="Changing Password..." data-complete-text="Password changed!" style="width: 35%">Change Password</button>'
+										+ '</div></div></div>';
+			}
+			// Schritt 1: Aufbau der Benutzeransicht
+			movieOfUser = '<div class="container">'
+								+'<h4>Information about '+ userName.get('username') +'</h4>' + userSpecificButtons 
+								+'<div class="panel panel-default">'
 								+'<div class="panel-heading">User created following movies with following ratings</div>'
 								+'<table class="table">'
 									+'<thead><tr id="tr-0"><th></th><th>Title</th><th>Seen / not seen</th><th>Rating</th><th></th><th></th></tr></thead>'
@@ -515,15 +548,19 @@ function parse_getUserView(username, callback) {
 				promises.push(checkEdit(movie, userName, function(seen, stars) {
 					i++;
 					var trID = 'tr-' + i;
+					// Schritt 2: Benutzeransicht mit Filmen fuellen die der ausgewaehlte Benutzer erstellt hat
 					movieOfUser += initiateTableRow(trID, stars, movie.get('Title'), movie.get('imdbID'), seen, editButton, deleteButton);
 
+				}, function(error) {
+					return Parse.Promise.error(error);
 				}));
 			});
 			return Parse.Promise.when(promises);
 		}).then(function() {
+			// Schritt 3: Alles vorbereiten um nachsten Abschnitt in Benutzeransicht aufzubauen
 			//@formatter:off
 			movieOfUser += '</tbody>'
-					+'</table></div><br>'
+					+'</table></div>'
 					+'<div class="panel panel-default">'
 					+'<div class="panel-heading">User rated following movies with following ratings</div>'
 					+'<table class="table">'
@@ -536,20 +573,18 @@ function parse_getUserView(username, callback) {
 
 			edit.equalTo('userID', userName);
 			edit.include('movieID');
+
+			// Schritt 4: Finde die Filme, die der ausgewaehlte Benutzer bewertet hat
 			edit.find().then(function(edits) {
 				var promises = [];
 				var i = 0;
 				_.each(edits, function(editResult) {
+					// Schritt 5: Aber nur die Filme von denen der ausgewaehlte Benutzer nicht auch der Besitzer ist
 					if ( typeof (editResult.get('movieID')) !== 'undefined' && editResult.get('movieID').get('Owner').id !== userName.id) {
 						if (Parse.User.current() !== null) {
 							// angemeldet
 							if (userName.id === Parse.User.current().id) {
-								// // angemeldeter User, der den Film "besitzt"
-								// editButton = editButtonActive;
-								// deleteButton = deleteButtonActive;
-								//
-								// } else {
-								// angemeldeter User, der den Film nicht "besitzt"
+								// angemeldeter User, der den Film "besitzt"
 								editButton = editButtonActive;
 								deleteButton = deleteButtonInactive;
 							}
@@ -562,17 +597,47 @@ function parse_getUserView(username, callback) {
 						promises.push(checkEdit(editResult.get('movieID'), userName, function(seen, stars) {
 							i++;
 							var trID = 'tr-' + i;
+							// Schritt 6: Fuege die gefundenen Filme mit der Bewertung des ausgewaehlten Nutzers der Benutzersicht unter "User rated" hinzu
 							movieOfUser += initiateTableRow(trID, stars, editResult.get('movieID').get('Title'), editResult.get('movieID').get('imdbID'), seen, editButton, deleteButton);
+						}, function(error) {
+							return Parse.Promise.error(error);
 						}));
 					}
 				});
 				return Parse.Promise.when(promises);
 			}).then(function() {
+				// Schritt 7: Schliesse Benutzeransicht ab und zeige diese durch den callback(...) an
 				movieOfUser += '</tbody></table></div></div>';
 				callback(movieOfUser);
+			}, function(error) {
+				return Parse.Promise(error);
 			});
+		}, function(error) {
+			parse_getErrorMessage(error);
 		});
 	});
+}
+
+/* Aendere das Passwort des angemeldeten Benutzers. Da der Benutzer sein altes Passwort eingeben musste, um sich anzumelden, wird es nicht nocheinmal
+ * uberprueft sondern direkt das neue Passwort gesetzt */
+function parse_changePassword() {
+	var newPassword = $.trim($(this).parent().find('input:first').val());
+	var newPasswordRepeats = $.trim($(this).parent().find('input:last').val());
+	var that = this;
+	if (newPassword === newPasswordRepeats) {
+		$(this).button('loading');
+		// Passwoerter in beiden Feldern sind gleich
+		var user = new Parse.Query(Parse.User);
+		user.get(Parse.User.current().id, {
+			success : function(object) {
+				object.set('password', newPassword);
+				object.save();
+				$(that).button('complete').addClass('btn-success').removeClass('btn-primary');
+			}
+		});
+	} else {
+		parse_getErrorMessage('Passwords do not match each other');
+	}
 }
 
 function parse_saveComment(imdbId, commentText, cb) {

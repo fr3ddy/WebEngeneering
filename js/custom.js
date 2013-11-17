@@ -5,6 +5,7 @@ var table;
  * Falls ja, darf die Bewertung nicht in die Tabelle übernommen werden, da sie durch 'mouseover' zu Stande gemkommen sein koennte.
  * Sie darf aber nur uebernommen werden, wenn der User die Bewertung durch 'click' gesetzt hat */
 var mouseoverForRatingOn = true;
+var changedFilInUserView = false;
 
 var ratingIconHTML = '&#xe007;';
 var ratingIconOn = 'glyphicon-star';
@@ -173,15 +174,14 @@ $(document).ready(function() {
 
 	/* Passwort des angemeldeten Benutzers aendern */
 	$('body').on('click', '#changePassword', function() {
-		// //@formatter:off
-		// var changeField = '<div id="changePasswordForm">'
-								// + '<input type="password" placeholder="old password">'
-								// + '<input type="password" placeholder="new password">'
-								// + '<input type="password" placeholder="repeat new password">'
-							// +'</div>';
-		// //@formatter:on
-// 		
-		// $(this).append(changeField).slideToggle();
+		$(this).parent().find('#changePasswordForm').find('button').button('reset');
+		$(this).parent().find('#changePasswordForm').find('button').addClass('btn-primary').removeClass('btn-success');
+		$(this).parent().find('#changePasswordForm').find('input').val("");
+		$(this).parent().find('#changePasswordForm').slideToggle();
+	});
+
+	$('body').on('click', '#saveChangePassword', function() {
+		parse_changePassword.apply($(this));
 	});
 
 	/*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
@@ -202,7 +202,14 @@ $(document).ready(function() {
 	$('#listNav').on('click', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		$('#userView').hide();
+		
+		// wurde ein Filmeintrag in der User Ansicht geaendert ist die Tabelle neu zu laden, bevor wir zur Liste zurueckkehren
+		$('#userView').hide(function() {
+			if(changedFilInUserView) {
+				parse_initialLoadMovieTable();
+			}
+		});
+		
 		$('#detailedView').stop().animate({
 			right : "-100%"
 		}, function() {
@@ -228,12 +235,14 @@ $(document).ready(function() {
 			setTimeout('$("#usernameInput").focus()', 100);
 		}
 	});
+	
 	$('#submitLoginButton').on('click', function(event) {
 		event.preventDefault();
 		var userName = $('#usernameInput').val();
 		var password = $('#passwordInput').val();
 		var parent = $('#loginButton').parent();
 		$('#submitLoginButton').button('loading');
+		showHomeView();
 		parse_loginUser(userName, password);
 	});
 
@@ -342,6 +351,8 @@ function allLoginActions() {
 	$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
 	$('#logoutButton').on('click', function() {
 		parse_initialLoadMovieTable();
+		showHomeView();
+		
 		$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
 		$('#menu1').removeClass("open");
 		Parse.User.logOut();
@@ -360,6 +371,17 @@ function allLoginActions() {
 		$('#facebookMovieList').hide();
 	});
 	//@formatter:on
+}
+
+/* Zeige Liste (Home-Ansicht ) an bei klick auf Login- oder Logout-Button */
+function showHomeView() {
+	$('#home').show().css({
+		left : "0px"
+	});
+	$('#detailedView').hide().css({
+		right : "-100%"
+	});
+	$('#userView').hide();
 }
 
 /*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
@@ -411,6 +433,7 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 					plot : data.Plot,
 					comments : userComments
 				}));
+				
 				$('#userView').hide();
 				$('#detailedView').stop().show().animate({
 					right : "0px"

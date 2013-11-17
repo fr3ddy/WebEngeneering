@@ -24,7 +24,7 @@ $(document).ready(function() {
 	});
 
 	/*Aendere-Button auf Modal 'editFilmModal'*/
-	$('#changeMovie').on('click', changeMovieValues);
+	$('#changeMovie').on('click', changeTableRowValues);
 
 	/*Aufbau Modal um den Film zu editieren*/
 	$('body').on('click', '.edit', function() {
@@ -303,13 +303,15 @@ function changeMovieValues(event) {
 	}
 }
 
-/* Die geaenderten Werte aus dem 'editFilmModal' werden in die entsprechende Zeile der Tabelle uebertragen. 'This' entspricht dem <div>, das die Sterne umgibt */
-function changeTableRowValues(numberOfStars) {
 
-	$(table).find('#' + selectedRowId).find('.tableMovieSeen').text($(this).find('.on').text().toLowerCase());
+/* Die geaenderten Werte aus dem 'editFilmModal' werden in die entsprechende Zeile der Tabelle uebertragen. 'This' entspricht dem <div>, das die Sterne umgibt */
+function changeTableRowValues() {
+	var numberOfStars = $(this).parent().parent().find('.stars').find('.' + ratingIconOn).length;
+
+	$(table).find('#' + selectedRowId).find('.tableMovieSeen').text($(this).parent().parent().find('.on').text().toLowerCase());
 	
 	// wurde ein Film als 'GESEHEN' markiert, erhält er die Anzahl an Sternen, mit denen er bewertet wurde. Ansonsten sind alle Sterne leer
-	if (seenText.toUpperCase() === $(this).find('.on').text()) {
+	if (seenText.toUpperCase() === $(this).parent().parent().find('.on').text()) {
 		if (mouseoverForRatingOn) {
 			/* an die Bewertung ist noch ein 'mouseover' Event gebunden, daher darf die Bewertung nicht geaendert werden und die bestehende Bewertung bleibt bestehen.
 			 * Ist die bestehende Bewertung aber 0, dann muss min. 1 Stern gesetzt werden.
@@ -326,9 +328,19 @@ function changeTableRowValues(numberOfStars) {
 	$('#editFilmModal').modal('hide');
 
 	// aktualisiere die Edit Tabelle bei parse oder fuege einen neuen Eintrag hinzu
-	var getRating = $(table).find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
-	var seen = $(this).find('.on').text().toLowerCase() === seenText ? true : false;
+	var getRating = parseFloat($(table).find('#' + selectedRowId).find('.stars').data('rated'));
+	// var getRating = $(table).find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
+	var seen = $(this).parent().parent().find('.on').text().toLowerCase() === seenText ? true : false;
 	parse_updateEntry($(table).find('#' + selectedRowId).data('imdbid'), getRating, seen);
+	
+	setUserViewChangedFlag();
+}
+
+/* Setze Flag um Movie List im Browser neu zu laden, wenn die Benutzeransicht verlassen wird, um wieder zur Startansicht zu gelangen */
+function setUserViewChangedFlag() {
+	if(table === "#userCreatedTable" || table === "#userRatedTable") {
+		changedFilInUserView = true;
+	}
 }
 
 /* Loescht ausgewaehlte Zeile aus Tabelle*/
