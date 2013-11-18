@@ -433,42 +433,77 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 
 			parse_getAvgRating(imdbID, function(stars) {
 				avgStars = stars;
-			});
-			var userComments;
-			parse_getComments(imdbID, false, function(comments) {
-				userComments = comments;
-			});
-			
-			parse_getOwnerOfMovie(imdbID, function(username) {
-				$('#detailedView').html(detailedMovieView({
-					imdbID : imdbID,
-					movieTitle : data.Title,
-					username : username,
-					movieSeen : movieSeen,
-					rating : rating,
-					avgRating : setRating(avgStars, true, true),
-					picture : poster,
-					release : data.Released,
-					runtime : data.Runtime,
-					genre : data.Genre,
-					director : data.Director,
-					actors : data.Actors,
-					plot : data.Plot,
-					comments : userComments
-				}));
+				parse_getComments(imdbID, false, function(comments) {
+					var userComments = comments;
+					parse_getOwnerOfMovie(imdbID, function(username) {
+						$('#detailedView').html(detailedMovieView({
+							imdbID : imdbID,
+							movieTitle : data.Title,
+							username : username,
+							movieSeen : movieSeen,
+							rating : rating,
+							avgRating : setRating(avgStars, true, true),
+							picture : poster,
+							release : data.Released,
+							runtime : data.Runtime,
+							genre : data.Genre,
+							director : data.Director,
+							actors : data.Actors,
+							plot : data.Plot,
+							comments : userComments
+						}));
 
-				$('#userView').hide();
-				$('#detailedView').stop().show().animate({
-					right : "0px"
-				});
-				$('#home').stop().animate({
-					left : "-100%"
-				}, function() {
-					$('#home').hide();
-				});
+						$('#userView').hide();
+						$('#detailedView').stop().show().animate({
+							right : "0px"
+						});
+						$('#home').stop().animate({
+							left : "-100%"
+						}, function() {
+							$('#home').hide();
+						});
 
-				that.toggleClass('glyphicon-search detailView-loading');
+						that.toggleClass('glyphicon-search detailView-loading');
+					});
+
+				});
 			});
+
+			// var userComments;
+			// parse_getComments(imdbID, false, function(comments) {
+			// userComments = comments;
+			// });
+
+			// parse_getOwnerOfMovie(imdbID, function(username) {
+			// $('#detailedView').html(detailedMovieView({
+			// imdbID : imdbID,
+			// movieTitle : data.Title,
+			// username : username,
+			// movieSeen : movieSeen,
+			// rating : rating,
+			// avgRating : setRating(avgStars, true, true),
+			// picture : poster,
+			// release : data.Released,
+			// runtime : data.Runtime,
+			// genre : data.Genre,
+			// director : data.Director,
+			// actors : data.Actors,
+			// plot : data.Plot,
+			// comments : userComments
+			// }));
+			//
+			// $('#userView').hide();
+			// $('#detailedView').stop().show().animate({
+			// right : "0px"
+			// });
+			// $('#home').stop().animate({
+			// left : "-100%"
+			// }, function() {
+			// $('#home').hide();
+			// });
+			//
+			// that.toggleClass('glyphicon-search detailView-loading');
+			// });
 
 		}
 	});
