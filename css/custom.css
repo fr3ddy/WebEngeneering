@@ -233,15 +233,18 @@ table {
 #comment-box textarea{
 	resize: none;
 }
-#comment-box .row{
+
+/*#comment-box .row{
 	border-bottom:	solid 1px #000000 ;
-}
-#comment-box .commentContent:hover{
+}*/
+
+/*#comment-box .commentContent:hover{
 	background-color: #f0f0f0;
-}
+}*/
+
 #comment-box .row .col-xs-5{
-	border-left:	solid 1px #000000;
-	padding-top:	10px;
+	/*border-left:	solid 1px #000000;*/
+	padding-top:	13px;
 }
 #comment-box .row .col-xs-7{
 	padding-top:	10px;

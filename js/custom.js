@@ -84,13 +84,17 @@ var detailedMovieView = _.template('<div class="container">'
 									+ '</div>');
 									
 var commentField = _.template('<div class="row commentContent">'
-								+ '<div class="col-xs-7">'
-									+ '<%- comment %>' 
-								+ '</div>'
-								+ '<div class="col-xs-5" data-commentID="<%- commentID%>">'
-									+ '<button type="button" class="deleteComment close" aria-hidden="true"> <%- button%></button>' 
-									+ '<label>By: </label><span><%- author%></span><br>'
-									+ '<label>Date </label><span><%- date%></&span>' 
+								+ '<div class="col-xs-8">'
+									+'<div class="panel panel-default">'
+										+'<div class="panel-body">'
+											+ '<%- comment %>'
+											+ '<button type="button" class="deleteComment close" aria-hidden="true"> <%- button%></button>' 
+										+'</div>' 
+									+ '</div>'
+								+'</div>'
+								+ '<div class="col-xs-4" data-commentID="<%- commentID%>">'
+									+ '<span style="font-weight: bold;"><span class="glyphicon glyphicon-user"></span> <%- author%></span><br>'
+									+ '<span style="font-size: 89%"><%- date%></&span>' 
 								+ '</div>' 								
 							+ '</div>');	
 
@@ -288,8 +292,8 @@ $(document).ready(function() {
 
 	$('#detailedView').on('click', '.deleteComment', function() {
 		var that = this;
-		parse_deleteComment($(this).parent().data("commentid"), function() {
-			$(that).parent().parent().remove();
+		parse_deleteComment($(this).parent().parent().parent().parent().find('div:last').data('commentid'), function() {
+			$(that).parent().parent().parent().parent().remove();
 		});
 	});
 
