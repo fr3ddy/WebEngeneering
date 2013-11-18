@@ -90,7 +90,7 @@ function searchMovie(numberOfStars, movieTitle, seen) {
 	}).done(function(data) {
 		if ( typeof (data.Response) == 'undefined') {
 			var elementsFound = $.map(data.Search, function(value, key) {
-				if (value.Type != 'game') {
+				if (value.Type != 'game' || value.Type != 'episode') {
 					return value;
 				}
 			});
