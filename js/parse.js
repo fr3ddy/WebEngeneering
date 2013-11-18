@@ -648,15 +648,15 @@ function parse_saveComment(imdbId, commentText, cb) {
 	comment.set("commentText", commentText);
 
 	comment.save(null, {
-		success : function() {
-			cb();
+		success : function(comment) {
+			cb(comment.id);
 		},
 		error : function(error) {
 		}
 	});
 }
 
-function parse_getComments(imdbID, cb) {
+function parse_getComments(imdbID, owner, cb) {
 	var comments = '<div id="comment-box">' + '<h3><span class="label label-default">User Comments</span></h3>';
 	var comment = new Parse.Query(Comment);
 
@@ -675,10 +675,19 @@ function parse_getComments(imdbID, cb) {
 			var yyyy = date.getFullYear();
 			var date = dd + "." + mm + "." + yyyy;
 
+			var button;
+			if(Parse.User.current() != null && result.get('userID').id == Parse.User.current().id || owner == true){
+				button = "x";
+			}else{
+				button = "";
+			}
+
 			var newComment = commentField({
 				comment : text,
 				author : user,
-				date : date
+				date : date,
+				button: button,
+				commentID: result.id
 			});
 
 			comments = comments + newComment;
@@ -690,7 +699,7 @@ function parse_getComments(imdbID, cb) {
 										+ '<div class="col-xs-7">' 
 											+ '<textarea class="form-control" rows="3"></textarea>'
 											+ '<p>'
-									 			+ '<button type="button" class="btn btn-primary btn-sm pull-right">Comment</button>'
+									 			+ '<button type="button" id="sendComment" class="btn btn-primary btn-sm pull-right">Comment</button>'
 											+ '</p>'	
 										+ '</div>'
 									+ '</div>';			
@@ -700,6 +709,18 @@ function parse_getComments(imdbID, cb) {
 		//@formatter:on
 		cb(comments);
 
+	}, function(error) {
+		parse_getErrorMessage(error);
+	});
+}
+
+function parse_deleteComment(commentID, cb){
+	var comment = new Parse.Query(Comment);
+	comment.equalTo('objectId', commentID);
+	
+	comment.first(function(result){
+		result.destroy();
+		cb();
 	}, function(error) {
 		parse_getErrorMessage(error);
 	});
