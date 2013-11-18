@@ -690,7 +690,7 @@ function parse_getComments(imdbID, cb) {
 										+ '<div class="col-xs-7">' 
 											+ '<textarea class="form-control" rows="3"></textarea>'
 											+ '<p>'
-									 			+ '<button type="button" class="btn btn-primary btn-sm pull-right">Comment</button>'
+									 			+ '<button type="button" id="sendComment" class="btn btn-primary btn-sm pull-right">Comment</button>'
 											+ '</p>'	
 										+ '</div>'
 									+ '</div>';			

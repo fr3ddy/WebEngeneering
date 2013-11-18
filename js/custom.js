@@ -281,7 +281,7 @@ $(document).ready(function() {
 	});
 
 	/*--------------------------------Comments--------------------------------------------*/
-	$('#detailedView').on('click', 'button', function() {
+	$('#detailedView').on('click', '#sendComment', function() {
 		if ($('#comment-box').find('textarea').val() != "") {
 
 			//Get actual Date
