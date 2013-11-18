@@ -676,7 +676,7 @@ function parse_getComments(imdbID, owner, cb) {
 			var date = dd + "." + mm + "." + yyyy;
 
 			var button;
-			if(result.get('userID').id == Parse.User.current().id || owner == true){
+			if(Parse.User.current() != null && result.get('userID').id == Parse.User.current().id || owner == true){
 				button = "x";
 			}else{
 				button = "";
