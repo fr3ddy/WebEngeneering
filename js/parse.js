@@ -656,7 +656,7 @@ function parse_saveComment(imdbId, commentText, cb) {
 	});
 }
 
-function parse_getComments(imdbID, cb) {
+function parse_getComments(imdbID, owner, cb) {
 	var comments = '<div id="comment-box">' + '<h3><span class="label label-default">User Comments</span></h3>';
 	var comment = new Parse.Query(Comment);
 
@@ -676,7 +676,7 @@ function parse_getComments(imdbID, cb) {
 			var date = dd + "." + mm + "." + yyyy;
 
 			var button;
-			if(result.get('userID').id == Parse.User.current().id){
+			if(result.get('userID').id == Parse.User.current().id || owner == true){
 				button = "x";
 			}else{
 				button = "";

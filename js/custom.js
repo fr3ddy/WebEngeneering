@@ -293,7 +293,7 @@ $(document).ready(function() {
 		});
 	});
 
-	$('#detailedView').on("keypress", "textarea",function(event) {
+	$('#detailedView').on("keypress", "textarea", function(event) {
 		if (event.keyCode == 13) {
 			save_comment();
 		}
@@ -430,12 +430,11 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 			parse_getAvgRating(imdbID, function(stars) {
 				avgStars = stars;
 			});
-
 			var userComments;
-			parse_getComments(imdbID, function(comments) {
+			parse_getComments(imdbID, false, function(comments) {
 				userComments = comments;
 			});
-
+			
 			parse_getOwnerOfMovie(imdbID, function(username) {
 				$('#detailedView').html(detailedMovieView({
 					imdbID : imdbID,
