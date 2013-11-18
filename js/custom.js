@@ -87,9 +87,10 @@ var commentField = _.template('<div class="row commentContent">'
 								+ '<div class="col-xs-7">'
 									+ '<%- comment %>' 
 								+ '</div>'
-								+ '<div class="col-xs-5">'
+								+ '<div class="col-xs-5" data-commentID="<%- commentID%>">'
+									+ '<button type="button" class="deleteComment close" aria-hidden="true"> <%- button%></button>' 
 									+ '<label>By: </label><span><%- author%></span><br>'
-									+ '<label>Date </label><span><%- date%></&span>'  
+									+ '<label>Date </label><span><%- date%></&span>' 
 								+ '</div>' 								
 							+ '</div>');	
 
@@ -202,14 +203,14 @@ $(document).ready(function() {
 	$('#listNav').on('click', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		
+
 		// wurde ein Filmeintrag in der User Ansicht geaendert ist die Tabelle neu zu laden, bevor wir zur Liste zurueckkehren
 		$('#userView').hide(function() {
-			if(changedFilInUserView) {
+			if (changedFilInUserView) {
 				parse_initialLoadMovieTable();
 			}
 		});
-		
+
 		$('#detailedView').stop().animate({
 			right : "-100%"
 		}, function() {
@@ -235,7 +236,7 @@ $(document).ready(function() {
 			setTimeout('$("#usernameInput").focus()', 100);
 		}
 	});
-	
+
 	$('#submitLoginButton').on('click', function(event) {
 		event.preventDefault();
 		var userName = $('#usernameInput').val();
@@ -282,30 +283,49 @@ $(document).ready(function() {
 
 	/*--------------------------------Comments--------------------------------------------*/
 	$('#detailedView').on('click', '#sendComment', function() {
-		if ($('#comment-box').find('textarea').val() != "") {
+		save_comment();
+	});
 
-			//Get actual Date
-			var today = new Date();
-			var dd = today.getDate();
-			var mm = today.getMonth() + 1;
-			//January is 0!
+	$('#detailedView').on('click', '.deleteComment', function() {
+		var that = this;
+		parse_deleteComment($(this).parent().data("commentid"), function() {
+			$(that).parent().parent().remove();
+		});
+	});
 
-			var yyyy = today.getFullYear();
-			var date = dd + "." + mm + "." + yyyy;
-
-			parse_saveComment($('#detailViewMovieTitle').data('imdbid'), $('#comment-box').find('textarea').val(), function() {
-				var newComment = commentField({
-					comment : $('#comment-box').find('textarea').val(),
-					author : Parse.User.current().get('username'),
-					date : date
-				});
-
-				$(newComment).insertBefore('#comment-textarea');
-				$('#comment-box').find('textarea').val("");
-			});
+	$('#detailedView').on("keypress", "textarea",function(event) {
+		if (event.keyCode == 13) {
+			save_comment();
 		}
 	});
 });
+
+function save_comment() {
+	if ($.trim($('#comment-box').find('textarea').val()) != "") {
+
+		//Get actual Date
+		var today = new Date();
+		var dd = today.getDate();
+		var mm = today.getMonth() + 1;
+		//January is 0!
+
+		var yyyy = today.getFullYear();
+		var date = dd + "." + mm + "." + yyyy;
+
+		parse_saveComment($('#detailViewMovieTitle').data('imdbid'), $('#comment-box').find('textarea').val(), function(commentID) {
+			var newComment = commentField({
+				comment : $('#comment-box').find('textarea').val(),
+				author : Parse.User.current().get('username'),
+				date : date,
+				button : "x",
+				commentID : commentID
+			});
+
+			$(newComment).insertBefore('#comment-textarea');
+			$('#comment-box').find('textarea').val("");
+		});
+	}
+}
 
 jQuery.fn.rotate = function(degrees) {
 	$(this).css({
@@ -433,7 +453,7 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 					plot : data.Plot,
 					comments : userComments
 				}));
-				
+
 				$('#userView').hide();
 				$('#detailedView').stop().show().animate({
 					right : "0px"

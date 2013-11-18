@@ -648,8 +648,8 @@ function parse_saveComment(imdbId, commentText, cb) {
 	comment.set("commentText", commentText);
 
 	comment.save(null, {
-		success : function() {
-			cb();
+		success : function(comment) {
+			cb(comment.id);
 		},
 		error : function(error) {
 		}
@@ -675,10 +675,19 @@ function parse_getComments(imdbID, cb) {
 			var yyyy = date.getFullYear();
 			var date = dd + "." + mm + "." + yyyy;
 
+			var button;
+			if(result.get('userID').id == Parse.User.current().id){
+				button = "x";
+			}else{
+				button = "";
+			}
+
 			var newComment = commentField({
 				comment : text,
 				author : user,
-				date : date
+				date : date,
+				button: button,
+				commentID: result.id
 			});
 
 			comments = comments + newComment;
@@ -700,6 +709,18 @@ function parse_getComments(imdbID, cb) {
 		//@formatter:on
 		cb(comments);
 
+	}, function(error) {
+		parse_getErrorMessage(error);
+	});
+}
+
+function parse_deleteComment(commentID, cb){
+	var comment = new Parse.Query(Comment);
+	comment.equalTo('objectId', commentID);
+	
+	comment.first(function(result){
+		result.destroy();
+		cb();
 	}, function(error) {
 		parse_getErrorMessage(error);
 	});
