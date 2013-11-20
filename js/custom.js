@@ -183,7 +183,7 @@ $(document).ready(function() {
 		$(this).parent().find('#changePasswordForm').find('button').button('reset');
 		$(this).parent().find('#changePasswordForm').find('button').addClass('btn-primary').removeClass('btn-success');
 		$(this).parent().find('#changePasswordForm').find('input').val("");
-		$(this).parent().find('#changePasswordForm').slideToggle();
+		$(this).parent().find('#changePasswordForm').slideToggle();	
 	});
 
 	$('body').on('click', '#saveChangePassword', function() {
