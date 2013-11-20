@@ -205,8 +205,6 @@ $(document).ready(function() {
 	});
 
 	$('#listNav').on('click', function(event) {
-		event.preventDefault();
-		event.stopPropagation();
 
 		// wurde ein Filmeintrag in der User Ansicht geaendert ist die Tabelle neu zu laden, bevor wir zur Liste zurueckkehren
 		$('#userView').hide(function() {
