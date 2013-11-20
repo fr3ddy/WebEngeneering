@@ -93,7 +93,7 @@ function loadMoviesUserLiked() {
 										}
 										//@formatter:off;
 										$('#facebookMovies').append('<div class="col-xs-3"><div class="panel panel-default"><div class="panel-heading">'
-													 + movieDataObject.name + '<div class="pull-right" style="margin-top: -5px;"><button class="btn btn-default btn-sm facebookAddMovie"><span class="glyphicon glyphicon-plus-sign"></span></button></div></div><div class="panel-body">'
+													 + movieDataObject.name.replace("Movie" , "").replace("The Movie" , "").replace("Trilogy" , "") + '<div class="pull-right" style="margin-top: -5px;"><button class="btn btn-default btn-sm facebookAddMovie"><span class="glyphicon glyphicon-plus-sign"></span></button></div></div><div class="panel-body">'
 													 + '<img class="img-thumbnail" src="'+movieDataObject.cover.source+'"/></div></div></div>');
 										//@formatter:on;
 										alreadyInsertedMovies[counter] = movieDataObject.name;
