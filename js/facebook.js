@@ -37,25 +37,7 @@ function closeFacebookMovieView() {
 	});
 }
 
-function movieDoesNotExist(movieData, callback) {
-	var movieName = movieData.name.replace(" ", "%20");
-	$.getJSON("http://www.omdbapi.com/?t=" + movieName).done(function(data) {
-		movieData.imdbID = data.imdbID;
-	}).then(function() {
-		var check = new Parse.Query(Movie);
-		check.equalTo('imdbID', movieData.imdbID);
-		check.first(function(checkResult) {
-			movieData.checkResult = checkResult;
-		}).then(function() {
-			if ( typeof (movieData.checkResult) == "undefined") {
-				callback(movieData);
-			} else {
-				callback(false);
-			}
-		});
-	});
-}
-var maxAmout;
+var maxAmount;
 function loadMoviesUserLiked() {
 	$('#facebookMovies').hide();
 	$('#facebookMoviesProgressBar').show();
@@ -73,9 +55,9 @@ function loadMoviesUserLiked() {
 				$('#facebookMovies').html("");
 				//Zum erhalten des richtigen Datensatzes
 				var movieData = response.data;
-				if(movieData.length < 8){
+				if (movieData.length < 8) {
 					maxAmount = movieData.length;
-				}else{
+				} else {
 					maxAmount = 8;
 				}
 				for (var x = 0; x < movieData.length; x++) {
@@ -86,31 +68,36 @@ function loadMoviesUserLiked() {
 						for (var i = 0; i < movieData.length; i++) {
 							if (responsecat.category == "Movie" && typeof (movieData[i].cover) != "undefined") {
 								movieDoesNotExist(movieData[i], function(movieDataObject) {
-									if (movieDataObject != false && $.inArray(movieDataObject.name, alreadyInsertedMovies) < 0 && counter < 8) {
-										//Render into Movielist
-										if (counter % 4 == 0) {
-											$('#facebookMovies').append("<div class='row'>");
-										}
-										//@formatter:off;
-										$('#facebookMovies').append('<div class="col-xs-3"><div class="panel panel-default"><div class="panel-heading">'
-													 + movieDataObject.name.replace("Movie" , "").replace("The Movie" , "").replace("Trilogy" , "") + '<div class="pull-right" style="margin-top: -5px;"><button class="btn btn-default btn-sm facebookAddMovie"><span class="glyphicon glyphicon-plus-sign"></span></button></div></div><div class="panel-body">'
-													 + '<img class="img-thumbnail" src="'+movieDataObject.cover.source+'"/></div></div></div>');
-										//@formatter:on;
-										alreadyInsertedMovies[counter] = movieDataObject.name;
-										if (counter % 4 == 0) {
-											$('#facebookMovies').append("</div>");
-										}
-										counter++;
-										if (counter < maxAmount) {
-											var val = counter * (100 / maxAmount);
-											$('#facebookMoviesProgressBar').find('.progress-bar').css("width", val + "%");
-											$('#facebookMoviesProgressBar').find('.progress-bar').css("aria-valuenow", val);
-										} else if (counter == maxAmount) {
-											$('#facebookMoviesProgressBar').hide();
-											$('#facebookMovies').show();
-											$('#facebookMoviesProgressBar').find('.progress-bar').css("width", "0%");
-											$('#facebookMoviesProgressBar').find('.progress-bar').css("aria-valuenow", "0");
-										}
+									if (movieDataObject != false) {
+										isInOmdb(movieDataObject, function(newMovieDataObject) {
+											if (newMovieDataObject != false && $.inArray(newMovieDataObject.name.replace("Movie", "").replace("The Movie", "").replace("Trilogy", ""), alreadyInsertedMovies) < 0 && counter < maxAmount) {
+												//Render into Movielist
+												var filmName = newMovieDataObject.name.replace("Movie", "").replace("The Movie", "").replace("Trilogy", "");
+												if (counter % 4 == 0) {
+													$('#facebookMovies').append("<div class='row'>");
+												}
+												//@formatter:off;
+													$('#facebookMovies').append('<div class="col-xs-3"><div class="panel panel-default"><div class="panel-heading">'
+																 + filmName + '<div class="pull-right" style="margin-top: -5px;"><button class="btn btn-default btn-sm facebookAddMovie"><span class="glyphicon glyphicon-plus-sign"></span></button></div></div><div class="panel-body">'
+																 + '<img class="img-thumbnail" src="'+newMovieDataObject.cover.source+'"/></div></div></div>');
+												//@formatter:on;
+												alreadyInsertedMovies[counter] = filmName;
+												if (counter % 4 == 0) {
+													$('#facebookMovies').append("</div>");
+												}
+												counter++;
+												if (counter < maxAmount) {
+													var val = counter * (100 / maxAmount);
+													$('#facebookMoviesProgressBar').find('.progress-bar').css("width", val + "%");
+													$('#facebookMoviesProgressBar').find('.progress-bar').css("aria-valuenow", val);
+												} else if (counter == maxAmount) {
+													$('#facebookMoviesProgressBar').hide();
+													$('#facebookMovies').show();
+													$('#facebookMoviesProgressBar').find('.progress-bar').css("width", "0%");
+													$('#facebookMoviesProgressBar').find('.progress-bar').css("aria-valuenow", "0");
+												}
+											}
+										});
 									}
 
 								});
@@ -132,4 +119,44 @@ function loadMoviesUserLiked() {
 			// the user isn't logged in to Facebook.
 		}
 	}, true);
+}
+
+//Überprüft ob Film schon in der Datenbank vorhanden ist
+function movieDoesNotExist(movieData, callback) {
+	var movieName = movieData.name.replace(" ", "%20");
+	$.getJSON("http://www.omdbapi.com/?t=" + movieName).done(function(data) {
+		movieData.imdbID = data.imdbID;
+	}).then(function() {
+		var check = new Parse.Query(Movie);
+		check.equalTo('imdbID', movieData.imdbID);
+		check.first(function(checkResult) {
+			movieData.checkResult = checkResult;
+		}).then(function() {
+			if ( typeof (movieData.checkResult) == "undefined") {
+				callback(movieData);
+			} else {
+				callback(false);
+			}
+		});
+	});
+}
+
+function isInOmdb(movie, callback) {
+	$.ajax({
+		url : "http://www.omdbapi.com/?s=" + movie.name.replace("Movie", "").replace("The Movie", "").replace("Trilogy", "").replace(" ", "+"),
+		dataType : 'json',
+	}).done(function(data) {
+		if ( typeof (data.Response) == 'undefined') {
+			var elementsFound = $.map(data.Search, function(value, key) {
+				if (value.Type != 'game' || value.Type != 'episode') {
+					return value;
+				}
+			});
+			if (elementsFound.length > 0) {
+				callback(movie);
+			} else {
+				callback(false);
+			}
+		}
+	});
 }
