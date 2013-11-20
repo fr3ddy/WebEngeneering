@@ -432,9 +432,8 @@ function parse_setWelcomeText() {
 	$('#welcometext').slideToggle();
 }
 
-/* Loesche einen Film aus der USER Tabelle. Aber nur, wenn kein anderer Benutzer diesen Bewertet hat.
- * Hat ein anderer Benutzer als der Besitzer den Film bewertet, wird der, der den Film bewertet hat zum neuen Besitzer.
- * Ansonsten wird der Film aus der MOVIE Tabelle entfernt */
+/* Loesche einen Film aus der MOVIE Tabelle. Aber nur, wenn kein anderer Benutzer diesen Bewertet hat.
+ * Hat ein anderer Benutzer als der Besitzer den Film bewertet, wird der, der den Film bewertet hat zum neuen Besitzer. */
 function parse_removeMovie(imdbID, cb) {
 	var movie = new Parse.Query(Movie);
 	movie.equalTo('imdbID', imdbID);
@@ -464,7 +463,16 @@ function parse_removeMovie(imdbID, cb) {
 			} else {
 				// entferne den Film
 				checkResult.destroy();
-				cb(true);
+				
+				// entferne Eintrag aus der EDIT Tabelle
+				var editDelete = new Parse.Query(Edit);
+				editDelete.equalTo('movieID', checkResult);
+				editDelete.equalTo('userID', Parse.User.current());
+				
+				editDelete.first().then(function(editResult) {
+					editResult.destroy();
+					cb(true);
+				});
 			}
 		});
 	}, function(error) {
@@ -676,9 +684,9 @@ function parse_getComments(imdbID, owner, cb) {
 			var date = dd + "." + mm + "." + yyyy;
 
 			var button;
-			if(Parse.User.current() != null && result.get('userID').id == Parse.User.current().id || owner == true){
+			if (Parse.User.current() != null && result.get('userID').id == Parse.User.current().id || owner == true) {
 				button = "x";
-			}else{
+			} else {
 				button = "";
 			}
 
@@ -686,8 +694,8 @@ function parse_getComments(imdbID, owner, cb) {
 				comment : text,
 				author : user,
 				date : date,
-				button: button,
-				commentID: result.id
+				button : button,
+				commentID : result.id
 			});
 
 			comments = comments + newComment;
@@ -714,11 +722,11 @@ function parse_getComments(imdbID, owner, cb) {
 	});
 }
 
-function parse_deleteComment(commentID, cb){
+function parse_deleteComment(commentID, cb) {
 	var comment = new Parse.Query(Comment);
 	comment.equalTo('objectId', commentID);
-	
-	comment.first(function(result){
+
+	comment.first(function(result) {
 		result.destroy();
 		cb();
 	}, function(error) {
