@@ -489,7 +489,6 @@ function parse_getAvgRating(imdbID, cb) {
  * In der zweiten alle Filme, die ein Benutzer bewertet hat ausgenommen der Filme, die schon in der ersten Tabelle stehen.
  * Ist der angemeldete Benutzer zudem in seiner eigenen Benutzeransicht, hat er dort die Moeglichkeit sein Passwort zu aendern */
 function parse_getUserView(username, callback) {
-	$('body').css("cursor" , "wait");
 	var movieOfUser = "";
 	var user = new Parse.Query(Parse.User);
 	user.equalTo('username', username);
@@ -522,7 +521,7 @@ function parse_getUserView(username, callback) {
 		movie.find().then(function(movies) {
 			var userSpecificButtons = "";
 			//@formatter:off
-			if (Parse.User.current() !== null && Parse.User.current().id === userName.id && typeof(Parse.User.current().attributes.authData.facebook.id) == "undefined") {
+			if (Parse.User.current() !== null && Parse.User.current().id === userName.id && typeof(Parse.User.current().attributes.authData) == "undefined") {
 				// ist der Benutzername der geklickt wurde gleich dem Benutzernamen des angemeldet Benutzers, so darf er sein Passwort in der Benutzeransicht aendern
 				userSpecificButtons = '<button id="changePassword" class="btn btn-default btn-sm">Change Password</button>'
 										+ '<div class="panel panel-default" id="changePasswordForm" style="width: 40%">'
@@ -609,7 +608,6 @@ function parse_getUserView(username, callback) {
 			}).then(function() {
 				// Schritt 7: Schliesse Benutzeransicht ab und zeige diese durch den callback(...) an
 				movieOfUser += '</tbody></table></div></div>';
-				$('body').css("cursor" , "default");
 				callback(movieOfUser);
 			}, function(error) {
 				return Parse.Promise(error);
