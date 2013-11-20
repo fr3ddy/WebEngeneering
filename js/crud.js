@@ -102,10 +102,10 @@ function searchMovie(numberOfStars, movieTitle, seen) {
 
 			if (elementsFound.length > 1) {
 				buildChooseTable(elementsFound, numberOfStars, seen);
-			} else if (elementsFound == 1) {
-				parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, function(success) {
+			} else if (elementsFound.length == 1) {
+				parse_saveMovie(elementsFound[0].Title, elementsFound[0].imdbID, numberOfStars, seen, function(success) {
 					if (success) {
-						addNewTableLine(numberOfStars, movieTitle, elementsFound.imdbID);
+						addNewTableLine(numberOfStars, elementsFound[0].Title, elementsFound[0].imdbID);
 						//Lade Auch Ansicht mit Filmen die der user geliked hat neu, damit nur die richtigen angezeigt werden
 					} else {
 						parse_getErrorMessage("Wasn't able to add movie to DB");
