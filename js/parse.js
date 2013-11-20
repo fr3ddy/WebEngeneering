@@ -529,7 +529,7 @@ function parse_getUserView(username, callback) {
 		movie.find().then(function(movies) {
 			var userSpecificButtons = "";
 			//@formatter:off
-			if (Parse.User.current() !== null && Parse.User.current().id === userName.id) {
+			if (Parse.User.current() !== null && Parse.User.current().id === userName.id && typeof(Parse.User.current().attributes.authData) == "undefined") {
 				// ist der Benutzername der geklickt wurde gleich dem Benutzernamen des angemeldet Benutzers, so darf er sein Passwort in der Benutzeransicht aendern
 				userSpecificButtons = '<button id="changePassword" class="btn btn-default btn-sm">Change Password</button>'
 										+ '<div class="panel panel-default" id="changePasswordForm" style="width: 40%">'

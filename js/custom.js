@@ -218,7 +218,6 @@ $(document).ready(function() {
 	});
 
 	$('#listNav').on('click', function(event) {
-		view = "home";
 		event.preventDefault();
 		event.stopPropagation();
 
