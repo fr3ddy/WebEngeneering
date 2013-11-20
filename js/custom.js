@@ -1,5 +1,6 @@
 var selectedRowId;
 var table;
+var view = "home";
 
 /* Flag: Ist das 'mouseover' Event noch an die Bewertung gebunden?
  * Falls ja, darf die Bewertung nicht in die Tabelle übernommen werden, da sie durch 'mouseover' zu Stande gemkommen sein koennte.
@@ -159,6 +160,7 @@ var chooseTable = _.template('<tr data-imdbID="<%- imdbID %>">'
 $(document).ready(function() {
 	/* Benutzeransicht zu einem ausgewaehlten Benutzer aufrufen */
 	$('body').on('click', '.user', function() {
+		view = "userView";
 		parse_getUserView($(this).text().trim(), function(view) {
 			$('#userView').html(view);
 
@@ -170,7 +172,6 @@ $(document).ready(function() {
 					html : 'true'
 				});
 			}
-
 			$('#userView').show();
 			$('#detailedView').hide();
 			$('#home').hide();
@@ -194,17 +195,30 @@ $(document).ready(function() {
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
-		$('#detailedView').stop().animate({
-			right : "-100%"
-		}, function() {
-			$('#detailedView').hide();
-		});
-		$('#home').stop().show().animate({
-			left : "0px"
-		});
+
+		if (view === "home") {
+			$('#userView').hide();
+			$('#detailedView').stop().animate({
+				right : "-100%"
+			}, function() {
+				$('#detailedView').hide();
+			});
+			$('#home').stop().show().animate({
+				left : "0px"
+			});
+		} else if(view === "userView") {
+			$('#userView').show();
+			$('#detailedView').stop().animate({
+				right : "-100%"
+			}, function() {
+				$('#detailedView').hide();
+			});
+			$('#home').stop().hide();
+		}
 	});
 
 	$('#listNav').on('click', function(event) {
+		view = "home";
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -399,6 +413,7 @@ function allLoginActions() {
 
 /* Zeige Liste (Home-Ansicht ) an bei klick auf Login- oder Logout-Button */
 function showHomeView() {
+	view = "home";
 	$('#home').show().css({
 		left : "0px"
 	});
@@ -468,43 +483,6 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 
 				});
 			});
-
-			// var userComments;
-			// parse_getComments(imdbID, false, function(comments) {
-			// userComments = comments;
-			// });
-
-			// parse_getOwnerOfMovie(imdbID, function(username) {
-			// $('#detailedView').html(detailedMovieView({
-			// imdbID : imdbID,
-			// movieTitle : data.Title,
-			// username : username,
-			// movieSeen : movieSeen,
-			// rating : rating,
-			// avgRating : setRating(avgStars, true, true),
-			// picture : poster,
-			// release : data.Released,
-			// runtime : data.Runtime,
-			// genre : data.Genre,
-			// director : data.Director,
-			// actors : data.Actors,
-			// plot : data.Plot,
-			// comments : userComments
-			// }));
-			//
-			// $('#userView').hide();
-			// $('#detailedView').stop().show().animate({
-			// right : "0px"
-			// });
-			// $('#home').stop().animate({
-			// left : "-100%"
-			// }, function() {
-			// $('#home').hide();
-			// });
-			//
-			// that.toggleClass('glyphicon-search detailView-loading');
-			// });
-
 		}
 	});
 }
