@@ -55,7 +55,7 @@ function movieDoesNotExist(movieData, callback) {
 		});
 	});
 }
-
+var maxAmout;
 function loadMoviesUserLiked() {
 	$('#facebookMovies').hide();
 	$('#facebookMoviesProgressBar').show();
@@ -73,6 +73,11 @@ function loadMoviesUserLiked() {
 				$('#facebookMovies').html("");
 				//Zum erhalten des richtigen Datensatzes
 				var movieData = response.data;
+				if(movieData.length < 8){
+					maxAmount = movieData.length;
+				}else{
+					maxAmount = 8;
+				}
 				for (var x = 0; x < movieData.length; x++) {
 					//Zum schönen formatieren von der Row
 					var counter = 0;
@@ -96,11 +101,11 @@ function loadMoviesUserLiked() {
 											$('#facebookMovies').append("</div>");
 										}
 										counter++;
-										if (counter < 8) {
-											var val = counter * 12.5;
+										if (counter < maxAmount) {
+											var val = counter * (100 / maxAmount);
 											$('#facebookMoviesProgressBar').find('.progress-bar').css("width", val + "%");
 											$('#facebookMoviesProgressBar').find('.progress-bar').css("aria-valuenow", val);
-										} else if (counter == 8) {
+										} else if (counter == maxAmount) {
 											$('#facebookMoviesProgressBar').hide();
 											$('#facebookMovies').show();
 											$('#facebookMoviesProgressBar').find('.progress-bar').css("width", "0%");
