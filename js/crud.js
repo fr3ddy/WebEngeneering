@@ -138,9 +138,10 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 		})).appendTo('#createFilmModal .modal-body tbody');
 	};
 
-	$('tbody .select').on('click', function() {
+	$('tbody .select').on('click', function() { debugger;
 		$(this).button();
 		$(this).button("loading");
+		$(this).parent().parent().parent().parent().parent().parent().parent().find('.blockChooseTable').show();
 		var imdbID = $(this).parent().parent().attr('data-imdbID');
 		if (checkForDuplicate(imdbID)) {
 			var movieTitle = $(this).parent().parent().find('td:first-child').text();
@@ -151,15 +152,17 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 					$('#createFilmModal').find('#saveFilm').show();
 					$('#createFilmModal').find('.modal-body .form-group').show();
 					$('#createFilmModal').find('#chooseTable').hide();
+					$(this).parent().parent().parent().parent().parent().parent().parent().find('.blockChooseTable').hide();
 					$(this).button("reset");
 
 				} else {
-					var error = "Wasn't able to add movie to DB";
-					parse_getErrorMessage(error);
+					return Parse.Promise.error("Wasn't able to add movie to DB");
 				}
 			});
 		} else {
 			var error = "Movie does already exist!";
+			$(this).parent().parent().parent().parent().parent().parent().parent().find('.blockChooseTable').hide();
+			$(this).button("reset");
 			parse_getErrorMessage(error);
 		}
 	});
@@ -299,22 +302,21 @@ function changeMovieValues(event) {
 			changeTableRowValues.call($(this).parent().parent(), $(this).parent().parent().find('.stars').find('.' + ratingIconOn).length);
 			break;
 		// case ('keypress'):
-			// if (event.keyCode === 13) {
-				// changeTableRowValues.call($(this).parent(), $(this).parent().find('.stars').find('.' + ratingIconOn).length);
-			// }
-			// break;
+		// if (event.keyCode === 13) {
+		// changeTableRowValues.call($(this).parent(), $(this).parent().find('.stars').find('.' + ratingIconOn).length);
+		// }
+		// break;
 		default:
 			break;
 	}
 }
-
 
 /* Die geaenderten Werte aus dem 'editFilmModal' werden in die entsprechende Zeile der Tabelle uebertragen. 'This' entspricht dem <div>, das die Sterne umgibt */
 function changeTableRowValues() {
 	var numberOfStars = $(this).parent().parent().find('.stars').find('.' + ratingIconOn).length;
 
 	$(table).find('#' + selectedRowId).find('.tableMovieSeen').text($(this).parent().parent().find('.on').text().toLowerCase());
-	
+
 	// wurde ein Film als 'GESEHEN' markiert, erhält er die Anzahl an Sternen, mit denen er bewertet wurde. Ansonsten sind alle Sterne leer
 	if (seenText.toUpperCase() === $(this).parent().parent().find('.on').text()) {
 		if (mouseoverForRatingOn) {
@@ -337,13 +339,13 @@ function changeTableRowValues() {
 	// var getRating = $(table).find('#' + selectedRowId).find('.tableRating').find('.' + ratingIconOn).length;
 	var seen = $(this).parent().parent().find('.on').text().toLowerCase() === seenText ? true : false;
 	parse_updateEntry($(table).find('#' + selectedRowId).data('imdbid'), getRating, seen);
-	
+
 	setUserViewChangedFlag();
 }
 
 /* Setze Flag um Movie List im Browser neu zu laden, wenn die Benutzeransicht verlassen wird, um wieder zur Startansicht zu gelangen */
 function setUserViewChangedFlag() {
-	if(table === "#userCreatedTable" || table === "#userRatedTable") {
+	if (table === "#userCreatedTable" || table === "#userRatedTable") {
 		changedFilInUserView = true;
 	}
 }
@@ -355,14 +357,14 @@ function removeMovie(element) {
 			$(element).remove();
 		} else {
 			$(element).find('td:last').find('button').attr('disabled', 'disabled');
-			
+
 			// wird der Film aus der "userCreatedTable" geloescht, muss er der "userRatedTable" hinzugefuegt werden, falls der Film nicht komplett geloescht wird
-			if(table === "#userCreatedTable") {
+			if (table === "#userCreatedTable") {
 				var row = $(element);
 				// passe den Zaehler in der ID des TR-Elements an, um in die neue Tabelle geschrieben werden zu koennen
 				var newTrID = $('body').find('#userRatedTable').find('tr').length + 1;
 				row.attr('id', 'tr-' + newTrID);
-				
+
 				$(element).remove();
 				$('body').find('#userRatedTable').append(row);
 			}
@@ -519,10 +521,11 @@ function setRating(selectedStars, forTableOrDetailedView, isAvgRating) {
 	var tooltip = "";
 	var tableTooltip = "";
 	var setHalfStarFlag = false;
-	
+
 	// optionaler Parameter. Wird nur gebraucht, wenn der User angemeldet ist und die Durchschnittsbewertung in der Detailansicht angezeigt wird
-	if (isAvgRating === undefined) isAvgRating = false;
-	
+	if (isAvgRating === undefined)
+		isAvgRating = false;
+
 	var commaSeperated = selectedStars.toFixed(2).toString().split('.')[1];
 	if (commaSeperated <= 25) {
 		selectedStars = Math.round(selectedStars);
@@ -561,8 +564,8 @@ function setRating(selectedStars, forTableOrDetailedView, isAvgRating) {
 			if (Parse.User.current() == null) {
 				avg = ", " + numberOfStars.toFixed(2) + " of 5";
 			}
-			
-			if(isAvgRating) {
+
+			if (isAvgRating) {
 				avg = ", " + numberOfStars.toFixed(2) + " of 5";
 			}
 

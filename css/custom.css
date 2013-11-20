@@ -27,6 +27,30 @@ table {
 	cursor: default;
 }
 
+.alert .close {
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+}
+
+.blockChooseTable {
+	display: none;
+	width: 100%;
+	height: 100%;
+	background-color: #fff;
+	opacity: 0.5;
+	z-index: 1;
+	position: absolute;
+}
+
+.btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+	box-shadow: none;
+	cursor: not-allowed;
+	opacity: 0.35;
+	pointer-events: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
 .customAlert .alert {
 	position: fixed;
 	z-index: 10000;
@@ -39,18 +63,7 @@ table {
 	border-radius: 0px;
 	/*text-align: center;*/
 }
-.alert .close {
-	opacity: 0.9;
-	filter: alpha(opacity=90);
-}
-.btn.disabled, .btn[disabled], fieldset[disabled] .btn {
-	box-shadow: none;
-	cursor: not-allowed;
-	opacity: 0.35;
-	pointer-events: none;
-	-webkit-box-shadow: none;
-	box-shadow: none;
-}
+
 .detailMagnifier {
 	color: #d3d3d3;
 	cursor: pointer;
@@ -196,7 +209,7 @@ table {
 
 #changePasswordForm {
 	display: none;
-	margin-top: 5px;	
+	margin-top: 5px;
 }
 
 #closeDetailedView {
@@ -224,32 +237,32 @@ table {
 	display: none;
 }
 
-#comment-box{
-	border-top: 	solid 2px #f0f0f0;
-	margin-top: 	20px;
-	margin-bottom:	20px;
-	padding-top:	10px;
+#comment-box {
+	border-top: solid 2px #f0f0f0;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	padding-top: 10px;
 }
-#comment-box textarea{
+#comment-box textarea {
 	resize: none;
 }
 
 /*#comment-box .row{
-	border-bottom:	solid 1px #000000 ;
-}*/
+ border-bottom:	solid 1px #000000 ;
+ }*/
 
 /*#comment-box .commentContent:hover{
-	background-color: #f0f0f0;
-}*/
+ background-color: #f0f0f0;
+ }*/
 
-#comment-box .row .col-xs-5{
+#comment-box .row .col-xs-5 {
 	/*border-left:	solid 1px #000000;*/
-	padding-top:	13px;
+	padding-top: 13px;
 }
-#comment-box .row .col-xs-7{
-	padding-top:	10px;
+#comment-box .row .col-xs-7 {
+	padding-top: 10px;
 }
-#comment-box #comment-textarea{
+#comment-box #comment-textarea {
 	border: none;
 }
 
@@ -312,8 +325,8 @@ table {
 	margin: 0 1.5px 0 1.5px;
 }
 
-#filterButton, #add, #refreshTableButton{
-	margin: 0 1.5px 0 1.5px;	
+#filterButton, #add, #refreshTableButton {
+	margin: 0 1.5px 0 1.5px;
 }
 
 #home {
@@ -361,11 +374,11 @@ table {
 	z-index: 1;
 	/*top: -100%;*/
 	/*left: -100%;
-	transform: rotate(90deg);
-	-webkit-transform: rotate(90deg);
-	-moz-transform: rotate(90deg);
-	-o-transform: rotate(90deg);
-	-ms-transform: rotate(90deg);*/
+	 transform: rotate(90deg);
+	 -webkit-transform: rotate(90deg);
+	 -moz-transform: rotate(90deg);
+	 -o-transform: rotate(90deg);
+	 -ms-transform: rotate(90deg);*/
 	/*filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1.5);*/
 }
 
@@ -374,6 +387,6 @@ table {
 	right: 0;
 }
 
-#facebookMoviesProgressBar{
+#facebookMoviesProgressBar {
 	padding-top: 250px;
 }
