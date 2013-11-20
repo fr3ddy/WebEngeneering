@@ -411,7 +411,7 @@ function showHomeView() {
 /*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
 /* Detailansicht wird aufgebaut. Dafuer werden Daten von der OMDB Database als JSON geholt */
 function buildDetailView(numberOfStars, movieSeen, imdbID) {
-	var that = $(this);
+	var that = $(this).parent().find(".detailMagnifier");
 	that.toggleClass('glyphicon-search detailView-loading');
 	// alternative Quelle könnte "http://mymovieapi.com/?title=" sein
 	$.getJSON("http://www.omdbapi.com/?i=" + imdbID + "&plot=full").done(function(data) {

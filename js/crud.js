@@ -6,6 +6,11 @@ $(document).ready(function() {
 		var clickedTr = $(this).parent().parent();
 		buildDetailView.call(this, parseFloat(clickedTr.find('.stars').data('rated')), clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
 	});
+	/* Action Listener für Detail View Titel */
+	$('body').on('click', 'table .tableFilmTitle', function() {
+		var clickedTr = $(this).parent();
+		buildDetailView.call(this, parseFloat(clickedTr.find('.stars').data('rated')), clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
+	});
 
 	/* Setze Focus auf Film Titel Input, wenn Modal geoeffnet wird */
 	$("#createFilmModal").on('focus', function() {
