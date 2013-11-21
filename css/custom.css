@@ -213,14 +213,29 @@ table {
 }
 
 #closeDetailedView {
-	left: -20px;
-	color: black;
-	font-size: 113%;
-	opacity: 1;
-	padding: 0;
+	left: -107px;
+	font-size: 1250%;
+	width: 200px;
+	height: 200px;
+	margin-top: 11%;
 	cursor: pointer;
-	background: transparent;
-	border: 0;
+	background-color: #000000;
+	opacity: 0.05;
+	border-radius: 50%;
+	position: absolute;
+}
+
+#closeDetailedView:hover {
+	opacity: 0.15	
+}
+
+#closeDetailedView > span {
+	color: #FFFFFF;
+	margin-top: 52px;
+	position: absolute;
+	top: 0px;
+	left: 112px;
+	font-size: 44%;
 }
 
 #closeFacebookView {

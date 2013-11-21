@@ -63,12 +63,15 @@ var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %
 								+ '</tr>');
 
 var detailedMovieView = _.template('<div class="container">' 
-										+ '<h3 id="detailViewMovieTitle" class="heading" data-imdbID="<%- imdbID %>"><%- movieTitle %>' 
-											+ '<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>' 
-										+ '</h3>' 
-										+ '<h6><span class="glyphicon glyphicon-user"/><a href="#user" class="user">  <%= username %></a></h6>' 
+										+ '<button type="button" id="closeDetailedView" class="close" aria-hidden="true">'
+											+'<span class="glyphicon glyphicon-arrow-left"></span>'
+										+'</button>'
 										+ '<div class="row">' 
 											+ '<div class="col-xs-7">' 
+												+ '<h3 id="detailViewMovieTitle" data-imdbID="<%- imdbID %>"><%- movieTitle %>' 
+													// + '<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>' 
+												+ '</h3>' 
+												+ '<h6><span class="glyphicon glyphicon-user"/><a href="#user" class="user">  <%= username %></a></h6>' 
 												+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
 												+ '<%= rating %>'
 												+ '<label>Avg. Rating: </label><span><%= avgRating %></span><br>' 
@@ -191,7 +194,7 @@ $(document).ready(function() {
 	});
 
 	/*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
-
+	// die DetailedView verlassen, wenn auf den Pfeil-Button gedrueckt wird
 	$('#detailedView').on('click', '#closeDetailedView', function(event) {
 		event.preventDefault();
 		event.stopPropagation();
