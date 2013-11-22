@@ -124,25 +124,31 @@ table {
 .loggedIn {
 	display: block;
 }
+
 .loggedOut {
 	display: none;
 }
+
 .magnifierTable {
 	width: 30px;
 }
+
 .navbar-static-top {
 	margin-bottom: 19px;
 }
+
 .navbar-default .navbar-brand:hover {
 	color: #fff;
 	background-color: #0088CC;
 }
+
 .plot {
 	text-align: justify;
 	margin-left: 5.2em;
 	margin-top: -25px;
 	margin-bottom: -13px;
 }
+
 .rating .stars, #filterStars {
 	color: #ffd700;
 	vertical-align: middle;
