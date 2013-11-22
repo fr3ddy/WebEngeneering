@@ -186,11 +186,20 @@ $(document).ready(function() {
 		$(this).parent().find('#changePasswordForm').find('button').button('reset');
 		$(this).parent().find('#changePasswordForm').find('button').addClass('btn-primary').removeClass('btn-success');
 		$(this).parent().find('#changePasswordForm').find('input').val("");
-		$(this).parent().find('#changePasswordForm').slideToggle();	
+		$(this).parent().find('#changePasswordForm').slideToggle();
+		$(this).parent().find('#changePasswordForm').find('input:first').focus();
 	});
 
+	/* Passwort aendern Formular ueber Button*/
 	$('body').on('click', '#saveChangePassword', function() {
 		parse_changePassword.apply($(this));
+	});
+
+	/* Passwort aendern Formular ueber Enter*/
+	$('body').on('keypress', '#changePasswordForm input', function(event) {
+		if (event.keyCode === 13) {
+			parse_changePassword.apply($(this));
+		}
 	});
 
 	/*--------------------------------Anfang Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
@@ -209,7 +218,7 @@ $(document).ready(function() {
 			$('#home').stop().show().animate({
 				left : "0px"
 			});
-		} else if(view === "userView") {
+		} else if (view === "userView") {
 			$('#userView').show();
 			$('#detailedView').stop().animate({
 				right : "-100%"
@@ -273,19 +282,34 @@ $(document).ready(function() {
 	$('#register').on("click", function(event) {
 		event.preventDefault();
 		$('#registerModal').modal('show');
+		setTimeout(function() {
+			$('#registerModal').find('#regUsernameInput').focus();
+		}, 500);
 		return false;
 	});
 
+	// Registrierung abschicken mit Button
 	$('#submitRegistration').on("click", function() {
 		var username = $('#registerModal .modal-body #regUsernameInput').val();
 		var password = $('#registerModal .modal-body #regPasswordInput').val();
 		parse_registerUser(username, password);
 	});
+	
+	// Registrierung abschicken via Enter
+	$('#registerModal').on("keypress", "input", function(event) {
+		if(event.keyCode === 13) {
+			var username = $('#registerModal .modal-body #regUsernameInput').val();
+			var password = $('#registerModal .modal-body #regPasswordInput').val();
+			parse_registerUser(username, password);
+		}
+	});
+
 	//Facebook Login and SignUp
 	$('#loginFacebook').on("click", function(event) {
 		event.preventDefault();
 		parse_facebookLoginSignUp();
 	});
+
 	/* -------------------Login / Logout Ende ------------------------------------*/
 	/* Refresh Button dreht sich und läd Tabelle neu */
 	$('#refreshTableButton').on("click", function() {
@@ -320,15 +344,15 @@ $(document).ready(function() {
 			save_comment();
 		}
 	});
-	
+
 	/*---------------------------Menu-Points-----------------------------*/
-	$('#notSeenMovies').on('click', function(){
-		filterWatchStatusSet(false);	
+	$('#notSeenMovies').on('click', function() {
+		filterWatchStatusSet(false);
 	});
-	
-	$('#top10Movies').on('click', function(){
+
+	$('#top10Movies').on('click', function() {
 		topTenMovies();
-	});	
+	});
 });
 
 function save_comment() {

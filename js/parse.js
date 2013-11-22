@@ -631,19 +631,25 @@ function parse_getUserView(username, callback) {
 function parse_changePassword() {
 	var newPassword = $.trim($(this).parent().find('input:first').val());
 	var newPasswordRepeats = $.trim($(this).parent().find('input:last').val());
+	
 	var that = this;
 	if (newPassword.length === 0) {
 		parse_getErrorMessage('Please type in a password');
 	} else {
 		if (newPassword === newPasswordRepeats) {
-			$(this).button('loading');
+			$(that).parent().find('#saveChangePassword').button('loading');
 			// Passwoerter in beiden Feldern sind gleich
 			var user = new Parse.Query(Parse.User);
 			user.get(Parse.User.current().id, {
 				success : function(object) {
 					object.set('password', newPassword);
 					object.save();
-					$(that).button('complete').addClass('btn-success').removeClass('btn-primary');
+					$(that).parent().find('#saveChangePassword').button('complete').addClass('btn-success').removeClass('btn-primary');
+					
+					// changePasswordForm soll nach 1 Sekunde automatisch verschwinden
+					setTimeout(function(){
+						$(that).parent().parent().parent().slideToggle();
+					}, 1000);
 				}
 			});
 		} else {
