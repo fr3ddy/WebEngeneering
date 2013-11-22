@@ -463,12 +463,12 @@ function parse_removeMovie(imdbID, cb) {
 			} else {
 				// entferne den Film
 				checkResult.destroy();
-				
+
 				// entferne Eintrag aus der EDIT Tabelle
 				var editDelete = new Parse.Query(Edit);
 				editDelete.equalTo('movieID', checkResult);
 				editDelete.equalTo('userID', Parse.User.current());
-				
+
 				editDelete.first().then(function(editResult) {
 					editResult.destroy();
 					cb(true);
@@ -632,19 +632,23 @@ function parse_changePassword() {
 	var newPassword = $.trim($(this).parent().find('input:first').val());
 	var newPasswordRepeats = $.trim($(this).parent().find('input:last').val());
 	var that = this;
-	if (newPassword === newPasswordRepeats) {
-		$(this).button('loading');
-		// Passwoerter in beiden Feldern sind gleich
-		var user = new Parse.Query(Parse.User);
-		user.get(Parse.User.current().id, {
-			success : function(object) {
-				object.set('password', newPassword);
-				object.save();
-				$(that).button('complete').addClass('btn-success').removeClass('btn-primary');
-			}
-		});
+	if (newPassword.length === 0) {
+		parse_getErrorMessage('Please type in a password');
 	} else {
-		parse_getErrorMessage('Passwords do not match each other');
+		if (newPassword === newPasswordRepeats) {
+			$(this).button('loading');
+			// Passwoerter in beiden Feldern sind gleich
+			var user = new Parse.Query(Parse.User);
+			user.get(Parse.User.current().id, {
+				success : function(object) {
+					object.set('password', newPassword);
+					object.save();
+					$(that).button('complete').addClass('btn-success').removeClass('btn-primary');
+				}
+			});
+		} else {
+			parse_getErrorMessage('Passwords do not match each other');
+		}
 	}
 }
 
