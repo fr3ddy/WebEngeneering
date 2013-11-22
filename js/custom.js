@@ -239,6 +239,8 @@ $(document).ready(function() {
 		$('#home').stop().show().animate({
 			left : "0px"
 		});
+		removeWatchFilter();
+		removeRatingFilter();
 	});
 
 	/*--------------------------------Ende Detailansicht fuer Film ------------------------------------------------------------------------------------------------*/
@@ -318,6 +320,15 @@ $(document).ready(function() {
 			save_comment();
 		}
 	});
+	
+	/*---------------------------Menu-Points-----------------------------*/
+	$('#notSeenMovies').on('click', function(){
+		filterWatchStatusSet(false);	
+	});
+	
+	$('#top10Movies').on('click', function(){
+		topTenMovies();
+	});	
 });
 
 function save_comment() {
@@ -375,6 +386,7 @@ function isLoggedInOrNot() {
 	toggleClassOnAllElements('#add');
 	toggleClassOnAllElements('#ratingFilterRow');
 	toggleClassOnAllElements('#comment-textarea');
+	toggleClassOnAllElements('#notSeenMovies');
 }
 
 /*Setzt die Klasse fuer Parameter 'element' auf 'loggedOut' und entfernt Klasse 'loggedIn', falls der User nicht eingeloggt ist. Ansonsten umgekehrt. */

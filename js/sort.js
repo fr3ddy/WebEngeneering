@@ -15,13 +15,13 @@ $(document).ready(function() {
 			$('#sortTitleASC').removeClass('sortInactive');
 			$('#sortTitleDESC').addClass('sortInactive');
 			sortTitleAlphabet(true);
-			
+
 			//Loescht die Rating-Sortierung
 			filter.movieRatingSorted = null;
 			$('#sortRatingASC').addClass('sortInactive');
-			$('#sortRatingDESC').addClass('sortInactive');			
+			$('#sortRatingDESC').addClass('sortInactive');
 
-		} 
+		}
 	});
 
 	$('#sortTitleDESC').on("click", function() {
@@ -68,7 +68,7 @@ $(document).ready(function() {
 			filter.movieTitleSorted = null;
 			$('#sortTitleASC').addClass('sortInactive');
 			$('#sortTitleDESC').addClass('sortInactive');
-		} 
+		}
 	});
 
 	$('#sortRatingDESC').on("click", function() {
@@ -93,14 +93,15 @@ $(document).ready(function() {
 			$('#sortTitleDESC').addClass('sortInactive');
 		}
 	});
-}); 
+});
 
 //---------------------------------------------Sortierung
 function removeSort() {
-	
-	function numsort(a, b){
-		return a-b;
+
+	function numsort(a, b) {
+		return a - b;
 	}
+
 	//Wenn keine Filme eingetragen sind wird nicht sortiert
 	if ($('#filmtable').find('tr').length !== 0) {
 		//erste Zeile in der Tabelle wird selektiert
@@ -133,8 +134,8 @@ function removeSort() {
 			actRow = '#tr-' + rows[i];
 
 			$(actRow).insertAfter($(prevRow));
-				
-			//Am Ende wird actRow in prevRow gespeichert, damit die naechste Zeile an diese gehaengt werden kann	
+
+			//Am Ende wird actRow in prevRow gespeichert, damit die naechste Zeile an diese gehaengt werden kann
 			prevRow = actRow;
 		};
 	}
@@ -181,7 +182,53 @@ function sortTitleAlphabet(direction) {
 
 			$(actRow).insertAfter($(prevRow));
 
-			//Am Ende wird actRow in prevRow gespeichert, damit die naechste Zeile an diese gehaengt werden kann	
+			//Am Ende wird actRow in prevRow gespeichert, damit die naechste Zeile an diese gehaengt werden kann
+			prevRow = actRow;
+		};
+	}
+}
+
+function topTenMovies() {
+	//Wenn keine Filme eingetragen sind wird nicht sortiert
+	if ($('#filmtable').find('tr').length !== 0) {
+		//erste Zeile in der Tabelle wird selektiert
+		var actRow = $('#list tbody tr:first-child');
+		var rating = new Array();
+		var counter = 0;
+
+		//von jeder Zeile wird das Rating und die ID in das Array rows[] geschrieben
+		//mit next() wird dann die naechste Zeile selektiert
+		//wenn die selektierte Zeile leere ist wird die Schleife abgebrochen
+		while (actRow.length != 0) {
+			rating[counter] = actRow.find('.tableRating .stars').data('rated') + "-" + actRow.attr('id');
+			actRow = actRow.next();
+			counter++;
+		}
+
+		//sortiert das Array nach dem Rating
+		rating.sort();
+		rating.reverse();
+
+		//Aufbau der sortierten Tabelle
+		//erste Zeile in den Tabellen-Bauch hängen
+		var segments = rating[0].split('-tr-');
+		actRow = '#tr-' + segments[1];
+
+		$(actRow).appendTo($('#list tbody'));
+		var prevRow = actRow;
+
+		//nun die restlichen Zeilen anhängen
+		for (var i = 1; i < rating.length; i++) {
+			var segments = rating[i].split('-tr-');
+			actRow = '#tr-' + segments[1];
+
+			$(actRow).insertAfter($(prevRow));
+
+			if(i > 10){
+				$(actRow).hide();	
+			}
+
+			//Am Ende wird actRow in prevRow gespeichert, damit die naechste Zeile an diese gehaengt werden kann
 			prevRow = actRow;
 		};
 	}
@@ -228,7 +275,7 @@ function sortRating(direction) {
 
 			$(actRow).insertAfter($(prevRow));
 
-			//Am Ende wird actRow in prevRow gespeichert, damit die naechste Zeile an diese gehaengt werden kann	
+			//Am Ende wird actRow in prevRow gespeichert, damit die naechste Zeile an diese gehaengt werden kann
 			prevRow = actRow;
 		};
 	}
