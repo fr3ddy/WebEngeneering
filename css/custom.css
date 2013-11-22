@@ -220,13 +220,13 @@ table {
 	margin-top: 11%;
 	cursor: pointer;
 	background-color: #000000;
-	opacity: 0.05;
+	opacity: 0.1;
 	border-radius: 50%;
 	position: absolute;
 }
 
 #closeDetailedView:hover {
-	opacity: 0.15	
+	opacity: 0.4	
 }
 
 #closeDetailedView > span {
