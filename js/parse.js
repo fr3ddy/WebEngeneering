@@ -1,7 +1,6 @@
-// Verbinde mit Parse
-// Parse.initialize("L6o5RS5o7y3L2qq0MdbUUx1rTm8dIzLVJR6etJ5K", "QyEYNDiJAI3ctZ9pZC8fX7ncgVsyQ665094o3nPA");
+// Verbinde mit Parse von Hr. Behrends
+Parse.initialize("9XyL7tMhZqwhV66898VsHhjy1kKXnEe77CBcee0V", "NtZ62P45o1UW9oWW23dY43ono6P5nTafM9ojY4ym");
 
-Parse.initialize("ZrdDgDCIBUuzQcDZDk6K22W9bCx9Z92vFNYyUEo9", "86pxeavigyQLRRnMRjhn5OUqmLHmJUv2ufsKaWLG");
 // Tabelle in der die Filme gespeicher werden, einschliesslich dem Besitzer des Films
 var Movie = Parse.Object.extend("Movie");
 // Tabelle in der die Bewertung, das Film-Objekt und Benutzer-Objekt eines Films mit dem Benutzerm der es bewertet hat gespeichert wird
