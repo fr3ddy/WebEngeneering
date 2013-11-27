@@ -1,10 +1,15 @@
 // Verbinde mit Parse
-Parse.initialize("L6o5RS5o7y3L2qq0MdbUUx1rTm8dIzLVJR6etJ5K", "QyEYNDiJAI3ctZ9pZC8fX7ncgVsyQ665094o3nPA");
+// Parse.initialize("L6o5RS5o7y3L2qq0MdbUUx1rTm8dIzLVJR6etJ5K", "QyEYNDiJAI3ctZ9pZC8fX7ncgVsyQ665094o3nPA");
 
+Parse.initialize("ZrdDgDCIBUuzQcDZDk6K22W9bCx9Z92vFNYyUEo9", "86pxeavigyQLRRnMRjhn5OUqmLHmJUv2ufsKaWLG");
+// Tabelle in der die Filme gespeicher werden, einschliesslich dem Besitzer des Films
 var Movie = Parse.Object.extend("Movie");
+// Tabelle in der die Bewertung, das Film-Objekt und Benutzer-Objekt eines Films mit dem Benutzerm der es bewertet hat gespeichert wird
 var Edit = Parse.Object.extend("Edit");
+// Tabelle in der die Kommentare mit dem dazugehoerigen Film- und Benutzer-Objekt gespeichert werden
 var Comment = Parse.Object.extend("Comment");
 
+/* Initialisiere alles notwendige um Facebook fuers Login verwenden zu koennen */
 function parse_initializeFacebook() {
 	Parse.FacebookUtils.init({
 		appId : '685337254818732', // Facebook App ID
@@ -15,6 +20,7 @@ function parse_initializeFacebook() {
 	});
 }
 
+/* ermoegliche die Registrierung eines neuen Benutzers */
 function parse_registerUser(username, password) {
 	var user = new Parse.User();
 	user.set("username", username);
@@ -23,8 +29,6 @@ function parse_registerUser(username, password) {
 	user.signUp(null, {
 		success : function(user) {
 			$('#registerModal').modal('hide');
-			$('#registerModal .modal-body').find('.alert').remove();
-			$('#registerModal .modal-body .alert').hide();
 			$('#registerModal .modal-body #regUsernameInput').val("");
 			$('#registerModal .modal-body #regPasswordInput').val("");
 		},
@@ -34,6 +38,7 @@ function parse_registerUser(username, password) {
 	});
 }
 
+/* Anmeldevorgang */
 function parse_loginUser(username, password) {
 	Parse.User.logIn(username, password).then(function(user) {
 		$('#menu1').removeClass("open");
@@ -149,8 +154,8 @@ function parse_initialLoadMovieTable() {
 		}).then(function() {
 			$('#filmtable').html(rows).fadeIn(1000);
 
-			//Loeche-Popover koennen erst an dieser Stelle den Zeilen hinzugefügt werden,
-			//da diese nur existierenden Elementen zugeteilt werden können.
+			//Loesche-Popover koennen erst an dieser Stelle den Zeilen hinzugefuegt werden,
+			//da diese nur existierenden Elementen zugeteilt werden koennen.
 			for (var i = 1; i <= rows.length; i++) {
 				/*Initialisiere PopOver fuer Delete-Button*/
 				$('#tr-' + i).find('.delete').popover({
@@ -215,6 +220,7 @@ function parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, cb) {
 	});
 }
 
+/* Speichere Bewertung eines neu erstellten Film in EDIT Tabelle ab */
 function parse_saveRating(numberOfStars, seen, movie) {
 	var edit = new Edit();
 
@@ -390,6 +396,7 @@ function parse_getErrorMessage(error) {
 	//@formatter:on
 }
 
+/* Authorisiere Facebook bei erstmaligem Login mit Facebook */
 function parse_facebookLoginSignUp() {
 	Parse.FacebookUtils.logIn(null, {
 		success : function(user) {
@@ -658,6 +665,7 @@ function parse_changePassword() {
 	}
 }
 
+/* Speichere Kommentar in COMMENT Tabelle */
 function parse_saveComment(imdbId, commentText, cb) {
 	var comment = new Comment();
 
@@ -674,6 +682,7 @@ function parse_saveComment(imdbId, commentText, cb) {
 	});
 }
 
+/* Finde alle Kommentare mit einer imdbID */
 function parse_getComments(imdbID, owner, cb) {
 	var comments = '<div id="comment-box">' + '<h3><span class="label label-default">User Comments</span></h3>';
 	var comment = new Parse.Query(Comment);
@@ -732,6 +741,7 @@ function parse_getComments(imdbID, owner, cb) {
 	});
 }
 
+/* loesche Kommentar mittels ihrer ID */
 function parse_deleteComment(commentID, cb) {
 	var comment = new Parse.Query(Comment);
 	comment.equalTo('objectId', commentID);

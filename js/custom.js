@@ -1,17 +1,25 @@
 var selectedRowId;
 var table;
+
+/* Flag, um zu markieren, ob der Benutzer von der Benutzer- oder Home-Ansicht zu der Detail-Ansicht navigiert ist */
 var view = "home";
 
 /* Flag: Ist das 'mouseover' Event noch an die Bewertung gebunden?
  * Falls ja, darf die Bewertung nicht in die Tabelle übernommen werden, da sie durch 'mouseover' zu Stande gemkommen sein koennte.
  * Sie darf aber nur uebernommen werden, wenn der User die Bewertung durch 'click' gesetzt hat */
 var mouseoverForRatingOn = true;
-var changedFilInUserView = false;
+
+/* Flag, ob Film in Benutzeransicht geaendert wurde oder nicht */
+var changedFilmInUserView = false;
 
 var ratingIconHTML = '&#xe007;';
+//leerer Stern
 var ratingIconOn = 'glyphicon-star';
+// voller Stern als Klasse
 var ratingIconOff = 'glyphicon-star-empty';
+// leerer Stern als Klasse
 var ratingIconHalf = 'glyphicon-star-half';
+// halb-voller Stern als Klasse
 var switchButtonSeen = "-11px";
 var switchButtonUnseen = "15px";
 
@@ -30,26 +38,32 @@ var filter = {
 
 //@formatter:off
 
+// keinen Delete Button anzeigen
 var deleteButtonNone = '<button class="btn btn-sm delete loggedOut" title="Delete">' 
 							+ '<span class="glyphicon glyphicon-trash"></span>' 
 						+ '</button>';
 
+// delete Button inaktiv anzeigen
 var deleteButtonInactive = '<button class="btn btn-sm delete loggedIn" title="Delete" disabled>' 
 								+ '<span class="glyphicon glyphicon-trash"></span>' 
 							+ '</button>';
 
+// delete Button aktiv anzeigen
 var deleteButtonActive = '<button class="btn btn-sm delete loggedIn" title="Delete">' 
 								+ '<span class="glyphicon glyphicon-trash"></span>' 
 							+ '</button>';
 
+// keinen Edit Button anzeigen
 var editButtonNone = '<button class="btn btn-sm edit loggedOut"title="Edit">' 
 							+ '<span class="glyphicon glyphicon-pencil"></span>' 
 						+ '</button>';
 
+// edit Button aktiv anzeigen
 var editButtonActive = '<button class="btn btn-sm edit loggedIn"title="Edit">' 
 							+ '<span class="glyphicon glyphicon-pencil"></span>' 
 						+ '</button>';
 
+// Template, um Film einer Liste hinzuzufuegen
 var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %>">' 
 										+ '<td class="magnifierTable"><span class="glyphicon glyphicon-search detailMagnifier"/></td>' 
 										+ '<td class="tableFilmTitle"><%- movieTitle %></td>' + '<td class="tableMovieSeen"><%- movieSeen %></td>' 
@@ -62,15 +76,14 @@ var addMovieToList = _.template('<tr id="<%- rowID %>" data-imdbID="<%- imdbID %
 										+ '</td>'
 								+ '</tr>');
 
+// Aufbau der Detail-Ansicht fuer einen Film
 var detailedMovieView = _.template('<div class="container">' 
 										+ '<button type="button" id="closeDetailedView" class="close" aria-hidden="true">'
 											+'<span class="glyphicon glyphicon-arrow-left"></span>'
 										+'</button>'
 										+ '<div class="row">' 
 											+ '<div class="col-xs-7">' 
-												+ '<h3 id="detailViewMovieTitle" data-imdbID="<%- imdbID %>"><%- movieTitle %>' 
-													// + '<button type="button" id="closeDetailedView" class="close" aria-hidden="true"> &times;</button>' 
-												+ '</h3>' 
+												+ '<h3 id="detailViewMovieTitle" data-imdbID="<%- imdbID %>"><%- movieTitle %></h3>' 
 												+ '<h6><span class="glyphicon glyphicon-user"/><a href="#user" class="user">  <%= username %></a></h6>' 
 												+ '<label>Seen: </label><span><%- movieSeen %></span><br>' 
 												+ '<%= rating %>'
@@ -86,7 +99,8 @@ var detailedMovieView = _.template('<div class="container">'
 											+ '</div>'
 										+ '</div> <%= comments %>'
 									+ '</div>');
-									
+			
+// Template fuer das Kommentarfeld						
 var commentField = _.template('<div class="row commentContent">'
 								+ '<div class="col-xs-8">'
 									+'<div class="panel panel-default">'
@@ -152,12 +166,13 @@ var popoverContent = 'Are you sure you want to delete the movie?<br>'
 					+'<button type="button" class="btn btn-primary btn-danger" onclick="removeMovie($(this).parent().parent().parent().parent())">Delete</button>'
 					+'<button type="button" class="btn btn-default" data-dismiss="popover">No</button>';
 
+// Tabelle zur Auswahl eines Films fuers Hinzufuegen, wenn mehrere gefunden wurden
 var chooseTable = _.template('<tr data-imdbID="<%- imdbID %>">'
-									+'<td><%- movieTitle %></td>'
-									+'<td><%- year %></td>'
-									+'<td><%- type %></td>' 
-									+'<td><button type="button" class="btn btn-primary select" data-loading-text="Selecting...">Select</button></td>'
-									+'</tr>');
+								+'<td><%- movieTitle %></td>'
+								+'<td><%- year %></td>'
+								+'<td><%- type %></td>' 
+								+'<td><button type="button" class="btn btn-primary select" data-loading-text="Selecting...">Select</button></td>'
+							 +'</tr>');
 //@formatter:on
 
 $(document).ready(function() {
@@ -208,6 +223,7 @@ $(document).ready(function() {
 		event.preventDefault();
 		event.stopPropagation();
 
+		// kehre zur Benutzer- oder Home-Ansicht zurueck, je nachdem wo der User hergekommen ist
 		if (view === "home") {
 			$('#userView').hide();
 			$('#detailedView').stop().animate({
@@ -235,7 +251,7 @@ $(document).ready(function() {
 
 		// wurde ein Filmeintrag in der User Ansicht geaendert ist die Tabelle neu zu laden, bevor wir zur Liste zurueckkehren
 		$('#userView').hide(function() {
-			if (changedFilInUserView) {
+			if (changedFilmInUserView) {
 				parse_initialLoadMovieTable();
 			}
 		});
@@ -294,10 +310,10 @@ $(document).ready(function() {
 		var password = $('#registerModal .modal-body #regPasswordInput').val();
 		parse_registerUser(username, password);
 	});
-	
+
 	// Registrierung abschicken via Enter
 	$('#registerModal').on("keypress", "input", function(event) {
-		if(event.keyCode === 13) {
+		if (event.keyCode === 13) {
 			var username = $('#registerModal .modal-body #regUsernameInput').val();
 			var password = $('#registerModal .modal-body #regPasswordInput').val();
 			parse_registerUser(username, password);
@@ -346,15 +362,20 @@ $(document).ready(function() {
 	});
 
 	/*---------------------------Menu-Points-----------------------------*/
+	// generiere eine Liste mit allen Filmen, die ein Benutzer noch nicht gesehen hat
 	$('#notSeenMovies').on('click', function() {
 		filterWatchStatusSet(false);
 	});
 
+	// zeige die zehn bestbewertensten Filme an
 	$('#top10Movies').on('click', function() {
+		// entferne erst etwaige Filter, um die besten 10 Filme zu finden
+		removeAllFilters();
 		topTenMovies();
 	});
 });
 
+/* Speichere neues Kommentar in COMMENT Tabelle ab */
 function save_comment() {
 	if ($.trim($('#comment-box').find('textarea').val()) != "") {
 
@@ -382,6 +403,7 @@ function save_comment() {
 	}
 }
 
+/* definiere eine JQuery-Funktion, namens rotate, die ein element rotieren laesst*/
 jQuery.fn.rotate = function(degrees) {
 	$(this).css({
 		'-webkit-transform' : 'rotate(' + degrees + 'deg)',
@@ -390,6 +412,8 @@ jQuery.fn.rotate = function(degrees) {
 		'transform' : 'rotate(' + degrees + 'deg)'
 	});
 };
+
+// animiere den Refresh Button am Kopf der Tabelle
 function animateRefreshSpan(span) {
 	rotation += 5;
 	span.rotate(rotation);
@@ -397,52 +421,67 @@ function animateRefreshSpan(span) {
 
 //Call for Facebook Login and Signup
 function changeLoginButtonOnFacebookLoginSignIn() {
-	//@formatter:off
 	$('#menu1').removeClass("open");
 	isLoggedInOrNot();
 	allLoginActions();
 }
 
-// Toggle Klassen fuer Edit-, Delete- und Hinzufuege-Buttons
+/* Toggle Klassen fuer definierten Elemente */
 function isLoggedInOrNot() {
-	// toggleClassOnAllElements('.edit');
-	// toggleClassOnAllElements('.delete');
 	toggleClassOnAllElements('#add');
 	toggleClassOnAllElements('#ratingFilterRow');
 	toggleClassOnAllElements('#comment-textarea');
 	toggleClassOnAllElements('#notSeenMovies');
 }
 
-/*Setzt die Klasse fuer Parameter 'element' auf 'loggedOut' und entfernt Klasse 'loggedIn', falls der User nicht eingeloggt ist. Ansonsten umgekehrt. */
+/* Setzt die Klasse fuer Parameter 'element' auf 'loggedOut' und entfernt Klasse 'loggedIn', falls der User nicht eingeloggt ist. Ansonsten umgekehrt. */
 function toggleClassOnAllElements(element) {
-	$(element).each(function() {
-		$(this).fadeToggle('1000', function() {
-			$(this).toggleClass('loggedOut loggedIn');
-		});
+	$(element).fadeToggle('1000', function() {
+		$(element).toggleClass('loggedOut loggedIn');
 	});
 }
 
+/* Was ist alles zu tun, wenn sich ein Benutzer anmeldet*/
 function allLoginActions() {
 	//@formatter:off
-	$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' + '<span class="glyphicon glyphicon-remove-circle"></span> Logout' + '</button>');
+	// ersetze Login-Button mit Logout-Button
+	$('#loginButton').parent().html('<button class="btn btn-default btn-lg" id="logoutButton">' 
+										+ '<span class="glyphicon glyphicon-remove-circle"></span> Logout' 
+									+ '</button>');
+	
+	// Click-Handler setzen fuer den neuen Logout-Button
 	$('#logoutButton').on('click', function() {
+		// Lade die Film Tabelle
 		parse_initialLoadMovieTable();
+		
+		// zeige die Film Liste
 		showHomeView();
 		
+		// Logout-Button wieder mit Login-Button ersetzen
 		$('#logoutButton').parent().html('<button class="btn btn-default btn-lg" id="loginButton"><span class="glyphicon glyphicon-user"></span> Login</button>');
 		$('#menu1').removeClass("open");
+		// auch bei Parse abmelden
 		Parse.User.logOut();
-
+		
+		// fokusiere das Benutzernamefeld nach 0.1s
 		setTimeout('$("#usernameInput").focus()', 100);
+		
 		//Login Button Listener
 		$('#loginButton').on('click', function() {
 			setTimeout('$("#usernameInput").focus()', 100);
 		});
+		
+		// leere die Input Felder
 		$('#passwordInput').val("");
 		$('#usernameInput').val("");
+		
+		// verstecke den Wilkommenstext
 		$('#welcometext').slideToggle();
-	//parse_setWelcomeText();
+		
+		// aendere alles, was davon abhaengig ist, ob man angemeldet ist oder nicht
 		isLoggedInOrNot();
+		
+		// zeige die Filmvorschlaege von Facebook nicht an!
 		$('#facebookButtonList').css("display", "none");
 		$('#facebookMovieList').hide();
 	});
@@ -465,29 +504,38 @@ function showHomeView() {
 /* Detailansicht wird aufgebaut. Dafuer werden Daten von der OMDB Database als JSON geholt */
 function buildDetailView(numberOfStars, movieSeen, imdbID) {
 	var that = $(this).parent().find(".detailMagnifier");
+
+	// ersetze die Lupe durch einen Loading Indicator
 	that.toggleClass('glyphicon-search detailView-loading');
-	// alternative Quelle könnte "http://mymovieapi.com/?title=" sein
+
+	// hole alle Informationen zum Film mittels imdbID
 	$.getJSON("http://www.omdbapi.com/?i=" + imdbID + "&plot=full").done(function(data) {
 		if (data.Response == "False") {
 			parse_getErrorMessage("Error with connecting to OMDB Api! Try again later!");
-		} else {// data.Response == "True"
+		} else {
 			var poster;
 			if (data.Poster === "N/A") {
+				// zeige ein Ersatzbild an, wenn kein Poster gefunden wurde
 				poster = './img/noposter.png';
 			} else {
 				poster = data.Poster;
 			}
 
 			var avgStars;
+
+			// setze benutzerspezifische Bewertung, wenn ein Benutzer angemeldet ist
 			var rating = "";
 			if (Parse.User.current() !== null) {
 				rating = '<label>Rating: </label><span>' + setRating(numberOfStars, true) + '</span><br>';
 			}
 
+			// finde die durchschnittliche Bewertung zu einem Film
 			parse_getAvgRating(imdbID, function(stars) {
 				avgStars = stars;
+				// finde alle Kommentare zu einem Film
 				parse_getComments(imdbID, false, function(comments) {
 					var userComments = comments;
+					// baue die Detailansicht auf
 					parse_getOwnerOfMovie(imdbID, function(username) {
 						$('#detailedView').html(detailedMovieView({
 							imdbID : imdbID,
@@ -516,6 +564,7 @@ function buildDetailView(numberOfStars, movieSeen, imdbID) {
 							$('#home').hide();
 						});
 
+						// ersetze den Loading Indicator mit der Lupe
 						that.toggleClass('glyphicon-search detailView-loading');
 					});
 

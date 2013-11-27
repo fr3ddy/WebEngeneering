@@ -61,7 +61,6 @@ table {
 	font-size: 121%;
 	background-color: #d9534f;
 	border-radius: 0px;
-	/*text-align: center;*/
 }
 
 .detailMagnifier {
@@ -209,6 +208,11 @@ table {
 	border-bottom: 2px solid #0088CC;
 }
 
+.tableFilmTitle:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
 #changePassword {
 	margin-bottom: 5px;
 }
@@ -232,7 +236,7 @@ table {
 }
 
 #closeDetailedView:hover {
-	opacity: 0.4	
+	opacity: 0.4
 }
 
 #closeDetailedView > span {
@@ -302,7 +306,7 @@ table {
 	width: 25px;
 	height: 100px;
 	position: fixed;
-	margin-top: 300px;
+	margin-top: 51px; /*300px;*/
 	z-index: 1;
 	cursor: pointer;
 	display: none;
@@ -333,20 +337,29 @@ table {
 	color: white;
 }
 
+#facebookMoviesProgressBar {
+	padding-top: 250px;
+}
+
+#filterButton, #add, #refreshTableButton {
+	margin: 0 1.5px 0 1.5px;
+}
+#filterResetButton {
+	float: right;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+#filterButton, #add, #refreshTableButton {
+	margin: 0 1.5px 0 1.5px;
+}
+
 #headContainer {
 	display: table-cell;
 	vertical-align: middle;
 }
 
-#filterButton, #add, #refreshTableButton {
-	margin: 0 1.5px 0 1.5px;
-}
-
 #headContainer .btn .btn-default .btn-sm {
-	margin: 0 1.5px 0 1.5px;
-}
-
-#filterButton, #add, #refreshTableButton {
 	margin: 0 1.5px 0 1.5px;
 }
 
@@ -358,6 +371,16 @@ table {
 }
 #loginButton, #logoutButton {
 	margin-top: 2px;
+}
+
+#loginDropdown {
+	width: 250px;
+}
+
+#register {
+	padding-left: 75px;
+	padding-bottom: 0px;
+	padding-top: 0px;
 }
 
 #sortTitleASC, #sortTitleDESC, #sortRatingASC, #sortRatingDESC {
@@ -372,19 +395,10 @@ table {
 	margin-left: 90px;
 	margin-top: -20px;
 }
-#filterResetButton {
-	float: right;
-	margin-top: 0px;
-	margin-bottom: 0px;
-}
-#loginDropdown {
-	width: 250px;
-}
 
-#register {
-	padding-left: 75px;
-	padding-bottom: 0px;
-	padding-top: 0px;
+#top10Movies:hover, #notSeenMovies:hover {
+	color: #fff;
+	background-color: #0088CC;
 }
 
 #userView {
@@ -394,21 +408,9 @@ table {
 	position: absolute;
 	background-color: #fff;
 	z-index: 1;
-	/*top: -100%;*/
-	/*left: -100%;
-	 transform: rotate(90deg);
-	 -webkit-transform: rotate(90deg);
-	 -moz-transform: rotate(90deg);
-	 -o-transform: rotate(90deg);
-	 -ms-transform: rotate(90deg);*/
-	/*filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1.5);*/
 }
 
 #welcometext {
 	display: none;
 	right: 0;
-}
-
-#facebookMoviesProgressBar {
-	padding-top: 250px;
 }

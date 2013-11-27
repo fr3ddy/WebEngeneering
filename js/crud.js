@@ -4,12 +4,12 @@ $(document).ready(function() {
 	/* Action Listener für Detail View Lupe */
 	$('body').on('click', 'table .detailMagnifier', function() {
 		var clickedTr = $(this).parent().parent();
-		buildDetailView.call(this, parseFloat(clickedTr.find('.stars').data('rated')), clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
+		buildDetailView.call(this, parseFloat(clickedTr.find('.stars').data('rated')), clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.data('imdbid'));
 	});
 	/* Action Listener für Detail View Titel */
 	$('body').on('click', 'table .tableFilmTitle', function() {
 		var clickedTr = $(this).parent();
-		buildDetailView.call(this, parseFloat(clickedTr.find('.stars').data('rated')), clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.attr('data-imdbID'));
+		buildDetailView.call(this, parseFloat(clickedTr.find('.stars').data('rated')), clickedTr.find('.tableMovieSeen').text().toLowerCase(), clickedTr.data('imdbid'));
 	});
 
 	/* Setze Focus auf Film Titel Input, wenn Modal geoeffnet wird */
@@ -88,6 +88,7 @@ function createMovie(event) {
 	}
 }
 
+/* Suche alle Filme und Serien, die dem eingegebenen Titel entsprechen */
 function searchMovie(numberOfStars, movieTitle, seen) {
 	$.ajax({
 		url : "http://www.omdbapi.com/?s=" + movieTitle.replace(" ", "+"),
@@ -122,13 +123,16 @@ function searchMovie(numberOfStars, movieTitle, seen) {
 	});
 }
 
-// Wenn mehre Filme gefunden erscheint Modal mit Liste der gefunden Filme
+/* Wenn mehre Filme gefunden erscheint Modal mit Liste der gefunden Filme.
+ * Wurde nur ein Film zum Titel gefunden, wird dieser direkt der Liste von Filmen hinzugefuegt,
+ * falls dieser nicht schon existiert */
 function buildChooseTable(foundMovies, numberOfStars, seen) {
 	$('#createFilmModal').find('.modal-body .form-group').hide();
 	$('#createFilmModal').find('#saveFilm').hide();
 	$('#createFilmModal').find('#chooseTable').show();
 	$('#createFilmModal').find('#chooseTable tbody').empty();
 
+	// baue die Tabelle zur Auswahl des richtigen Films auf
 	for (var i = 0; i < foundMovies.length; i++) {
 		$(chooseTable({
 			imdbID : foundMovies[i].imdbID,
@@ -138,13 +142,15 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 		})).appendTo('#createFilmModal .modal-body tbody');
 	};
 
-	$('tbody .select').on('click', function() { debugger;
-		$(this).button();
-		$(this).button("loading");
-		$(this).parent().parent().parent().parent().parent().parent().parent().find('.blockChooseTable').show();
-		var imdbID = $(this).parent().parent().attr('data-imdbID');
+	/* Waehlt der Benutzer einen Film aus, soll dieser der Liste hinzugefuegt werden. Dabei wird die Liste fuer weitere Inputs gesperrt */
+	$('tbody .select').on('click', function() {
+		var that = this;
+		$(that).button();
+		$(that).button("loading");
+		$(that).parent().parent().parent().parent().parent().parent().parent().find('.blockChooseTable').show();
+		var imdbID = $(that).parent().parent().attr('data-imdbID');
 		if (checkForDuplicate(imdbID)) {
-			var movieTitle = $(this).parent().parent().find('td:first-child').text();
+			var movieTitle = $(that).parent().parent().find('td:first-child').text();
 			parse_saveMovie(movieTitle, imdbID, numberOfStars, seen, function(success) {
 				if (success) {
 					addNewTableLine(numberOfStars, movieTitle, imdbID);
@@ -152,8 +158,8 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 					$('#createFilmModal').find('#saveFilm').show();
 					$('#createFilmModal').find('.modal-body .form-group').show();
 					$('#createFilmModal').find('#chooseTable').hide();
-					$(this).parent().parent().parent().parent().parent().parent().parent().find('.blockChooseTable').hide();
-					$(this).button("reset");
+					$(that).parent().parent().parent().parent().parent().parent().parent().find('.blockChooseTable').hide();
+					$(that).button("reset");
 
 				} else {
 					return Parse.Promise.error("Wasn't able to add movie to DB");
@@ -161,14 +167,14 @@ function buildChooseTable(foundMovies, numberOfStars, seen) {
 			});
 		} else {
 			var error = "Movie does already exist!";
-			$(this).parent().parent().parent().parent().parent().parent().parent().find('.blockChooseTable').hide();
-			$(this).button("reset");
+			$(that).parent().parent().parent().parent().parent().parent().parent().find('.blockChooseTable').hide();
+			$(that).button("reset");
 			parse_getErrorMessage(error);
 		}
 	});
 }
 
-//* Create new Film Modal wird angezeigt und alles nötige Initialisiert **/
+/* Create new Film Modal wird angezeigt und alles nötige Initialisiert */
 function showCreateFilmModal() {
 	//Falls Auswahl abgebrochen wurde
 	$('#createFilmModal').find('#saveFilm').show();
@@ -297,17 +303,8 @@ function initiateTableRow(trID, numberOfStars, movieTitle, imdbID, seenText, edi
 
 /* Das 'editFilmModal' wird geschlossen und moechte die geanderten Werte in die Tabelle uebertragen werden. Dabei ist zu unterscheiden, wie das Event ausgeloest wurde */
 function changeMovieValues(event) {
-	switch(event.type) {
-		case ('click'):
-			changeTableRowValues.call($(this).parent().parent(), $(this).parent().parent().find('.stars').find('.' + ratingIconOn).length);
-			break;
-		// case ('keypress'):
-		// if (event.keyCode === 13) {
-		// changeTableRowValues.call($(this).parent(), $(this).parent().find('.stars').find('.' + ratingIconOn).length);
-		// }
-		// break;
-		default:
-			break;
+	if (event.type === 'click') {
+		changeTableRowValues.call($(this).parent().parent(), $(this).parent().parent().find('.stars').find('.' + ratingIconOn).length);
 	}
 }
 
@@ -346,7 +343,7 @@ function changeTableRowValues() {
 /* Setze Flag um Movie List im Browser neu zu laden, wenn die Benutzeransicht verlassen wird, um wieder zur Startansicht zu gelangen */
 function setUserViewChangedFlag() {
 	if (table === "#userCreatedTable" || table === "#userRatedTable") {
-		changedFilInUserView = true;
+		changedFilmInUserView = true;
 	}
 }
 
@@ -496,9 +493,9 @@ function fillTableStar(event) {
 	}
 }
 
-/* Legt fest, ob ein Stern beim Mouseover gefüllt oder leer dargestellt wird.
- * Der Parameter 'prev' hat den Wert 'true', wenn das aktuelle Element ein Vorgänger desjenigen Elements ist, über dem der Cursor platziert ist.
- * Ansonsten ist der Wert 'false'. Das aktuelle Element wird im Parameter 'elem' übergeben.
+/* Legt fest, ob ein Stern beim Mouseover gefuellt oder leer dargestellt wird.
+ * Der Parameter 'prev' hat den Wert 'true', wenn das aktuelle Element ein Vorgaenger desjenigen Elements ist, ueber dem der Cursor platziert ist.
+ * Ansonsten ist der Wert 'false'. Das aktuelle Element wird im Parameter 'elem' uebergeben.
  * */
 function toggleRatingClasses(elem, prev) {
 	if (prev) {
@@ -526,6 +523,10 @@ function setRating(selectedStars, forTableOrDetailedView, isAvgRating) {
 	if (isAvgRating === undefined)
 		isAvgRating = false;
 
+	/* Stelle Sterne wie folgt dar:
+	 * 1. Ist Wert hinter Komma kleiner-gleich 25 => leerer Stern
+	 * 1. Ist Wert hinter Komma groesser 25, kleiner 75 => halbvoller Stern
+	 * 1. Ist Wert hinter Komma groesser-gleich 75 => voller Stern */
 	var commaSeperated = selectedStars.toFixed(2).toString().split('.')[1];
 	if (commaSeperated <= 25) {
 		selectedStars = Math.round(selectedStars);
@@ -535,6 +536,7 @@ function setRating(selectedStars, forTableOrDetailedView, isAvgRating) {
 		setHalfStarFlag = true;
 	}
 
+	// setzte Tooltips
 	for (var i = 1; i <= 5; i++) {
 		switch(i) {
 			case 1:
@@ -597,6 +599,7 @@ function setRating(selectedStars, forTableOrDetailedView, isAvgRating) {
 }
 
 /*---------------------------------Ende Bewertung -------------------------------------------------------------------------------------------------------*/
+
 /*---------------------------------- Anfang Doppelte Eintraege verhindern -------------------------------------------------------------------------------*/
 
 /* Ueberprueft ob der Film in der Tabelle schon existiert */

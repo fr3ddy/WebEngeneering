@@ -174,9 +174,6 @@ function removeTitleFilter() {
 }
 
 function removeAllFilters() {
-
-	//TODO Performance technisch sehr unglücklich -> in jeder remove-Methode wird filterTable() aufgerufen.
-	//nach aktuellem Stand würde die Tabelle also 4 Mal gefiltert werden!!!!
 	removeWatchFilter();
 	removeTitleFilter();
 	removeRatingFilter();

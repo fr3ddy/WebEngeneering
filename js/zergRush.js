@@ -1,3 +1,10 @@
+/*
+ * Vielen Dank an perdolsey, der den hier angegebenen Code fuer ZergRush zur Verfuegung gestellt hat.
+ * Der Code wurde an einigen Stellen leicht modifiziert, um unseren Anspruechen zu genuegen.
+ * 
+ * Original Source: https://github.com/padolsey/ZergRush/blob/master/ZergRush.js
+ */
+
 ( function() {
 
 		window.Zergling = Zergling;
